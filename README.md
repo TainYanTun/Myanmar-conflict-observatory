@@ -48,6 +48,11 @@ It intends to expand beyond simple data aggregation. Below are the core analytic
      - Natural Language Processing (NLP): Analyzing the "Notes" section of ACLED data to extract keywords and sentiment regarding specific incidents.
      - Predictive Modeling: Experimenting with basic time-series forecasting to estimate near-future conflict intensity in specific regions.
      
+### Collaborators
+
+- **Tain Yan Tun** - Data Engineer (Undergraduate)
+- **Kyaw Zay Aung** - Data Analyst (Undergraduate)
+
 ### Disclaimer & Ethics 
 
      The data analyzed involves real-world violence, suffering, and human rights issues. The goal of this project is to provide objective clarity for research purposes, not to sensationalize.
@@ -57,5 +62,5 @@ It intends to expand beyond simple data aggregation. Below are the core analytic
 
 ### License 
 
-The code in this repository is licensed under the MIT License. 
+The code in this repository is licensed under the [MIT License](LICENSE). 
 Information on political violence and protest events is sourced from the Armed Conflict Location & Event Data Project (ACLED). 

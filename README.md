@@ -1,3 +1,5 @@
+[မြန်မာဘာသာဖြင့် ဖတ်ရန်](myanmar_translation.md)
+
 # Myanmar Conflict Insight Project
 
 Intially as planned, this project will serves as an analytical toolkit and visualization hub for conflict data in Myanmar. The primary focus is to transform raw, complex datasets into insights and accessible visualizations. 

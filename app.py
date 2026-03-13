@@ -1,10 +1,18 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import plotly.graph_objects as go
+import networkx as nx
+from sqlalchemy import create_engine
 import os
 import glob
 import time
 from datetime import datetime
+from dotenv import load_dotenv
+
+# Load Environment Variables
+load_dotenv()
+DB_URL = os.getenv("DB_URL")
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -93,14 +101,33 @@ if not st.session_state.gate_passed:
 # --- Post-Gate CSS Reset ---
 st.markdown("<style>[data-testid='stAppViewContainer'] { overflow: auto !important; height: auto !important; position: static !important; } [data-testid='stSidebar'] { display: block !important; } [data-testid='stHeader'] { display: flex !important; }</style>", unsafe_allow_html=True)
 
-# --- Data Engine (Kaggle-Aware) ---
+# --- Data Engine (SQL & CSV Fallback) ---
 @st.cache_data
 def load_data():
-    # 1. Check local directory
+    try:
+        # 1. Attempt to load from PostgreSQL
+        if DB_URL:
+            engine = create_engine(DB_URL)
+            df = pd.read_sql("SELECT * FROM conflict_events", engine)
+            if not df.empty:
+                df['event_date'] = pd.to_datetime(df['event_date'])
+                
+                # Robustness: Ensure date filter is applied even if DB is not pre-filtered
+                df = df[df['event_date'] >= '2021-02-01']
+                
+                df['year_month'] = df['event_date'].dt.strftime('%Y-%m')
+                
+                # Format update_time based on latest data in DB
+                update_time = df['event_date'].max().strftime('%Y-%m-%d %H:%M')
+                return df, update_time
+    except Exception as e:
+        st.warning(f"Database unavailable or empty, falling back to local files: {e}")
+
+    # 2. Fallback: Check local directory
     data_dir = os.path.join(os.getcwd(), "data")
     files = glob.glob(os.path.join(data_dir, "*.csv"))
     
-    # 2. Check Kaggle standard input path if local is empty
+    # 3. Fallback: Check Kaggle standard input path
     if not files:
         kaggle_dir = "/kaggle/input/myanmar-conflict-observatory/"
         files = glob.glob(os.path.join(kaggle_dir, "*.csv"))
@@ -114,7 +141,10 @@ def load_data():
     df['event_date'] = pd.to_datetime(df['event_date'])
     df = df[df['event_date'] >= '2021-02-01']
     df['year_month'] = df['event_date'].dt.strftime('%Y-%m')
-    return df, file_mod_time
+    
+    # Format update_time for CSV fallback
+    update_time = pd.to_datetime(file_mod_time, unit='s').strftime('%Y-%m-%d %H:%M')
+    return df, update_time
 
 def categorize_actor(actor_name):
     if pd.isna(actor_name): return "Unidentified"
@@ -126,14 +156,21 @@ def categorize_actor(actor_name):
     elif any(eao in name for eao in ['knu', 'kia', 'tnla', 'mndaa', 'rcss', 'knpp', 'cnp', 'aa ']): return 'EAOs'
     else: return 'Other Groups'
 
-df_raw, mod_timestamp = load_data()
+df_raw, update_time = load_data()
+
+@st.cache_data
+def calculate_network_layout(adj_df):
+    G = nx.Graph()
+    for _, row in adj_df.iterrows():
+        G.add_edge(row['actor1_clean'], row['actor2_clean'], weight=row['weight'])
+    pos = nx.spring_layout(G, seed=42)
+    return G, pos
 
 if df_raw is None:
     st.error("Data source missing. Ensure dataset is in /data or Kaggle input folder.")
 else:
     df_raw['actor1_clean'] = df_raw['actor1'].apply(categorize_actor)
     latest_event_date = df_raw['event_date'].max().strftime('%B %d, %Y')
-    update_time = pd.to_datetime(mod_timestamp, unit='s').strftime('%Y-%m-%d %H:%M')
 
     # --- Sidebar ---
     with st.sidebar:
@@ -210,6 +247,55 @@ else:
             fig_pie = px.sunburst(df, path=['event_type', 'sub_event_type'], values='fatalities', color_discrete_sequence=["#334155", "#475569", "#64748b", "#94a3b8"])
             fig_pie.update_layout(plotly_layout, margin={"r":0,"t":0,"l":0,"b":0})
             st.plotly_chart(fig_pie, use_container_width=True)
+
+        st.markdown("---")
+        st.caption("ACTOR INTERACTION NETWORK (Conflict Dynamics)")
+        
+        # Prepare network data
+        df_net = df.copy()
+        df_net['actor2_clean'] = df_net['actor2'].apply(categorize_actor)
+        
+        # Filter for meaningful interactions (ignore self-interaction or unidentified)
+        interactions = df_net[(df_net['actor1_clean'] != df_net['actor2_clean']) & 
+                             (df_net['actor2_clean'] != 'Unidentified')]
+        
+        if not interactions.empty:
+            # Group by actor pairs
+            adj = interactions.groupby(['actor1_clean', 'actor2_clean']).size().reset_index(name='weight')
+            
+            # Use cached layout calculation for scalability
+            G, pos = calculate_network_layout(adj)
+            
+            # Edges
+            edge_x = []
+            edge_y = []
+            for edge in G.edges():
+                x0, y0 = pos[edge[0]]
+                x1, y1 = pos[edge[1]]
+                edge_x.extend([x0, x1, None])
+                edge_y.extend([y0, y1, None])
+                
+            edge_trace = go.Scatter(x=edge_x, y=edge_y, line=dict(width=1, color='#475569'), hoverinfo='none', mode='lines')
+            
+            # Nodes
+            node_x = []
+            node_y = []
+            node_text = []
+            node_size = []
+            
+            for node in G.nodes():
+                x, y = pos[node]
+                node_x.append(x)
+                node_y.append(y)
+                node_text.append(f"{node}: {sum(d['weight'] for u, v, d in G.edges(node, data=True))} interactions")
+                node_size.append(15 + (sum(d['weight'] for u, v, d in G.edges(node, data=True)) / adj['weight'].max() * 30))
+                
+            node_trace = go.Scatter(x=node_x, y=node_y, mode='markers+text', text=[n for n in G.nodes()], textposition="top center", hoverinfo='text', hovertext=node_text, marker=dict(showscale=False, color='#ef4444', size=node_size, line_width=2))
+            
+            fig_net = go.Figure(data=[edge_trace, node_trace], layout=go.Layout(showlegend=False, hovermode='closest', margin=dict(b=0,l=0,r=0,t=0), xaxis=dict(showgrid=False, zeroline=False, showticklabels=False), yaxis=dict(showgrid=False, zeroline=False, showticklabels=False), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)'))
+            st.plotly_chart(fig_net, use_container_width=True)
+        else:
+            st.info("Insufficient interaction data for network mapping.")
 
     with tab4:
         st.subheader("REGIONAL SEVERITY ASSESSMENT")

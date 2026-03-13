@@ -4,6 +4,7 @@ import os
 import glob
 from datetime import datetime
 from dotenv import load_dotenv
+from src.processing import clean_conflict_data
 
 # Load Environment Variables
 load_dotenv()
@@ -30,9 +31,7 @@ def ingest_data():
     df = pd.read_csv(csv_path)
     
     # 1. Cleaning and Filtering
-    df = df[df['country'] == 'Myanmar']
-    df['event_date'] = pd.to_datetime(df['event_date'])
-    df = df[df['event_date'] >= '2021-02-01']
+    df = clean_conflict_data(df)
     
     # 2. Performance Check: Skip if latest data already in DB
     engine = create_engine(DB_URL)

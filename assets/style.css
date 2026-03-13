@@ -1,0 +1,96 @@
+/* Main Background & Theme */
+.stApp { 
+    background-color: var(--background-color); 
+    color: var(--text-color); 
+}
+
+/* Professional Metric Cards */
+.metric-card { 
+    background-color: var(--secondary-background-color); 
+    padding: 24px; 
+    border-radius: 4px; 
+    border: 1px solid rgba(128, 128, 128, 0.2); 
+    margin-bottom: 1rem; 
+    display: flex; 
+    align-items: center; 
+    gap: 20px; 
+}
+
+.metric-icon { 
+    font-size: 1.8rem; 
+    color: var(--text-color); 
+    opacity: 0.6; 
+}
+
+.metric-content { 
+    display: flex; 
+    flex-direction: column; 
+}
+
+.metric-label { 
+    font-size: 0.75rem; 
+    color: var(--text-color); 
+    opacity: 0.7; 
+    text-transform: uppercase; 
+    letter-spacing: 0.05em; 
+    font-weight: 600; 
+}
+
+.metric-value { 
+    font-size: 1.5rem; 
+    font-weight: 700; 
+    color: var(--text-color); 
+}
+
+/* Typography */
+.main-header { 
+    font-size: 1.75rem; 
+    font-weight: 700; 
+    color: var(--text-color); 
+    margin-bottom: 0.25rem; 
+    letter-spacing: -0.02em; 
+    text-transform: uppercase;
+}
+
+.sub-header { 
+    font-size: 0.875rem; 
+    color: var(--text-color); 
+    opacity: 0.6; 
+    margin-bottom: 2rem; 
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Navigation Overrides */
+.stTabs [data-baseweb="tab-list"] { 
+    gap: 32px; 
+    background-color: transparent; 
+}
+
+.stTabs [data-baseweb="tab"] { 
+    height: 48px; 
+    background-color: transparent; 
+    border: none; 
+    color: var(--text-color); 
+    opacity: 0.6; 
+    font-weight: 600; 
+    font-size: 0.8rem; 
+    letter-spacing: 0.05em; 
+}
+
+.stTabs [data-baseweb="tab-highlight"] { 
+    background-color: #ef4444; 
+}
+
+/* Briefing Card Styling */
+.briefing-card { 
+    background-color: var(--secondary-background-color); 
+    padding: 30px 40px; 
+    border-radius: 12px; 
+    border: 1px solid rgba(128, 128, 128, 0.2); 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+}
+
+/* Hide Streamlit UI elements */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}

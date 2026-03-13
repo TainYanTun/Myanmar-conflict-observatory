@@ -1,15 +1,9 @@
-# ASIA-PACIFIC INTERNATIONAL UNIVERSITY  
-## Faculty of Information Technology  
-### IT422–424: Big Data  
-## RESEARCH PROPOSAL
+# RESEARCH PROPOSAL
 
 **Title of Research Proposal:**  
 **Myanmar Conflict Observatory: A Big Data Analytics Framework for Post-Coup Stability Assessment**
 
 **Student Name:** Tain Yan Tun  
-**Student ID:** 202200292  
-**Lecturer:** Dr. Gakwaya  
-**Semester:** 2nd Semester (January–May)  
 **Research Area:** Big Data Visualization and Conflict Analytics  
 
 ---

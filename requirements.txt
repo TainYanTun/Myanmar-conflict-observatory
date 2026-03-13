@@ -12,3 +12,4 @@ nbformat>=4.2.0
 ipywidgets
 streamlit
 streamlit
+kaggle

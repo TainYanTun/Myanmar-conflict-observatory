@@ -1,0 +1,16 @@
+{
+  "title": "Myanmar Conflict Observatory (ACLED)",
+  "id": "tainyantun/myanmar-conflict-observatory",
+  "licenses": [
+    {
+      "name": "CC-BY-NC-SA-4.0"
+    }
+  ],
+  "keywords": [
+    "conflict",
+    "myanmar",
+    "geospatial",
+    "big data",
+    "acled"
+  ]
+}

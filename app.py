@@ -14,12 +14,14 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Global CSS ---
-st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">', unsafe_allow_html=True)
+# --- Theme-Aware Professional CSS ---
+def local_css(file_name):
+    if os.path.exists(file_name):
+        with open(file_name) as f:
+            st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
-if os.path.exists("assets/style.css"):
-    with open("assets/style.css") as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">', unsafe_allow_html=True)
+local_css("assets/style.css")
 
 # --- Session State ---
 if 'gate_passed' not in st.session_state:
@@ -54,7 +56,7 @@ if not st.session_state.gate_passed:
                 Conflict metrics in Myanmar are <strong>dynamic and non-static</strong>. Users must understand that all data presented here is subject to constant revision as forensic verification continues and reporting barriers are navigated.
                 <br><br>
                 <strong>The Fatality Gap:</strong> While this framework currently records <strong>77,000+ verified fatalities</strong> based on ACLED's rigorous multi-source confirmation protocols, other international humanitarian monitoring entities estimate total human costs to be upwards of <strong>89,200</strong>. 
-                The delta between these figures represents the 'Fog of War'—a direct result of internet blackouts, localized telecommunications shutdowns, and the extreme difficulty of confirming deaths in active kinetic zones like Sagaing, Magway, and the Dry Zone. The figures shown in this observatory serve as a <strong>Verified Floor</strong> (the absolute minimum confirmed), not a final ceiling.
+                The delta between these figures represents the 'Fog of War'—a direct result of internet blackouts and verification difficulty. The figures shown in this observatory serve as a <strong>Verified Floor</strong>, not a final ceiling.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -63,16 +65,15 @@ if not st.session_state.gate_passed:
         with c_l:
             st.markdown("""
             ### <i class="fas fa-scale-balanced"></i> OPERATIONAL NEUTRALITY
-            The Myanmar Conflict Observatory maintains strict institutional independence. This project is not affiliated with any political party, rebel administration, or state security apparatus. Categorization of actors is a functional requirement for data science and does not imply legal recognition or political endorsement.
+            Independent research prototype. Institutional independence from all political or military entities.
             """, unsafe_allow_html=True)
         with c_r:
             st.markdown("""
             ### <i class="fas fa-shield-halved"></i> THE 'DO NO HARM' MANDATE
-            This framework is designed for strategic research and humanitarian assessment. In compliance with international ethical standards, the data is aggregated and delayed. It is **explicitly not designed**, nor suitable, for tactical military planning, targeting, or real-time kinetic operations.
+            Strategic research only. Explicitly not for tactical military planning or real-time kinetic use.
             """, unsafe_allow_html=True)
             
         st.markdown("<br><br>", unsafe_allow_html=True)
-        
         elapsed = time.time() - st.session_state.start_time
         remaining = int(max(0, 5 - elapsed))
         
@@ -92,13 +93,20 @@ if not st.session_state.gate_passed:
 # --- Post-Gate CSS Reset ---
 st.markdown("<style>[data-testid='stAppViewContainer'] { overflow: auto !important; height: auto !important; position: static !important; } [data-testid='stSidebar'] { display: block !important; } [data-testid='stHeader'] { display: flex !important; }</style>", unsafe_allow_html=True)
 
-# --- Data Engine ---
+# --- Data Engine (Kaggle-Aware) ---
 @st.cache_data
 def load_data():
+    # 1. Check local directory
     data_dir = os.path.join(os.getcwd(), "data")
-    if not os.path.exists(data_dir): return None, None
     files = glob.glob(os.path.join(data_dir, "*.csv"))
+    
+    # 2. Check Kaggle standard input path if local is empty
+    if not files:
+        kaggle_dir = "/kaggle/input/myanmar-conflict-observatory/"
+        files = glob.glob(os.path.join(kaggle_dir, "*.csv"))
+        
     if not files: return None, None
+    
     latest_file = max(files, key=os.path.getmtime)
     file_mod_time = os.path.getmtime(latest_file)
     df = pd.read_csv(latest_file)
@@ -121,7 +129,7 @@ def categorize_actor(actor_name):
 df_raw, mod_timestamp = load_data()
 
 if df_raw is None:
-    st.error("Data source missing. Please check the /data folder.")
+    st.error("Data source missing. Ensure dataset is in /data or Kaggle input folder.")
 else:
     df_raw['actor1_clean'] = df_raw['actor1'].apply(categorize_actor)
     latest_event_date = df_raw['event_date'].max().strftime('%B %d, %Y')
@@ -149,11 +157,11 @@ else:
     if selected_region != "All Regions":
         df = df[df['admin1'] == selected_region]
 
-    # --- Main Interface ---
+    # --- Main Header ---
     st.markdown('<p class="main-header">MYANMAR CONFLICT OBSERVATORY</p>', unsafe_allow_html=True)
-    st.markdown(f'<p class="sub-header">Analytical Framework for Stability Assessment | Data current as of: {latest_event_date}</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="sub-header">ANALYTICAL FRAMEWORK FOR STABILITY ASSESSMENT | DATA CURRENT AS OF: {latest_event_date}</p>', unsafe_allow_html=True)
 
-    # --- Metrics (Filtered) ---
+    # --- Metrics ---
     m_col1, m_col2, m_col3, m_col4 = st.columns(4)
     with m_col1: st.markdown(f'<div class="metric-card"><i class="fas fa-bullseye metric-icon"></i><div class="metric-content"><div class="metric-label">Total Events</div><div class="metric-value">{len(df):,}</div></div></div>', unsafe_allow_html=True)
     with m_col2: st.markdown(f'<div class="metric-card"><i class="fas fa-skull metric-icon" style="color:#ef4444"></i><div class="metric-content"><div class="metric-label">Fatalities (Verified)</div><div class="metric-value">{int(df["fatalities"].sum()):,}</div></div></div>', unsafe_allow_html=True)
@@ -267,7 +275,7 @@ else:
         - **Observation Protocol:** We treat the figures presented here as a Verified Floor—the minimum confirmed human cost of the conflict. In regions subject to internet blackouts, real figures are likely significantly higher than reported.
 
         ### 3. The 'Do No Harm' Ethical Mandate
-        - **Strategic vs. Tactical Utility:** Data is presented in aggregate form and delayed by source reporting cycles. This observatory is strictly intended for strategic research. It is explicitly not designed, nor suitable, for tactical military planning or targeting.
+        - **Strategic vs. Tactical Utility:** Data is presented in aggregate form and delayed by source reporting cycles. This observatory is strictly intended for strategic research. It is explicitly **not** designed, nor suitable, for tactical military planning or targeting.
         - **Protection of Local Reporters:** All coordinates and narrative notes are handled according to established safety protocols to prevent the identification of local informants.
 
         ### 4. Comprehensive Disclaimer of Liability

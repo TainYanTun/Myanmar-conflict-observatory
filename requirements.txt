@@ -1,0 +1,12 @@
+pandas
+numpy
+matplotlib
+seaborn
+plotly
+scipy
+networkx
+ipykernel
+geopandas
+folium
+nbformat>=4.2.0
+ipywidgets

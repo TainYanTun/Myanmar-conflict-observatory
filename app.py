@@ -9,6 +9,7 @@ import glob
 import time
 from datetime import datetime
 from dotenv import load_dotenv
+from src.processing import categorize_actor
 
 # Load Environment Variables
 load_dotenv()
@@ -145,16 +146,6 @@ def load_data():
     # Format update_time for CSV fallback
     update_time = pd.to_datetime(file_mod_time, unit='s').strftime('%Y-%m-%d %H:%M')
     return df, update_time
-
-def categorize_actor(actor_name):
-    if pd.isna(actor_name): return "Unidentified"
-    name = str(actor_name).lower()
-    if 'military forces of myanmar' in name or 'police forces of myanmar' in name: return 'State Forces'
-    elif 'pdf' in name or "people's defence force" in name or 'local defense force' in name: return 'Resistance'
-    elif 'protesters' in name: return 'Protesters'
-    elif 'civilians' in name: return 'Civilians'
-    elif any(eao in name for eao in ['knu', 'kia', 'tnla', 'mndaa', 'rcss', 'knpp', 'cnp', 'aa ']): return 'EAOs'
-    else: return 'Other Groups'
 
 df_raw, update_time = load_data()
 

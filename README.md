@@ -1,18 +1,19 @@
-[မြန်မာဘာသာဖြင့် ဖတ်ရန်](myanmar_translation.md)
+[မြန်မာဘာသာဖြင့် ဖတ်ရန်](docs/myanmar_translation.md)
 
-# Myanmar Conflict Insight Project
+# Myanmar Conflict Observatory (MCO)
 
-Intially as planned, this project will serves as an analytical toolkit and visualization hub for conflict data in Myanmar. The primary focus is to transform raw, complex datasets into insights and accessible visualizations. 
-The current core dataset is sourced from ACLED (Armed Conflict Location & Event Data Project), specifically focusing on the timeframe following the military takeover on February 1, 2021. 
+This project serves as an analytical toolkit and visualization hub for conflict data in Myanmar. The primary focus is to transform raw, complex datasets into structured insights and accessible visualizations. 
+The core dataset is sourced from ACLED (Armed Conflict Location & Event Data Project), specifically focusing on the timeframe following the military takeover on February 1, 2021. 
 
-The goal is to and will be provided to researchers, journalists, and analysts with a clear picture of conflict trends, geographical hotspots, and actor dynamics, updated regularly to reflect the evolving situation on the ground. 
+The goal is to provide researchers, journalists, and analysts with a clear picture of conflict trends, geographical hotspots, and actor dynamics, updated through a robust technical framework.
 
-### Project Status & Data Update 
+### Project Status & Data Infrastructure 
 
      Start Date: February 1, 2021 (Coup d'état).
      End Date: Current Date (Rolling update).
-     Update Mechanism: Currently, the dataset is updated manually to ensure data integrity and curation. The system is designed to allow easy injection of new dated data.
-         Future Goal: Develop a script to automate the fetching and cleaning of ACLED data via API or scraper to ensure real-time accuracy.
+     Update Mechanism: Automated ETL pipeline via PostgreSQL database ingestion. 
+     Database: PostgreSQL with SQLAlchemy ORM for scalable and performant data retrieval.
+     Architecture: Modularized directory structure (src, docs, notebooks, scripts) for enterprise-grade maintainability.
               
 This project utilizes data from the Armed Conflict Location & Event Data Project (ACLED). 
 
@@ -23,33 +24,45 @@ This project utilizes data from the Armed Conflict Location & Event Data Project
      
 ### Possibilities & Scope 
 
-It intends to expand beyond simple data aggregation. Below are the core analytical possibilities currently being explored or implemented: 
+Below are the core analytical components currently implemented or in the advanced roadmap: 
 
 1. Temporal Analysis 
 
-     - Conflict Frequency: Time-series graphs tracking the number of conflict events per day/week/month.
+     - Conflict Frequency: Time-series evaluations tracking the number of conflict events per day/week/month.
      - Fatality Trends: Analysis of reported fatalities over time to identify spikes in violence.
      - Event Typology: Breakdown of event types (e.g., Battles, Violence against civilians, Protests, Riots).
      
 
 2. Geospatial Analysis 
 
-     - Conflict Hotspots: Mapping events to identify high-risk regions (State/Region, Township level).
-     - Displacement Correlation: (Potential) Overlaying conflict data with IDP (Internally Displaced Persons) camp data to visualize movement triggers.
-     - Actor Control Zones: Visualizing areas of influence for different armed groups (Military/SAC, EAOs, PDFs).
+     - Conflict Hotspots: Mapping events to identify high-risk regions at State/Region and Township levels.
+     - Temporal Expansion: Animated visualizations showing the expansion of conflict over time.
+     - Regional Severity: Quantification of instability through a custom Severity Index (Fatalities/Events ratio).
 
 3. Actor Dynamics 
 
-     - Actor Interaction: Network graphs showing which actors are fighting whom.
-     - Most Active Actors: Ranked lists of groups involved in the highest number of conflict events.
+     - Actor Interaction: Interactive network graphs mapping engagements between State Forces, Resistance (PDFs), and EAOs.
+     - Engagement Composition: Sunburst visualizations of event types and sub-event categories.
      
 
 4. Advanced Insights (Roadmap) 
 
-     Although it is not confirmed, it is pretty much expected with some foundational Machine Learning integrated in the system possibly
-     - Natural Language Processing (NLP): Analyzing the "Notes" section of ACLED data to extract keywords and sentiment regarding specific incidents.
-     - Predictive Modeling: Experimenting with basic time-series forecasting to estimate near-future conflict intensity in specific regions.
+     The following Natural Language Processing (NLP) components are currently being integrated:
+     - Topic Modeling: Categorical classification of events through latent theme discovery in ACLED narratives.
+     - Named Entity Recognition (NER): Extraction of specific military units and localized militia names from event notes.
+     - Semantic Search: Vector-based search capabilities for qualitative event descriptions.
      
+### Project Organization
+
+The repository has been restructured to support professional development standards:
+
+     app.py: Main Streamlit dashboard interface.
+     db_manager.py: Data ingestion and PostgreSQL management pipeline.
+     src/: Shared processing logic including actor categorization and data cleaning.
+     docs/: Formal research documentation, proposals, and NLP strategy.
+     notebooks/: Environment for experimental EDA and research-driven analysis.
+     scripts/: Utility tools for data integrity audits and forensic checks.
+
 ### Collaborators
 
 - **Tain Yan Tun** - Data Engineer (Undergraduate)
@@ -57,9 +70,9 @@ It intends to expand beyond simple data aggregation. Below are the core analytic
 
 ### Disclaimer & Ethics 
 
-     The data analyzed involves real-world violence, suffering, and human rights issues. The goal of this project is to provide objective clarity for research purposes, not to sensationalize.
-     ACLED data is derived from media reports and may not capture every incident. Visualizations are only as accurate as the underlying data source.
-     All credit for the raw data belongs to ACLED. The analysis and code produced in this repository are provided under the MIT License.
+     The data analyzed involves real-world violence and human rights issues. The goal of this project is to provide objective clarity for research purposes, not to sensationalize.
+     ACLED data is derived from multiple reports and represents a "Verified Floor"—a conservative confirmed minimum of fatalities.
+     Visualizations are only as accurate as the underlying data source. All credit for the raw data belongs to ACLED. 
      
 
 ### License 

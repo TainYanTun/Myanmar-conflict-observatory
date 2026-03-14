@@ -9,11 +9,74 @@ import glob
 import time
 from datetime import datetime
 from dotenv import load_dotenv
-from src.processing import categorize_actor, extract_keywords
+from src.processing import categorize_actor, extract_keywords, extract_health_impacts
 
 # Load Environment Variables
 load_dotenv()
 DB_URL = os.getenv("DB_URL")
+
+# --- Function Definitions ---
+def display_briefing_gate():
+    """Displays the humanitarian mission briefing overlay."""
+    st.markdown("""
+<div style="padding: 50px; border-radius: 24px; background: rgba(128, 128, 128, 0.02); border: 1px solid rgba(128, 128, 128, 0.2); backdrop-filter: blur(20px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); font-family: 'Inter', sans-serif;">
+    <div style="text-align: center; margin-bottom: 40px;">
+        <div style="display: inline-block; background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px 16px; border-radius: 99px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 20px; border: 1px solid rgba(10, 185, 129, 0.2);">SDG 3: GOOD HEALTH & WELL-BEING FOCUS</div>
+        <h1 style="font-weight: 900; letter-spacing: -0.05em; margin-bottom: 10px; font-size: 3rem;">HUMANITARIAN MISSION BRIEFING</h1>
+        <p style="opacity: 0.5; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4em; font-size: 0.7rem; margin-bottom: 30px;">Conflict-Induced Health Crisis Monitoring | v1.8 (Hackathon Edition)</p>
+        <div style="height: 2px; width: 60px; background: #10b981; margin: 0 auto; border-radius: 2px;"></div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 40px;">
+        <!-- Section 1: SDG 3 Alignment -->
+        <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 30px; border-radius: 16px;">
+            <div style="display: flex; align-items: flex-start; gap: 20px;">
+                <div style="background: #10b981; color: white; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem;">
+                    <i class="fas fa-heart-pulse"></i>
+                </div>
+                <div>
+                    <h4 style="margin-top:0; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">SDG 3: THE WELL-BEING IMPERATIVE</h4>
+                    <p style="font-size: 0.95rem; line-height: 1.7; opacity: 0.8; margin-bottom: 15px;">
+                        Conflict is a direct barrier to <b>SDG 3 (Good Health and Well-being)</b>. This observatory tracks kinetic engagements to assess their impact on public health infrastructure and human survival.
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: rgba(128, 128, 128, 0.05); padding: 15px; border-radius: 10px;">
+                        <div>
+                            <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Direct Health Impact</span>
+                            <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">Monitoring fatalities and injuries as primary indicators of regional health crises.</p>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Infrastructure Risk</span>
+                            <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">Mapping conflict hotspots to identify vulnerable clinics and healthcare access points.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Section 2: Forensic Mandate -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <div style="background: rgba(128, 128, 128, 0.03); padding: 25px; border-radius: 16px; border: 1px solid rgba(128, 128, 128, 0.1);">
+                <i class="fas fa-microscope" style="opacity: 0.5; font-size: 1.2rem; margin-bottom: 15px;"></i>
+                <h5 style="margin-top: 0; font-weight: 800; font-size: 1rem;">VERIFIED FLOOR PROTOCOL</h5>
+                <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 0;">We utilize a forensic verification threshold, recording only corroborated data to ensure humanitarian response is based on accurate, confirmed insights.</p>
+            </div>
+            <div style="background: rgba(128, 128, 128, 0.03); padding: 25px; border-radius: 16px; border: 1px solid rgba(128, 128, 128, 0.1);">
+                <i class="fas fa-hand-holding-heart" style="opacity: 0.5; font-size: 1.2rem; margin-bottom: 15px;"></i>
+                <h5 style="margin-top: 0; font-weight: 800; font-size: 1rem;">ETHICAL HUMANITARIANISM</h5>
+                <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 0;">This data is for academic and humanitarian strategic planning. Use for tactical coordination is strictly prohibited to preserve 'Do No Harm' principles.</p>
+            </div>
+        </div>
+        <!-- Section 3: Professional Disclaimer -->
+        <div style="padding: 20px 30px; border-radius: 12px; border: 1px dashed rgba(128, 128, 128, 0.3); background: rgba(128, 128, 128, 0.02);">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <i class="fas fa-circle-info" style="opacity: 0.4; font-size: 0.9rem;"></i>
+                <h5 style="opacity: 0.7; margin: 0; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Hackathon Submission & Disclaimer</h5>
+            </div>
+            <p style="font-size: 0.8rem; opacity: 0.5; line-height: 1.6; margin-bottom: 0;">
+                Developed for the GNEC Hackathon 2026. This observatory transforms raw conflict logs into humanitarian insights to support SDG 3 objectives in crisis-affected regions of Myanmar.
+            </p>
+        </div>
+    </div>
+</div>
+        """, unsafe_allow_html=True)
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -39,7 +102,7 @@ LANG_DICT = {
         "latest": "Latest Event",
         "update": "System Update",
         "keywords_title": "Top Narrative Keywords (NLP-lite Extraction)",
-        "tabs": ["GEOSPATIAL", "TEMPORAL", "ACTORS", "STABILITY", "DATA AUDIT", "METHODOLOGY", "POLICY", "RECORDS"],
+        "tabs": ["GEOSPATIAL", "TEMPORAL", "ACTORS", "STABILITY", "SDG 3: HEALTH IMPACT", "METHODOLOGY", "POLICY", "RECORDS"],
         "geo_intensity": "Incident Intensity (Density Mapping)",
         "geo_expansion": "Temporal Conflict Expansion (Animation)",
         "temp_freq": "Conflict Frequency and Impact Over Time",
@@ -48,10 +111,8 @@ LANG_DICT = {
         "actor_net": "ACTOR INTERACTION NETWORK (Conflict Dynamics)",
         "stab_title": "REGIONAL SEVERITY ASSESSMENT",
         "stab_desc": "Severity Index: Ratio of fatalities to total conflict events.",
-        "audit_title": "DATA VERACITY AUDIT",
-        "audit_integrity": "Integrity",
-        "audit_gap": "Lethality Gap",
-        "audit_super": "Super-Events",
+        "health_title": "SDG 3: CONFLICT-INDUCED HEALTH IMPACTS",
+        "health_desc": "Incidents specifically impacting medical infrastructure, healthcare staff, and human well-being.",
         "records_title": "DATA RECORDS EXPLORER",
         "records_desc": "Filtered incident logs based on current parameters."
     },
@@ -69,7 +130,7 @@ LANG_DICT = {
         "latest": "နောက်ဆုံးဖြစ်ရပ်",
         "update": "စနစ်အား အပ်ဒိတ်လုပ်ချိန်",
         "keywords_title": "အဓိက ပါဝင်သော စကားလုံးများ (NLP-lite ခွဲခြမ်းစိတ်ဖြာမှု)",
-        "tabs": ["ပထဝီဝင်အနေအထား", "အချိန်ကာလ", "ပါဝင်ပတ်သက်သူများ", "တည်ငြိမ်မှု", "ဒေတာစစ်ဆေးချက်", "လုပ်ထုံးလုပ်နည်း", "မူဝါဒ", "မှတ်တမ်းများ"],
+        "tabs": ["ပထဝီဝင်အနေအထား", "အချိန်ကာလ", "ပါဝင်ပတ်သက်သူများ", "တည်ငြိမ်မှု", "ကျန်းမာရေးသက်ရောက်မှု (SDG 3)", "လုပ်ထုံးလုပ်နည်း", "မူဝါဒ", "မှတ်တမ်းများ"],
         "geo_intensity": "ဖြစ်ရပ်ပြင်းအား (သိပ်သည်းဆပြမြေပုံ)",
         "geo_expansion": "ပဋိပက္ခနယ်မြေကျယ်ပြန့်လာမှု (အချိန်နှင့်အမျှ)",
         "temp_freq": "ပဋိပက္ခအကြိမ်ရေနှင့် သက်ရောက်မှု (အချိန်နှင့်အမျှ)",
@@ -78,10 +139,8 @@ LANG_DICT = {
         "actor_net": "အဖွဲ့အစည်းများအကြား အပြန်အလှန်ဆက်နွယ်မှု (ပဋိပက္ခလှုပ်ရှားမှုများ)",
         "stab_title": "ဒေသအလိုက် ပြင်းထန်မှုအကဲဖြတ်ခြင်း",
         "stab_desc": "ပြင်းထန်မှုညွှန်းကိန်း - သေဆုံးမှုနှင့် ဖြစ်ရပ်အရေအတွက် အချိုး",
-        "audit_title": "ဒေတာမှန်ကန်မှုစစ်ဆေးချက်",
-        "audit_integrity": "ဒေတာခိုင်မာမှု",
-        "audit_gap": "သေဆုံးမှုကွာဟချက်",
-        "audit_super": "အလွန်ပြင်းထန်သောဖြစ်ရပ်များ",
+        "health_title": "SDG 3: ပဋိပက္ခကြောင့် ကျန်းမာရေးအပေါ်သက်ရောက်မှုများ",
+        "health_desc": "ဆေးရုံ၊ ဆေးခန်း၊ ကျန်းမာရေးဝန်ထမ်းများနှင့် လူမှုဘဝတည်ငြိမ်မှုအပေါ် ထိခိုက်စေသော ဖြစ်ရပ်များ",
         "records_title": "ဒေတာမှတ်တမ်းများ ရှာဖွေခြင်း",
         "records_desc": "ရွေးချယ်ထားသော ကန့်သတ်ချက်များအပေါ် အခြေခံသည့် ဖြစ်ရပ်မှတ်တမ်းများ"
     }
@@ -116,66 +175,7 @@ if not st.session_state.gate_passed:
     _, col_center, _ = st.columns([1, 10, 1])
     
     with col_center:
-        # We use a single markdown block to avoid magic rendering of strings
-        st.markdown("""
-<div style="padding: 50px; border-radius: 24px; background: rgba(128, 128, 128, 0.02); border: 1px solid rgba(128, 128, 128, 0.2); backdrop-filter: blur(20px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); font-family: 'Inter', sans-serif;">
-    <div style="text-align: center; margin-bottom: 40px;">
-        <div style="display: inline-block; background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 6px 16px; border-radius: 99px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 20px; border: 1px solid rgba(239, 68, 68, 0.2);">Restricted Access / Research Only</div>
-        <h1 style="font-weight: 900; letter-spacing: -0.05em; margin-bottom: 10px; font-size: 3rem;">MISSION BRIEFING</h1>
-        <p style="opacity: 0.5; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4em; font-size: 0.7rem; margin-bottom: 30px;">Myanmar Conflict Observatory | Advanced Forensic Analytics v1.8</p>
-        <div style="height: 2px; width: 60px; background: #ef4444; margin: 0 auto; border-radius: 2px;"></div>
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 40px;">
-        <!-- Section 1: Data Veracity -->
-        <div style="background: rgba(128, 128, 128, 0.05); border: 1px solid rgba(128, 128, 128, 0.1); padding: 30px; border-radius: 16px;">
-            <div style="display: flex; align-items: flex-start; gap: 20px;">
-                <div style="background: #ef4444; color: white; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem;">
-                    <i class="fas fa-triangle-exclamation"></i>
-                </div>
-                <div>
-                    <h4 style="margin-top:0; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">PROTOCOL 01: THE VERIFIED FLOOR MANDATE</h4>
-                    <p style="font-size: 0.95rem; line-height: 1.7; opacity: 0.8; margin-bottom: 15px;">
-                        Extreme reporting volatility necessitates a <b>"Verified Floor"</b> methodology. We only record events corroborated by multiple, high-resolution forensic sources. 
-                    </p>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: rgba(128, 128, 128, 0.05); padding: 15px; border-radius: 10px;">
-                        <div>
-                            <span style="font-size: 0.7rem; font-weight: 800; color: #ef4444; text-transform: uppercase;">Fatality Gap</span>
-                            <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">Official counts are confirmed minimums. Actual impact is estimated 15-20% higher.</p>
-                        </div>
-                        <div>
-                            <span style="font-size: 0.7rem; font-weight: 800; color: #ef4444; text-transform: uppercase;">Geospatial Drift</span>
-                            <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">1-3km reporting drift applied for the physical safety of local informants.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Section 2: Operational Ethics -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-            <div style="background: rgba(128, 128, 128, 0.03); padding: 25px; border-radius: 16px; border: 1px solid rgba(128, 128, 128, 0.1);">
-                <i class="fas fa-scale-balanced" style="opacity: 0.5; font-size: 1.2rem; margin-bottom: 15px;"></i>
-                <h5 style="margin-top: 0; font-weight: 800; font-size: 1rem;">INSTITUTIONAL NEUTRALITY</h5>
-                <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 0;">This platform is an independent research prototype. It maintains strict institutional independence from all political, military, or state entities.</p>
-            </div>
-            <div style="background: rgba(128, 128, 128, 0.03); padding: 25px; border-radius: 16px; border: 1px solid rgba(128, 128, 128, 0.1);">
-                <i class="fas fa-shield-halved" style="opacity: 0.5; font-size: 1.2rem; margin-bottom: 15px;"></i>
-                <h5 style="margin-top: 0; font-weight: 800; font-size: 1rem;">'DO NO HARM' MANDATE</h5>
-                <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 0;">Use of this observatory for real-time kinetic coordination or tactical military targeting is strictly prohibited. Strategic research only.</p>
-            </div>
-        </div>
-        <!-- Section 3: Professional Disclaimer -->
-        <div style="padding: 20px 30px; border-radius: 12px; border: 1px dashed rgba(128, 128, 128, 0.3); background: rgba(128, 128, 128, 0.02);">
-            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
-                <i class="fas fa-circle-info" style="opacity: 0.4; font-size: 0.9rem;"></i>
-                <h5 style="opacity: 0.7; margin: 0; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Professional Disclaimer & Legal Notice</h5>
-            </div>
-            <p style="font-size: 0.8rem; opacity: 0.5; line-height: 1.6; margin-bottom: 0;">
-                By authorizing access, you confirm your status as a professional researcher or verified observer. No party involved in the development of this framework shall be held liable for interpretations or decisions made based on this high-intensity conflict data.
-            </p>
-        </div>
-    </div>
-</div>
-        """, unsafe_allow_html=True)
+        display_briefing_gate()
         
         st.markdown("<br>", unsafe_allow_html=True)
         elapsed = time.time() - st.session_state.start_time
@@ -290,7 +290,12 @@ else:
     m_col1, m_col2, m_col3, m_col4 = st.columns(4)
     with m_col1: st.markdown(f'<div class="metric-card"><i class="fas fa-bullseye metric-icon"></i><div class="metric-content"><div class="metric-label">{L["events"]}</div><div class="metric-value">{len(df):,}</div></div></div>', unsafe_allow_html=True)
     with m_col2: st.markdown(f'<div class="metric-card"><i class="fas fa-skull metric-icon" style="color:#ef4444"></i><div class="metric-content"><div class="metric-label">{L["fatalities"]}</div><div class="metric-value">{int(df["fatalities"].sum()):,}</div></div></div>', unsafe_allow_html=True)
-    with m_col3: st.markdown(f'<div class="metric-card"><i class="fas fa-map-location-dot metric-icon"></i><div class="metric-content"><div class="metric-label">{L["hotspots"]}</div><div class="metric-value">{df["admin2"].nunique()}</div></div></div>', unsafe_allow_html=True)
+    
+    # SDG 3 Specific Metric
+    health_hits = extract_health_impacts(df['notes'])
+    health_count = health_hits.sum()
+    with m_col3: st.markdown(f'<div class="metric-card"><i class="fas fa-house-medical metric-icon" style="color:#10b981"></i><div class="metric-content"><div class="metric-label">SDG 3 Incidents</div><div class="metric-value">{health_count}</div></div></div>', unsafe_allow_html=True)
+    
     with m_col4: st.markdown(f'<div class="metric-card"><i class="fas fa-users metric-icon"></i><div class="metric-content"><div class="metric-label">{L["active_groups"]}</div><div class="metric-value">{df["actor1"].nunique()}</div></div></div>', unsafe_allow_html=True)
 
     # --- Analysis Tabs ---
@@ -404,20 +409,31 @@ else:
         st.plotly_chart(fig_stab, use_container_width=True)
 
     with tab5:
-        st.markdown(f'<p class="main-header"><i class="fas fa-clipboard-check"></i> {L["audit_title"]}</p>', unsafe_allow_html=True)
-        total_mm = len(df_raw)
-        zero_fat_battles = len(df_raw[(df_raw['event_type'] == 'Battles') & (df_raw['fatalities'] == 0)])
-        extreme_events = len(df_raw[df_raw['fatalities'] > 50])
-        col_a1, col_a2, col_a3 = st.columns(3)
-        with col_a1: st.markdown(f'<div class="metric-card"><i class="fas fa-file-shield metric-icon"></i><div class="metric-content"><div class="metric-label">{L["audit_integrity"]}</div><div class="metric-value">100% Clean</div></div></div>', unsafe_allow_html=True)
-        with col_a2: st.markdown(f'<div class="metric-card"><i class="fas fa-triangle-exclamation metric-icon" style="color:#ef4444"></i><div class="metric-content"><div class="metric-label">{L["audit_gap"]}</div><div class="metric-value">{zero_fat_battles:,}</div></div></div>', unsafe_allow_html=True)
-        with col_a3: st.markdown(f'<div class="metric-card"><i class="fas fa-bolt-lightning metric-icon"></i><div class="metric-content"><div class="metric-label">{L["audit_super"]}</div><div class="metric-value">{extreme_events}</div></div></div>', unsafe_allow_html=True)
-        st.markdown("""
-        ### Forensic Consistency Report
-        - **Structural Integrity:** 100%. The dataset contains zero duplicate IDs and 100% population in geospatial fields.
-        - **Geospatial Consistency:** 100% of event coordinates fall within Myanmar's sovereign boundaries.
-        - **Logical Inconsistency:** 12.1% of 'Battle' events record zero fatalities, confirming the Verified Floor methodology.
-        """)
+        st.subheader(L["health_title"])
+        st.markdown(L["health_desc"])
+        
+        health_df = df[health_hits].copy()
+        
+        if not health_df.empty:
+            h_col1, h_col2 = st.columns([2, 1])
+            with h_col1:
+                st.caption("Geospatial Distribution of Health-Impacting Incidents")
+                fig_h_geo = px.scatter_mapbox(health_df, lat="latitude", lon="longitude", color="event_type", size="fatalities", hover_name="location", hover_data=["notes"], zoom=5, height=500, mapbox_style="carto-darkmatter")
+                fig_h_geo.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+                st.plotly_chart(fig_h_geo, use_container_width=True)
+            
+            with h_col2:
+                st.caption("Top Affected Regions (Medical Infrastructure)")
+                h_stats = health_df.groupby('admin1').size().reset_index(name='count').sort_values('count', ascending=False)
+                fig_h_bar = px.bar(h_stats, x='count', y='admin1', orientation='h', color='count', color_continuous_scale="Viridis")
+                fig_h_bar.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, showlegend=False)
+                st.plotly_chart(fig_h_bar, use_container_width=True)
+                
+            st.markdown("---")
+            st.caption("Recent Health-Related Narrative Insights (NLP Filtered)")
+            st.dataframe(health_df[['event_date', 'location', 'notes']].sort_values('event_date', ascending=False).head(15), use_container_width=True)
+        else:
+            st.info("No medical-impact incidents detected in current filtered data.")
 
     with tab6:
         st.markdown('<p class="main-header">ANALYTICAL METHODOLOGY</p>', unsafe_allow_html=True)
@@ -439,25 +455,20 @@ else:
         The dashboard utilizes two primary models for stability assessment:
         - **Intensity Mapping:** Using Gaussian kernels to calculate incident density, highlighting "hotzones" where kinetic engagements are most concentrated.
         - **Temporal Resampling:** Using Month End (ME) intervals to smooth daily reporting noise and reveal systemic shifts in conflict velocity.
-
-        ### 4. Stability Quantification (Severity Index)
-        Unlike simple event counting, our Severity Index (Fatalities divided by Total Events) provides a more nuanced measure of regional instability. This index helps identify areas where engagements are most lethal, allowing researchers to distinguish between high-frequency low-impact protests and low-frequency high-impact battles.
         """)
 
     with tab7:
         st.markdown('<p class="main-header">ANALYTICAL POLICY & ETHICAL FRAMEWORK</p>', unsafe_allow_html=True)
         st.markdown("""
         ### 1. Statement of Institutional Neutrality
-        The Myanmar Conflict Observatory is an independent, non-partisan research project. It is not affiliated with, funded by, or coordinated with any political party, rebel administration, or state security apparatus. Our mission is strictly academic: to provide a transparent, data-driven framework for assessing regional stability and humanitarian impact. The categorization of entities is a functional requirement for data science and does not imply a legal or political judgment on any group's legitimacy.
+        The Myanmar Conflict Observatory is an independent, non-partisan research project. It is not affiliated with, funded by, or coordinated with any political party, rebel administration, or state security apparatus. Our mission is strictly academic: to provide a transparent, data-driven framework for assessing regional stability and humanitarian impact.
 
         ### 2. The 'Fatality Gap' & Data Veracity Protocol
-        Users of this observatory must acknowledge the critical discrepancy in conflict quantification known as the 'Fatality Gap':
-        - **Conservative Verification (ACLED):** This framework utilizes ACLED data, which prioritizes a high verification threshold. ACLED codes deaths only when corroborated by multiple reliable sources. This often results in a lower, more conservative figure (~77,000 confirmed).
-        - **Aggregated Estimates:** Other humanitarian monitoring groups estimate total fatalities to be upwards of 89,200.
+        - **Conservative Verification (ACLED):** This framework utilizes ACLED data, which prioritizes a high verification threshold. 
         - **Observation Protocol:** We treat the figures presented here as a Verified Floor—the minimum confirmed human cost of the conflict. In regions subject to internet blackouts, real figures are likely significantly higher than reported.
 
         ### 3. The 'Do No Harm' Ethical Mandate
-        - **Strategic vs. Tactical Utility:** Data is presented in aggregate form and delayed by source reporting cycles. This observatory is strictly intended for strategic research. It is explicitly **not** designed, nor suitable, for tactical military planning or targeting.
+        - **Strategic vs. Tactical Utility:** Data is presented in aggregate form and delayed by source reporting cycles. This observatory is strictly intended for strategic research. 
         - **Protection of Local Reporters:** All coordinates and narrative notes are handled according to established safety protocols to prevent the identification of local informants.
 
         ### 4. Comprehensive Disclaimer of Liability

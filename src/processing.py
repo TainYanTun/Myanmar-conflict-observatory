@@ -32,3 +32,17 @@ def extract_keywords(text_series, top_n=20):
     from collections import Counter
     counts = Counter(filtered_words).most_common(top_n)
     return pd.DataFrame(counts, columns=['Keyword', 'Frequency'])
+
+def extract_health_impacts(text_series):
+    """
+    Identifies incidents specifically impacting healthcare infrastructure and well-being.
+    Aligned with SDG 3: Health and Well-being.
+    """
+    health_keywords = ['hospital', 'clinic', 'medical', 'doctor', 'nurse', 'health', 'ambulance', 'medicine', 'patient', 'pharmacy', 'red cross', 'who ', 'unicef', 'displacement', 'malnutrition', 'injury', 'wounded']
+    
+    # Create a pattern
+    pattern = '|'.join(health_keywords)
+    
+    # Filter series
+    health_incidents = text_series.fillna('').str.lower().str.contains(pattern, case=False)
+    return health_incidents

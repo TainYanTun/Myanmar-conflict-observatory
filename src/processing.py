@@ -18,3 +18,17 @@ def clean_conflict_data(df):
     df['event_date'] = pd.to_datetime(df['event_date'])
     df = df[df['event_date'] >= '2021-02-01']
     return df
+
+def extract_keywords(text_series, top_n=20):
+    """
+    Simple keyword extraction for conflict narratives.
+    """
+    # Common English stopwords + conflict-specific noise
+    stopwords = set(['the', 'and', 'a', 'to', 'in', 'of', 'on', 'with', 'for', 'at', 'by', 'from', 'an', 'is', 'was', 'were', 'it', 'as', 'that', 'this', 'reported', 'took', 'place', 'around', 'near', 'village', 'township', 'district', 'region', 'state', 'myanmar', 'burma', 'forces', 'military', 'junta', 'people', 'defence', 'force', 'pdf', 'tatmadaw', 'knu', 'kia', 'pdf', 'ldf', 'eao', 'ia', 'army'])
+    
+    all_words = ' '.join(text_series.fillna('').str.lower().replace(r'[^a-zA-Z\s]', '', regex=True)).split()
+    filtered_words = [word for word in all_words if word not in stopwords and len(word) > 3]
+    
+    from collections import Counter
+    counts = Counter(filtered_words).most_common(top_n)
+    return pd.DataFrame(counts, columns=['Keyword', 'Frequency'])

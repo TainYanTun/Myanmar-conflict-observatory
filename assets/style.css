@@ -1,25 +1,45 @@
-/* Main Background & Theme */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+Myanmar:wght@400;700&display=swap');
+
+/* Main Background & Theme - Use Variables for Light/Dark support */
 .stApp { 
-    background-color: var(--background-color); 
-    color: var(--text-color); 
+    font-family: 'Inter', 'Noto Sans Myanmar', sans-serif;
 }
 
-/* Professional Metric Cards */
+/* Sidebar Styling */
+[data-testid="stSidebar"] {
+    border-right: 1px solid rgba(128, 128, 128, 0.1);
+}
+
+/* Professional Metric Cards with Theme-Aware Glassmorphism */
 .metric-card { 
-    background-color: var(--secondary-background-color); 
+    background: rgba(128, 128, 128, 0.05);
+    backdrop-filter: blur(10px);
     padding: 24px; 
-    border-radius: 4px; 
-    border: 1px solid rgba(128, 128, 128, 0.2); 
+    border-radius: 12px; 
+    border: 1px solid rgba(128, 128, 128, 0.1); 
     margin-bottom: 1rem; 
     display: flex; 
     align-items: center; 
     gap: 20px; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.metric-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(239, 68, 68, 0.4);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    background: rgba(128, 128, 128, 0.08);
 }
 
 .metric-icon { 
-    font-size: 1.8rem; 
-    color: var(--text-color); 
-    opacity: 0.6; 
+    font-size: 2rem; 
+    color: #ef4444; 
+    background: rgba(239, 68, 68, 0.1);
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .metric-content { 
@@ -28,69 +48,82 @@
 }
 
 .metric-label { 
-    font-size: 0.75rem; 
-    color: var(--text-color); 
-    opacity: 0.7; 
+    font-size: 0.7rem; 
     text-transform: uppercase; 
-    letter-spacing: 0.05em; 
-    font-weight: 600; 
+    letter-spacing: 0.1em; 
+    font-weight: 700; 
+    opacity: 0.7;
 }
 
 .metric-value { 
-    font-size: 1.5rem; 
-    font-weight: 700; 
-    color: var(--text-color); 
+    font-size: 1.75rem; 
+    font-weight: 800; 
+    letter-spacing: -0.02em;
 }
 
-/* Typography */
+/* Typography Overrides */
 .main-header { 
-    font-size: 1.75rem; 
-    font-weight: 700; 
-    color: var(--text-color); 
+    font-size: 2.25rem; 
+    font-weight: 800; 
     margin-bottom: 0.25rem; 
-    letter-spacing: -0.02em; 
+    letter-spacing: -0.04em; 
     text-transform: uppercase;
 }
 
 .sub-header { 
-    font-size: 0.875rem; 
-    color: var(--text-color); 
-    opacity: 0.6; 
-    margin-bottom: 2rem; 
+    font-size: 0.8rem; 
+    margin-bottom: 2.5rem; 
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    opacity: 0.6;
 }
 
 /* Navigation Overrides */
 .stTabs [data-baseweb="tab-list"] { 
-    gap: 32px; 
+    gap: 16px; 
     background-color: transparent; 
+    border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+    padding-bottom: 8px;
 }
 
 .stTabs [data-baseweb="tab"] { 
-    height: 48px; 
-    background-color: transparent; 
-    border: none; 
-    color: var(--text-color); 
-    opacity: 0.6; 
+    height: 40px; 
+    background-color: rgba(128, 128, 128, 0.05); 
+    border-radius: 8px 8px 0 0;
+    border: 1px solid rgba(128, 128, 128, 0.1); 
+    border-bottom: none;
     font-weight: 600; 
-    font-size: 0.8rem; 
-    letter-spacing: 0.05em; 
+    font-size: 0.75rem; 
+    padding: 0 20px;
+    transition: all 0.2s ease;
+}
+
+.stTabs [aria-selected="true"] { 
+    background-color: #ef4444 !important;
+    color: white !important;
 }
 
 .stTabs [data-baseweb="tab-highlight"] { 
-    background-color: #ef4444; 
+    display: none;
 }
 
-/* Briefing Card Styling */
+/* Briefing Card Styling - Fixed Theme Colors */
 .briefing-card { 
-    background-color: var(--secondary-background-color); 
-    padding: 30px 40px; 
-    border-radius: 12px; 
+    padding: 40px 50px; 
+    border-radius: 16px; 
     border: 1px solid rgba(128, 128, 128, 0.2); 
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3); 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2); 
+}
+
+/* Streamlit Element Styling */
+.stButton > button {
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.2s;
 }
 
 /* Hide Streamlit UI elements */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
+header { backdrop-filter: blur(10px); border-bottom: 1px solid rgba(128, 128, 128, 0.1);}

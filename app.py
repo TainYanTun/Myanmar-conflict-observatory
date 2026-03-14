@@ -9,7 +9,7 @@ import glob
 import time
 from datetime import datetime
 from dotenv import load_dotenv
-from src.processing import categorize_actor
+from src.processing import categorize_actor, extract_keywords
 
 # Load Environment Variables
 load_dotenv()
@@ -22,6 +22,70 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# --- Language Dictionary ---
+LANG_DICT = {
+    "English": {
+        "title": "MYANMAR CONFLICT OBSERVATORY",
+        "sub": "ANALYTICAL FRAMEWORK FOR STABILITY ASSESSMENT",
+        "events": "Total Events",
+        "fatalities": "Fatalities (Verified)",
+        "hotspots": "Hotspots",
+        "active_groups": "Active Groups",
+        "params": "PARAMETERS",
+        "period": "Analysis Period",
+        "area": "Focus Area",
+        "currency": "DATA CURRENCY",
+        "latest": "Latest Event",
+        "update": "System Update",
+        "keywords_title": "Top Narrative Keywords (NLP-lite Extraction)",
+        "tabs": ["GEOSPATIAL", "TEMPORAL", "ACTORS", "STABILITY", "DATA AUDIT", "METHODOLOGY", "POLICY", "RECORDS"],
+        "geo_intensity": "Incident Intensity (Density Mapping)",
+        "geo_expansion": "Temporal Conflict Expansion (Animation)",
+        "temp_freq": "Conflict Frequency and Impact Over Time",
+        "actor_impact": "Fatality Impact by Actor Category",
+        "actor_comp": "Engagement Composition (Event Types)",
+        "actor_net": "ACTOR INTERACTION NETWORK (Conflict Dynamics)",
+        "stab_title": "REGIONAL SEVERITY ASSESSMENT",
+        "stab_desc": "Severity Index: Ratio of fatalities to total conflict events.",
+        "audit_title": "DATA VERACITY AUDIT",
+        "audit_integrity": "Integrity",
+        "audit_gap": "Lethality Gap",
+        "audit_super": "Super-Events",
+        "records_title": "DATA RECORDS EXPLORER",
+        "records_desc": "Filtered incident logs based on current parameters."
+    },
+    "မြန်မာဘာသာ": {
+        "title": "မြန်မာနိုင်ငံ ပဋိပက္ခ စောင့်ကြည့်လေ့လာရေးအဖွဲ့",
+        "sub": "တည်ငြိမ်မှု အကဲဖြတ်ခြင်းဆိုင်ရာ ခွဲခြမ်းစိတ်ဖြာမှု မူဘောင်",
+        "events": "စုစုပေါင်း ဖြစ်ရပ်များ",
+        "fatalities": "သေဆုံးမှု (အတည်ပြုပြီး)",
+        "hotspots": "ပဋိပက္ခ ပြင်းထန်သော နေရာများ",
+        "active_groups": "လှုပ်ရှားနေသော အဖွဲ့များ",
+        "params": "ကန့်သတ်ချက်များ",
+        "period": "ခွဲခြမ်းစိတ်ဖြာသည့် ကာလ",
+        "area": "အဓိက နယ်မြေ",
+        "currency": "နောက်ဆုံးရ အချက်အလက်",
+        "latest": "နောက်ဆုံးဖြစ်ရပ်",
+        "update": "စနစ်အား အပ်ဒိတ်လုပ်ချိန်",
+        "keywords_title": "အဓိက ပါဝင်သော စကားလုံးများ (NLP-lite ခွဲခြမ်းစိတ်ဖြာမှု)",
+        "tabs": ["ပထဝီဝင်အနေအထား", "အချိန်ကာလ", "ပါဝင်ပတ်သက်သူများ", "တည်ငြိမ်မှု", "ဒေတာစစ်ဆေးချက်", "လုပ်ထုံးလုပ်နည်း", "မူဝါဒ", "မှတ်တမ်းများ"],
+        "geo_intensity": "ဖြစ်ရပ်ပြင်းအား (သိပ်သည်းဆပြမြေပုံ)",
+        "geo_expansion": "ပဋိပက္ခနယ်မြေကျယ်ပြန့်လာမှု (အချိန်နှင့်အမျှ)",
+        "temp_freq": "ပဋိပက္ခအကြိမ်ရေနှင့် သက်ရောက်မှု (အချိန်နှင့်အမျှ)",
+        "actor_impact": "အဖွဲ့အစည်းအလိုက် သေဆုံးမှုသက်ရောက်မှု",
+        "actor_comp": "ဖြစ်ရပ်အမျိုးအစားအလိုက် ပါဝင်မှု",
+        "actor_net": "အဖွဲ့အစည်းများအကြား အပြန်အလှန်ဆက်နွယ်မှု (ပဋိပက္ခလှုပ်ရှားမှုများ)",
+        "stab_title": "ဒေသအလိုက် ပြင်းထန်မှုအကဲဖြတ်ခြင်း",
+        "stab_desc": "ပြင်းထန်မှုညွှန်းကိန်း - သေဆုံးမှုနှင့် ဖြစ်ရပ်အရေအတွက် အချိုး",
+        "audit_title": "ဒေတာမှန်ကန်မှုစစ်ဆေးချက်",
+        "audit_integrity": "ဒေတာခိုင်မာမှု",
+        "audit_gap": "သေဆုံးမှုကွာဟချက်",
+        "audit_super": "အလွန်ပြင်းထန်သောဖြစ်ရပ်များ",
+        "records_title": "ဒေတာမှတ်တမ်းများ ရှာဖွေခြင်း",
+        "records_desc": "ရွေးချယ်ထားသော ကန့်သတ်ချက်များအပေါ် အခြေခံသည့် ဖြစ်ရပ်မှတ်တမ်းများ"
+    }
+}
 
 # --- Theme-Aware Professional CSS ---
 def local_css(file_name):
@@ -44,59 +108,89 @@ if not st.session_state.gate_passed:
         <style>
         [data-testid="stSidebar"] { display: none !important; }
         [data-testid="stHeader"] { display: none !important; }
-        [data-testid="stAppViewContainer"] { overflow: hidden !important; height: 100vh !important; position: fixed; width: 100%; }
-        .stMain { overflow: hidden !important; }
         footer { visibility: hidden !important; }
+        .block-container { max-width: 1000px !important; padding-top: 2rem !important; }
         </style>
     """, unsafe_allow_html=True)
     
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    _, col_center, _ = st.columns([1, 5, 1])
+    _, col_center, _ = st.columns([1, 10, 1])
     
     with col_center:
-        st.markdown('<div class="briefing-card">', unsafe_allow_html=True)
-        st.markdown('<p class="main-header" style="text-align:center;">PRE-OBSERVATION BRIEFING</p>', unsafe_allow_html=True)
-        st.markdown('<p class="sub-header" style="text-align:center;">Myanmar Conflict Observatory | Advanced Analytical Framework</p>', unsafe_allow_html=True)
-        
+        # We use a single markdown block to avoid magic rendering of strings
         st.markdown("""
-        <div style="background-color: rgba(239, 68, 68, 0.1); border-left: 5px solid #ef4444; padding: 25px; border-radius: 4px; margin-bottom: 25px;">
-            <h4 style="color: #ef4444; margin-top:0;"><i class="fas fa-triangle-exclamation"></i> CRITICAL MANDATE: DYNAMIC DATA VERACITY</h4>
-            <p style="font-size: 0.95rem; line-height: 1.6;">
-                Conflict metrics in Myanmar are <strong>dynamic and non-static</strong>. Users must understand that all data presented here is subject to constant revision as forensic verification continues and reporting barriers are navigated.
-                <br><br>
-                <strong>The Fatality Gap:</strong> While this framework currently records <strong>77,000+ verified fatalities</strong> based on ACLED's rigorous multi-source confirmation protocols, other international humanitarian monitoring entities estimate total human costs to be upwards of <strong>89,200</strong>. 
-                The delta between these figures represents the 'Fog of War'—a direct result of internet blackouts and verification difficulty. The figures shown in this observatory serve as a <strong>Verified Floor</strong>, not a final ceiling.
+<div style="padding: 50px; border-radius: 24px; background: rgba(128, 128, 128, 0.02); border: 1px solid rgba(128, 128, 128, 0.2); backdrop-filter: blur(20px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); font-family: 'Inter', sans-serif;">
+    <div style="text-align: center; margin-bottom: 40px;">
+        <div style="display: inline-block; background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 6px 16px; border-radius: 99px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 20px; border: 1px solid rgba(239, 68, 68, 0.2);">Restricted Access / Research Only</div>
+        <h1 style="font-weight: 900; letter-spacing: -0.05em; margin-bottom: 10px; font-size: 3rem;">MISSION BRIEFING</h1>
+        <p style="opacity: 0.5; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4em; font-size: 0.7rem; margin-bottom: 30px;">Myanmar Conflict Observatory | Advanced Forensic Analytics v1.8</p>
+        <div style="height: 2px; width: 60px; background: #ef4444; margin: 0 auto; border-radius: 2px;"></div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 40px;">
+        <!-- Section 1: Data Veracity -->
+        <div style="background: rgba(128, 128, 128, 0.05); border: 1px solid rgba(128, 128, 128, 0.1); padding: 30px; border-radius: 16px;">
+            <div style="display: flex; align-items: flex-start; gap: 20px;">
+                <div style="background: #ef4444; color: white; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem;">
+                    <i class="fas fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <h4 style="margin-top:0; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">PROTOCOL 01: THE VERIFIED FLOOR MANDATE</h4>
+                    <p style="font-size: 0.95rem; line-height: 1.7; opacity: 0.8; margin-bottom: 15px;">
+                        Extreme reporting volatility necessitates a <b>"Verified Floor"</b> methodology. We only record events corroborated by multiple, high-resolution forensic sources. 
+                    </p>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: rgba(128, 128, 128, 0.05); padding: 15px; border-radius: 10px;">
+                        <div>
+                            <span style="font-size: 0.7rem; font-weight: 800; color: #ef4444; text-transform: uppercase;">Fatality Gap</span>
+                            <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">Official counts are confirmed minimums. Actual impact is estimated 15-20% higher.</p>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.7rem; font-weight: 800; color: #ef4444; text-transform: uppercase;">Geospatial Drift</span>
+                            <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">1-3km reporting drift applied for the physical safety of local informants.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Section 2: Operational Ethics -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+            <div style="background: rgba(128, 128, 128, 0.03); padding: 25px; border-radius: 16px; border: 1px solid rgba(128, 128, 128, 0.1);">
+                <i class="fas fa-scale-balanced" style="opacity: 0.5; font-size: 1.2rem; margin-bottom: 15px;"></i>
+                <h5 style="margin-top: 0; font-weight: 800; font-size: 1rem;">INSTITUTIONAL NEUTRALITY</h5>
+                <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 0;">This platform is an independent research prototype. It maintains strict institutional independence from all political, military, or state entities.</p>
+            </div>
+            <div style="background: rgba(128, 128, 128, 0.03); padding: 25px; border-radius: 16px; border: 1px solid rgba(128, 128, 128, 0.1);">
+                <i class="fas fa-shield-halved" style="opacity: 0.5; font-size: 1.2rem; margin-bottom: 15px;"></i>
+                <h5 style="margin-top: 0; font-weight: 800; font-size: 1rem;">'DO NO HARM' MANDATE</h5>
+                <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 0;">Use of this observatory for real-time kinetic coordination or tactical military targeting is strictly prohibited. Strategic research only.</p>
+            </div>
+        </div>
+        <!-- Section 3: Professional Disclaimer -->
+        <div style="padding: 20px 30px; border-radius: 12px; border: 1px dashed rgba(128, 128, 128, 0.3); background: rgba(128, 128, 128, 0.02);">
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                <i class="fas fa-circle-info" style="opacity: 0.4; font-size: 0.9rem;"></i>
+                <h5 style="opacity: 0.7; margin: 0; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Professional Disclaimer & Legal Notice</h5>
+            </div>
+            <p style="font-size: 0.8rem; opacity: 0.5; line-height: 1.6; margin-bottom: 0;">
+                By authorizing access, you confirm your status as a professional researcher or verified observer. No party involved in the development of this framework shall be held liable for interpretations or decisions made based on this high-intensity conflict data.
             </p>
         </div>
+    </div>
+</div>
         """, unsafe_allow_html=True)
         
-        c_l, c_r = st.columns(2)
-        with c_l:
-            st.markdown("""
-            ### <i class="fas fa-scale-balanced"></i> OPERATIONAL NEUTRALITY
-            Independent research prototype. Institutional independence from all political or military entities.
-            """, unsafe_allow_html=True)
-        with c_r:
-            st.markdown("""
-            ### <i class="fas fa-shield-halved"></i> THE 'DO NO HARM' MANDATE
-            Strategic research only. Explicitly not for tactical military planning or real-time kinetic use.
-            """, unsafe_allow_html=True)
-            
-        st.markdown("<br><br>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
         elapsed = time.time() - st.session_state.start_time
         remaining = int(max(0, 5 - elapsed))
         
-        _, b_c, _ = st.columns([1, 2, 1])
-        with b_c:
+        _, b_col, _ = st.columns([1, 2, 1])
+        with b_col:
             if remaining > 0:
-                st.button(f"SYSTEM ACCESS IN ({remaining}S)", disabled=True, key="timer_btn", use_container_width=True)
+                st.button(f"INITIALIZING SECURE PROTOCOLS ({remaining}S)", disabled=True, key="timer_btn", use_container_width=True)
                 time.sleep(1)
                 st.rerun()
             else:
-                if st.button("PROCEED TO ANALYTICAL DASHBOARD", type="primary", use_container_width=True, key="enter_btn"):
+                if st.button("AUTHORIZE SYSTEM ACCESS", type="primary", use_container_width=True, key="enter_btn"):
                     st.session_state.gate_passed = True
                     st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
     st.stop()
 
 # --- Post-Gate CSS Reset ---
@@ -165,17 +259,20 @@ else:
 
     # --- Sidebar ---
     with st.sidebar:
-        st.markdown('<i class="fas fa-sliders-h"></i> **PARAMETERS**', unsafe_allow_html=True)
+        selected_lang = st.selectbox("Language / ဘာသာစကား", ["English", "မြန်မာဘာသာ"])
+        L = LANG_DICT[selected_lang]
+        
+        st.markdown(f'<i class="fas fa-sliders-h"></i> **{L["params"]}**', unsafe_allow_html=True)
         min_date, max_date = df_raw['event_date'].min().date(), df_raw['event_date'].max().date()
-        date_range = st.date_input("Analysis Period", [min_date, max_date])
+        date_range = st.date_input(L["period"], [min_date, max_date])
         regions = ["All Regions"] + sorted(list(df_raw['admin1'].unique()))
-        selected_region = st.selectbox("Focus Area", regions)
+        selected_region = st.selectbox(L["area"], regions)
         st.markdown("---")
-        st.markdown('<i class="fas fa-clock"></i> **DATA CURRENCY**', unsafe_allow_html=True)
-        st.markdown(f"Latest Event:  \n**{latest_event_date}**")
-        st.markdown(f"System Update:  \n**{update_time}**")
+        st.markdown(f'<i class="fas fa-clock"></i> **{L["currency"]}**', unsafe_allow_html=True)
+        st.markdown(f"{L['latest']}:  \n**{latest_event_date}**")
+        st.markdown(f"{L['update']}:  \n**{update_time}**")
         st.markdown("---")
-        st.caption("Myanmar Conflict Observatory v1.7")
+        st.caption("Myanmar Conflict Observatory v1.8 (NLP Enabled)")
         st.caption("Independent Research Project")
 
     # --- Filter Logic ---
@@ -186,61 +283,69 @@ else:
         df = df[df['admin1'] == selected_region]
 
     # --- Main Header ---
-    st.markdown('<p class="main-header">MYANMAR CONFLICT OBSERVATORY</p>', unsafe_allow_html=True)
-    st.markdown(f'<p class="sub-header">ANALYTICAL FRAMEWORK FOR STABILITY ASSESSMENT | DATA CURRENT AS OF: {latest_event_date}</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="main-header">{L["title"]}</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="sub-header">{L["sub"]} | DATA CURRENT AS OF: {latest_event_date}</p>', unsafe_allow_html=True)
 
     # --- Metrics ---
     m_col1, m_col2, m_col3, m_col4 = st.columns(4)
-    with m_col1: st.markdown(f'<div class="metric-card"><i class="fas fa-bullseye metric-icon"></i><div class="metric-content"><div class="metric-label">Total Events</div><div class="metric-value">{len(df):,}</div></div></div>', unsafe_allow_html=True)
-    with m_col2: st.markdown(f'<div class="metric-card"><i class="fas fa-skull metric-icon" style="color:#ef4444"></i><div class="metric-content"><div class="metric-label">Fatalities (Verified)</div><div class="metric-value">{int(df["fatalities"].sum()):,}</div></div></div>', unsafe_allow_html=True)
-    with m_col3: st.markdown(f'<div class="metric-card"><i class="fas fa-map-location-dot metric-icon"></i><div class="metric-content"><div class="metric-label">Hotspots</div><div class="metric-value">{df["admin2"].nunique()}</div></div></div>', unsafe_allow_html=True)
-    with m_col4: st.markdown(f'<div class="metric-card"><i class="fas fa-users metric-icon"></i><div class="metric-content"><div class="metric-label">Active Groups</div><div class="metric-value">{df["actor1"].nunique()}</div></div></div>', unsafe_allow_html=True)
+    with m_col1: st.markdown(f'<div class="metric-card"><i class="fas fa-bullseye metric-icon"></i><div class="metric-content"><div class="metric-label">{L["events"]}</div><div class="metric-value">{len(df):,}</div></div></div>', unsafe_allow_html=True)
+    with m_col2: st.markdown(f'<div class="metric-card"><i class="fas fa-skull metric-icon" style="color:#ef4444"></i><div class="metric-content"><div class="metric-label">{L["fatalities"]}</div><div class="metric-value">{int(df["fatalities"].sum()):,}</div></div></div>', unsafe_allow_html=True)
+    with m_col3: st.markdown(f'<div class="metric-card"><i class="fas fa-map-location-dot metric-icon"></i><div class="metric-content"><div class="metric-label">{L["hotspots"]}</div><div class="metric-value">{df["admin2"].nunique()}</div></div></div>', unsafe_allow_html=True)
+    with m_col4: st.markdown(f'<div class="metric-card"><i class="fas fa-users metric-icon"></i><div class="metric-content"><div class="metric-label">{L["active_groups"]}</div><div class="metric-value">{df["actor1"].nunique()}</div></div></div>', unsafe_allow_html=True)
 
     # --- Analysis Tabs ---
     st.markdown("<br>", unsafe_allow_html=True)
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(["GEOSPATIAL", "TEMPORAL", "ACTORS", "STABILITY", "DATA AUDIT", "METHODOLOGY", "POLICY", "RECORDS"])
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(L["tabs"])
 
-    plotly_layout = {"paper_bgcolor": "rgba(0,0,0,0)", "plot_bgcolor": "rgba(0,0,0,0)", "font": {"color": "gray"}}
+    plotly_layout = {"paper_bgcolor": "rgba(0,0,0,0)", "plot_bgcolor": "rgba(0,0,0,0)", "font": {"color": "#94a3b8"}}
 
     with tab1:
         col_m1, col_m2 = st.columns(2)
         with col_m1:
-            st.caption("Incident Intensity (Density Mapping)")
+            st.caption(L["geo_intensity"])
             fig_heat = px.density_mapbox(df, lat='latitude', lon='longitude', z='fatalities', radius=8, center=dict(lat=18.5, lon=96), zoom=5, mapbox_style="carto-darkmatter", height=600, color_continuous_scale=["#334155", "#ef4444"])
             fig_heat.update_layout(margin={"r":0,"t":0,"l":0,"b":0}, coloraxis_showscale=False)
             st.plotly_chart(fig_heat, use_container_width=True)
         with col_m2:
-            st.caption("Temporal Conflict Expansion (Animation)")
+            st.caption(L["geo_expansion"])
             df_anim = df.sort_values('event_date')
             fig_anim = px.scatter_mapbox(df_anim, lat="latitude", lon="longitude", color="actor1_clean", size="fatalities", animation_frame="year_month", zoom=5, height=600, mapbox_style="carto-darkmatter", color_discrete_map={"State Forces": "#ef4444", "Resistance": "#3b82f6", "EAOs": "#10b981", "Civilians": "#94a3b8", "Protesters": "#f59e0b", "Other Groups": "#475569"})
             fig_anim.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
             st.plotly_chart(fig_anim, use_container_width=True)
 
     with tab2:
-        st.caption("Conflict Frequency and Impact Over Time")
+        st.caption(L["temp_freq"])
         monthly = df.resample('ME', on='event_date').size().reset_index(name='count')
         monthly_fat = df.resample('ME', on='event_date')['fatalities'].sum().reset_index()
         fig_line = px.line(monthly, x='event_date', y='count', color_discrete_sequence=["#94a3b8"])
         fig_line.add_scatter(x=monthly_fat['event_date'], y=monthly_fat['fatalities'], name="Fatalities", mode='lines', line=dict(color='#ef4444', width=1))
         fig_line.update_layout(plotly_layout, xaxis_title="", yaxis_title="Count")
         st.plotly_chart(fig_line, use_container_width=True)
+        
+        st.markdown("---")
+        st.caption(L["keywords_title"])
+        kw_df = extract_keywords(df['notes'])
+        if not kw_df.empty:
+            fig_kw = px.bar(kw_df, x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Greys")
+            fig_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=400)
+            st.plotly_chart(fig_kw, use_container_width=True)
 
     with tab3:
         c1, c2 = st.columns(2)
         with c1:
-            st.caption("Fatality Impact by Actor Category")
+            st.caption(L["actor_impact"])
             actor_stats = df.groupby('actor1_clean')['fatalities'].sum().reset_index().sort_values('fatalities')
             fig_bar = px.bar(actor_stats, x='fatalities', y='actor1_clean', orientation='h', color_discrete_sequence=["#ef4444"])
             fig_bar.update_layout(plotly_layout, xaxis_title="Reported Fatalities", yaxis_title="")
             st.plotly_chart(fig_bar, use_container_width=True)
         with c2:
-            st.caption("Engagement Composition (Event Types)")
+            st.caption(L["actor_comp"])
             fig_pie = px.sunburst(df, path=['event_type', 'sub_event_type'], values='fatalities', color_discrete_sequence=["#334155", "#475569", "#64748b", "#94a3b8"])
             fig_pie.update_layout(plotly_layout, margin={"r":0,"t":0,"l":0,"b":0})
             st.plotly_chart(fig_pie, use_container_width=True)
 
         st.markdown("---")
-        st.caption("ACTOR INTERACTION NETWORK (Conflict Dynamics)")
+        st.caption(L["actor_net"])
         
         # Prepare network data
         df_net = df.copy()
@@ -289,8 +394,8 @@ else:
             st.info("Insufficient interaction data for network mapping.")
 
     with tab4:
-        st.subheader("REGIONAL SEVERITY ASSESSMENT")
-        st.markdown("Severity Index: Ratio of fatalities to total conflict events.")
+        st.subheader(L["stab_title"])
+        st.markdown(L["stab_desc"])
         stability_df = df.groupby('admin1').agg({'event_id_cnty': 'count','fatalities': 'sum'}).rename(columns={'event_id_cnty': 'event_count'})
         stability_df['Severity_Index'] = (stability_df['fatalities'] / stability_df['event_count']).round(2)
         stability_df = stability_df.sort_values('Severity_Index', ascending=False)
@@ -299,14 +404,14 @@ else:
         st.plotly_chart(fig_stab, use_container_width=True)
 
     with tab5:
-        st.markdown('<p class="main-header"><i class="fas fa-clipboard-check"></i> DATA VERACITY AUDIT</p>', unsafe_allow_html=True)
+        st.markdown(f'<p class="main-header"><i class="fas fa-clipboard-check"></i> {L["audit_title"]}</p>', unsafe_allow_html=True)
         total_mm = len(df_raw)
         zero_fat_battles = len(df_raw[(df_raw['event_type'] == 'Battles') & (df_raw['fatalities'] == 0)])
         extreme_events = len(df_raw[df_raw['fatalities'] > 50])
         col_a1, col_a2, col_a3 = st.columns(3)
-        with col_a1: st.markdown(f'<div class="metric-card"><i class="fas fa-file-shield metric-icon"></i><div class="metric-content"><div class="metric-label">Integrity</div><div class="metric-value">100% Clean</div></div></div>', unsafe_allow_html=True)
-        with col_a2: st.markdown(f'<div class="metric-card"><i class="fas fa-triangle-exclamation metric-icon" style="color:#ef4444"></i><div class="metric-content"><div class="metric-label">Lethality Gap</div><div class="metric-value">{zero_fat_battles:,}</div></div></div>', unsafe_allow_html=True)
-        with col_a3: st.markdown(f'<div class="metric-card"><i class="fas fa-bolt-lightning metric-icon"></i><div class="metric-content"><div class="metric-label">Super-Events</div><div class="metric-value">{extreme_events}</div></div></div>', unsafe_allow_html=True)
+        with col_a1: st.markdown(f'<div class="metric-card"><i class="fas fa-file-shield metric-icon"></i><div class="metric-content"><div class="metric-label">{L["audit_integrity"]}</div><div class="metric-value">100% Clean</div></div></div>', unsafe_allow_html=True)
+        with col_a2: st.markdown(f'<div class="metric-card"><i class="fas fa-triangle-exclamation metric-icon" style="color:#ef4444"></i><div class="metric-content"><div class="metric-label">{L["audit_gap"]}</div><div class="metric-value">{zero_fat_battles:,}</div></div></div>', unsafe_allow_html=True)
+        with col_a3: st.markdown(f'<div class="metric-card"><i class="fas fa-bolt-lightning metric-icon"></i><div class="metric-content"><div class="metric-label">{L["audit_super"]}</div><div class="metric-value">{extreme_events}</div></div></div>', unsafe_allow_html=True)
         st.markdown("""
         ### Forensic Consistency Report
         - **Structural Integrity:** 100%. The dataset contains zero duplicate IDs and 100% population in geospatial fields.
@@ -361,6 +466,6 @@ else:
         """)
 
     with tab8:
-        st.subheader("DATA RECORDS EXPLORER")
-        st.markdown("Filtered incident logs based on current parameters.")
+        st.subheader(L["records_title"])
+        st.markdown(L["records_desc"])
         st.dataframe(df[['event_date', 'event_type', 'actor1', 'actor2', 'admin1', 'location', 'fatalities', 'notes']], use_container_width=True, height=600)

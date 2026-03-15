@@ -1,0 +1,17 @@
+.git
+.gitignore
+venv
+.env
+__pycache__
+*.pyc
+*.ipynb_checkpoints
+notebooks/
+kaggle/
+docs/
+.streamlit
+.gemini
+.vscode
+*.md
+LICENSE
+README.md
+expectation.md

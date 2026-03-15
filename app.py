@@ -110,11 +110,21 @@ LANG_DICT = {
         "actor_comp": "Engagement Composition (Event Types)",
         "actor_net": "ACTOR INTERACTION NETWORK (Conflict Dynamics)",
         "stab_title": "REGIONAL SEVERITY ASSESSMENT",
-        "stab_desc": "Severity Index: Ratio of fatalities to total conflict events.",
+        "stab_desc": "The **Severity Index** is the ratio of fatalities to total conflict events. A higher score indicates areas where kinetic engagements are more lethal. Use this to distinguish between high-frequency low-impact areas and high-lethality conflict zones.",
         "health_title": "SDG 3: CONFLICT-INDUCED HEALTH IMPACTS",
-        "health_desc": "Incidents specifically impacting medical infrastructure, healthcare staff, and human well-being.",
+        "health_desc": "Incidents impacting medical infrastructure, healthcare staff, and human well-being. This analysis uses an NLP engine to extract healthcare-related narratives (Hospital, Clinic, Medical, etc.) from event notes.",
         "records_title": "DATA RECORDS EXPLORER",
-        "records_desc": "Filtered incident logs based on current parameters."
+        "records_desc": "Filtered incident logs based on current parameters.",
+        "tab_explanations": {
+            "GEOSPATIAL": "Overlays general conflict density (red) with specific health-impacting incidents (green). The animation shows how conflict has expanded geographically over time.",
+            "TEMPORAL": "Tracks the rhythm of conflict. Peaks in the line chart indicate surges in violence. The keyword chart uses NLP to identify common narrative themes.",
+            "ACTORS": "Identifies the groups involved. The network map visualizes interactions between actors to reveal the underlying power dynamics of the conflict.",
+            "STABILITY": "Ranks regions by lethality using the Severity Index (Fatalities ÷ Events). This distinguishes high-frequency areas from high-lethality 'Red Zones'.",
+            "SDG 3: HEALTH IMPACT": "Focused specifically on SDG 3. This filters for incidents disrupting hospitals, medical infrastructure, and healthcare personnel.",
+            "METHODOLOGY": "Detailed technical explanation of the data pipeline, ETL logic, and analytical models used in this observatory.",
+            "POLICY": "The ethical framework and neutral stance governing the use of this conflict data for humanitarian research.",
+            "RECORDS": "Direct access to the raw filtered incident logs for manual verification and research."
+        }
     },
     "မြန်မာဘာသာ": {
         "title": "မြန်မာနိုင်ငံ ပဋိပက္ခ စောင့်ကြည့်လေ့လာရေးအဖွဲ့",
@@ -138,11 +148,21 @@ LANG_DICT = {
         "actor_comp": "ဖြစ်ရပ်အမျိုးအစားအလိုက် ပါဝင်မှု",
         "actor_net": "အဖွဲ့အစည်းများအကြား အပြန်အလှန်ဆက်နွယ်မှု (ပဋိပက္ခလှုပ်ရှားမှုများ)",
         "stab_title": "ဒေသအလိုက် ပြင်းထန်မှုအကဲဖြတ်ခြင်း",
-        "stab_desc": "ပြင်းထန်မှုညွှန်းကိန်း - သေဆုံးမှုနှင့် ဖြစ်ရပ်အရေအတွက် အချိုး",
+        "stab_desc": "**ပြင်းထန်မှုညွှန်းကိန်း** သည် သေဆုံးမှုနှင့် ဖြစ်ရပ်အရေအတွက် အချိုးဖြစ်သည်။ ဤညွှန်းကိန်းမြင့်မားခြင်းသည် ထိုဒေသရှိ ပဋိပက္ခများတွင် အသက်အန္တရာယ် ပိုမိုပြင်းထန်ကြောင်း ဖော်ပြသည်။",
         "health_title": "SDG 3: ပဋိပက္ခကြောင့် ကျန်းမာရေးအပေါ်သက်ရောက်မှုများ",
-        "health_desc": "ဆေးရုံ၊ ဆေးခန်း၊ ကျန်းမာရေးဝန်ထမ်းများနှင့် လူမှုဘဝတည်ငြိမ်မှုအပေါ် ထိခိုက်စေသော ဖြစ်ရပ်များ",
+        "health_desc": "ဆေးရုံ၊ ဆေးခန်း၊ ကျန်းမာရေးဝန်ထမ်းများနှင့် လူမှုဘဝတည်ငြိမ်မှုအပေါ် ထိခိုက်စေသော ဖြစ်ရပ်များ။ ဤခွဲခြမ်းစိတ်ဖြာမှုသည် အဖြစ်အပျက်မှတ်တမ်းများမှ ကျန်းမာရေးဆိုင်ရာ အချက်အလက်များကို (NLP) နည်းပညာဖြင့် ထုတ်ယူဖော်ပြခြင်းဖြစ်သည်။",
         "records_title": "ဒေတာမှတ်တမ်းများ ရှာဖွေခြင်း",
-        "records_desc": "ရွေးချယ်ထားသော ကန့်သတ်ချက်များအပေါ် အခြေခံသည့် ဖြစ်ရပ်မှတ်တမ်းများ"
+        "records_desc": "ရွေးချယ်ထားသော ကန့်သတ်ချက်များအပေါ် အခြေခံသည့် ဖြစ်ရပ်မှတ်တမ်းများ",
+        "tab_explanations": {
+            "GEOSPATIAL": "ပဋိပက္ခပြင်းထန်မှု (အနီရောင်) နှင့် ကျန်းမာရေးထိခိုက်မှု (အစိမ်းရောင်) ကို ပေါင်းစပ်ပြသထားသည်။ အချိန်နှင့်အမျှ ပဋိပက္ခကျယ်ပြန့်လာမှုကိုလည်း ကြည့်ရှုနိုင်သည်။",
+            "TEMPORAL": "ပဋိပက္ခဖြစ်ပွားမှုအရှိန်ကို ခြေရာခံသည်။ မြင်းကွေးဇယားရှိ အတက်အကျများသည် အကြမ်းဖက်မှု မြင့်တက်လာမှုကို ဖော်ပြပြီး စကားလုံးဇယားသည် အဓိကအကြောင်းအရာများကို NLP ဖြင့် ဖော်ပြသည်။",
+            "ACTORS": "ပါဝင်ပတ်သက်သူများကို ခွဲခြားပြသသည်။ ကွန်ရက်မြေပုံသည် အဖွဲ့အစည်းများအကြား အပြန်အလှန်ဆက်နွယ်မှုနှင့် အားပြိုင်မှုများကို ဖော်ပြသည်။",
+            "STABILITY": "ဒေသအလိုက် အသက်အန္တရာယ်ပြင်းထန်မှုကို တွက်ချက်ပြသသည်။ ၎င်းသည် ဖြစ်ရပ်အရေအတွက်ထက် သေဆုံးမှုနှုန်းမြင့်မားသည့် 'ပြင်းထန်ဇုန်' များကို ခွဲခြားသိမြင်စေသည်။",
+            "SDG 3: HEALTH IMPACT": "SDG 3 ကို အဓိကထားသည်။ ဆေးရုံ၊ ဆေးခန်းနှင့် ကျန်းမာရေးဝန်ထမ်းများအပေါ် ထိခိုက်စေသော ဖြစ်ရပ်များကိုသာ သီးသန့်စစ်ထုတ်ပြသသည်။",
+            "METHODOLOGY": "ဤလေ့လာမှုတွင် အသုံးပြုထားသော ဒေတာနည်းပညာ၊ ETL လုပ်ငန်းစဉ်နှင့် ခွဲခြမ်းစိတ်ဖြာမှုပုံစံများကို နည်းပညာပိုင်းအရ ရှင်းလင်းချက်။",
+            "POLICY": "လူသားချင်းစာနာထောက်ထားမှုဆိုင်ရာ သုတေသနအတွက် ဤပဋိပက္ခဒေတာကို အသုံးပြုရာတွင် လိုက်နာရမည့် ကျင့်ဝတ်မူဘောင်နှင့် ကြားနေရပ်တည်ချက်။",
+            "RECORDS": "စစ်ထုတ်ထားသော ဖြစ်ရပ်မှတ်တမ်းများကို တိုက်ရိုက်ကြည့်ရှု စစ်ဆေးနိုင်ခြင်း။"
+        }
     }
 }
 
@@ -245,9 +265,12 @@ df_raw, update_time = load_data()
 
 @st.cache_data
 def calculate_network_layout(adj_df):
+    """Calculates the network layout using interaction_count for weighting."""
     G = nx.Graph()
     for _, row in adj_df.iterrows():
-        G.add_edge(row['actor1_clean'], row['actor2_clean'], weight=row['weight'])
+        # Use 'interaction_count' for layout weighting, 'total_fatalities' is for visual edge thickness
+        G.add_edge(row['actor1_clean'], row['actor2_clean'], weight=row['interaction_count'], interaction_count=row['interaction_count'])
+    # The layout algorithm uses the 'weight' attribute internally
     pos = nx.spring_layout(G, seed=42)
     return G, pos
 
@@ -305,26 +328,109 @@ else:
     plotly_layout = {"paper_bgcolor": "rgba(0,0,0,0)", "plot_bgcolor": "rgba(0,0,0,0)", "font": {"color": "#94a3b8"}}
 
     with tab1:
+        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['GEOSPATIAL']}")
         col_m1, col_m2 = st.columns(2)
         with col_m1:
-            st.caption(L["geo_intensity"])
-            fig_heat = px.density_mapbox(df, lat='latitude', lon='longitude', z='fatalities', radius=8, center=dict(lat=18.5, lon=96), zoom=5, mapbox_style="carto-darkmatter", height=600, color_continuous_scale=["#334155", "#ef4444"])
-            fig_heat.update_layout(margin={"r":0,"t":0,"l":0,"b":0}, coloraxis_showscale=False)
+            st.caption("Humanitarian Conflict Overlay (Heatmap: Fatalities | Points: Health Impacts)")
+            
+            # 1. Base Layer: Density Heatmap of all fatalities
+            fig_heat = px.density_mapbox(
+                df, lat='latitude', lon='longitude', z='fatalities', radius=10,
+                center=dict(lat=18.5, lon=96), zoom=5, 
+                mapbox_style="carto-darkmatter", height=600,
+                color_continuous_scale=["#1e293b", "#475569", "#ef4444"], # Grayscale to Red
+                opacity=0.7
+            )
+            
+            # 2. Overlay Layer: Scatter points for health-impacting incidents
+            # We reuse the health_hits logic from before
+            health_overlay = df[health_hits].copy()
+            if not health_overlay.empty:
+                fig_overlay = px.scatter_mapbox(
+                    health_overlay, lat='latitude', lon='longitude',
+                    color_discrete_sequence=["#10b981"], # Bright Green for Health
+                    hover_name="location",
+                    size_max=15
+                )
+                # Add the health points to the heatmap figure
+                for trace in fig_overlay.data:
+                    trace.name = "Health Impact"
+                    trace.showlegend = True
+                    fig_heat.add_trace(trace)
+
+            fig_heat.update_layout(
+                margin={"r":0,"t":0,"l":0,"b":0}, 
+                coloraxis_showscale=False,
+                legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(0,0,0,0.5)")
+            )
             st.plotly_chart(fig_heat, use_container_width=True)
         with col_m2:
             st.caption(L["geo_expansion"])
             df_anim = df.sort_values('event_date')
-            fig_anim = px.scatter_mapbox(df_anim, lat="latitude", lon="longitude", color="actor1_clean", size="fatalities", animation_frame="year_month", zoom=5, height=600, mapbox_style="carto-darkmatter", color_discrete_map={"State Forces": "#ef4444", "Resistance": "#3b82f6", "EAOs": "#10b981", "Civilians": "#94a3b8", "Protesters": "#f59e0b", "Other Groups": "#475569"})
+            fig_anim = px.scatter_mapbox(
+                df_anim, 
+                lat="latitude", 
+                lon="longitude", 
+                color="actor1_clean", 
+                size="fatalities", 
+                animation_frame="year_month", 
+                hover_name="location",
+                hover_data={
+                    "event_date": "|%B %d, %Y", 
+                    "event_type": True,
+                    "actor1": True,
+                    "actor2": True,
+                    "fatalities": True,
+                    "latitude": False,
+                    "longitude": False,
+                    "year_month": False
+                },
+                zoom=5, 
+                height=600, 
+                mapbox_style="carto-darkmatter", 
+                color_discrete_map={"State Forces": "#ef4444", "Resistance": "#3b82f6", "EAOs": "#10b981", "Civilians": "#94a3b8", "Protesters": "#f59e0b", "Other Groups": "#475569"}
+            )
             fig_anim.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
             st.plotly_chart(fig_anim, use_container_width=True)
 
     with tab2:
+        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['TEMPORAL']}")
         st.caption(L["temp_freq"])
-        monthly = df.resample('ME', on='event_date').size().reset_index(name='count')
-        monthly_fat = df.resample('ME', on='event_date')['fatalities'].sum().reset_index()
-        fig_line = px.line(monthly, x='event_date', y='count', color_discrete_sequence=["#94a3b8"])
-        fig_line.add_scatter(x=monthly_fat['event_date'], y=monthly_fat['fatalities'], name="Fatalities", mode='lines', line=dict(color='#ef4444', width=1))
-        fig_line.update_layout(plotly_layout, xaxis_title="", yaxis_title="Count")
+        
+        # Prepare monthly stats
+        monthly_events = df.resample('ME', on='event_date').size().reset_index(name='event_count')
+        monthly_fatalities = df.resample('ME', on='event_date')['fatalities'].sum().reset_index()
+        monthly_combined = pd.merge(monthly_events, monthly_fatalities, on='event_date')
+        
+        fig_line = go.Figure()
+        
+        # Add Events Trace
+        fig_line.add_trace(go.Scatter(
+            x=monthly_combined['event_date'], 
+            y=monthly_combined['event_count'],
+            name="Conflict Incidents",
+            mode='lines',
+            line=dict(color='#94a3b8', width=2),
+            hovertemplate="<b>%{x|%B %Y}</b><br>Incidents: %{y}<extra></extra>"
+        ))
+        
+        # Add Fatalities Trace
+        fig_line.add_trace(go.Scatter(
+            x=monthly_combined['event_date'], 
+            y=monthly_combined['fatalities'],
+            name="Verified Fatalities",
+            mode='lines',
+            line=dict(color='#ef4444', width=2),
+            hovertemplate="<b>%{x|%B %Y}</b><br>Fatalities: %{y}<extra></extra>"
+        ))
+        
+        fig_line.update_layout(
+            plotly_layout, 
+            xaxis_title="", 
+            yaxis_title="Volume",
+            hovermode="x unified",
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+        )
         st.plotly_chart(fig_line, use_container_width=True)
         
         st.markdown("---")
@@ -336,6 +442,7 @@ else:
             st.plotly_chart(fig_kw, use_container_width=True)
 
     with tab3:
+        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['ACTORS']}")
         c1, c2 = st.columns(2)
         with c1:
             st.caption(L["actor_impact"])
@@ -350,55 +457,88 @@ else:
             st.plotly_chart(fig_pie, use_container_width=True)
 
         st.markdown("---")
+        st.info(f"**{selected_lang} Guidance:** Use the dropdown to spotlight an actor. Edge thickness is weighted by total fatalities in those interactions.", icon="💡")
         st.caption(L["actor_net"])
         
-        # Prepare network data
+        # --- Actor Network Enhancements ---
         df_net = df.copy()
         df_net['actor2_clean'] = df_net['actor2'].apply(categorize_actor)
         
-        # Filter for meaningful interactions (ignore self-interaction or unidentified)
-        interactions = df_net[(df_net['actor1_clean'] != df_net['actor2_clean']) & 
-                             (df_net['actor2_clean'] != 'Unidentified')]
+        interactions = df_net[(df_net['actor1_clean'] != df_net['actor2_clean']) & (df_net['actor2_clean'] != 'Unidentified')]
         
+        # Dropdown for actor spotlight
+        actor_list = sorted(pd.concat([interactions['actor1_clean'], interactions['actor2_clean']]).unique())
+        spotlight_actor = st.selectbox("Spotlight Actor:", ["All"] + actor_list)
+
         if not interactions.empty:
-            # Group by actor pairs
-            adj = interactions.groupby(['actor1_clean', 'actor2_clean']).size().reset_index(name='weight')
-            
-            # Use cached layout calculation for scalability
+            # Aggregate by both interaction count and total fatalities
+            adj = interactions.groupby(['actor1_clean', 'actor2_clean']).agg(
+                interaction_count=('event_id_cnty', 'count'),
+                total_fatalities=('fatalities', 'sum')
+            ).reset_index()
+
             G, pos = calculate_network_layout(adj)
             
-            # Edges
-            edge_x = []
-            edge_y = []
-            for edge in G.edges():
-                x0, y0 = pos[edge[0]]
-                x1, y1 = pos[edge[1]]
-                edge_x.extend([x0, x1, None])
-                edge_y.extend([y0, y1, None])
+            # --- Build Traces (Edges & Nodes) ---
+            edge_traces = []
+            max_fatalities = adj['total_fatalities'].max()
+            
+            for _, row in adj.iterrows():
+                actor1, actor2, count, fatalities = row['actor1_clean'], row['actor2_clean'], row['interaction_count'], row['total_fatalities']
+                x0, y0 = pos[actor1]
+                x1, y1 = pos[actor2]
                 
-            edge_trace = go.Scatter(x=edge_x, y=edge_y, line=dict(width=1, color='#475569'), hoverinfo='none', mode='lines')
-            
-            # Nodes
-            node_x = []
-            node_y = []
-            node_text = []
-            node_size = []
-            
-            for node in G.nodes():
-                x, y = pos[node]
-                node_x.append(x)
-                node_y.append(y)
-                node_text.append(f"{node}: {sum(d['weight'] for u, v, d in G.edges(node, data=True))} interactions")
-                node_size.append(15 + (sum(d['weight'] for u, v, d in G.edges(node, data=True)) / adj['weight'].max() * 30))
+                # Base attributes
+                edge_width = 1 + (fatalities / max_fatalities * 10)
+                edge_color = '#475569'
+                edge_opacity = 0.6
                 
-            node_trace = go.Scatter(x=node_x, y=node_y, mode='markers+text', text=[n for n in G.nodes()], textposition="top center", hoverinfo='text', hovertext=node_text, marker=dict(showscale=False, color='#ef4444', size=node_size, line_width=2))
-            
-            fig_net = go.Figure(data=[edge_trace, node_trace], layout=go.Layout(showlegend=False, hovermode='closest', margin=dict(b=0,l=0,r=0,t=0), xaxis=dict(showgrid=False, zeroline=False, showticklabels=False), yaxis=dict(showgrid=False, zeroline=False, showticklabels=False), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)'))
+                # Spotlight logic
+                if spotlight_actor != "All":
+                    if actor1 != spotlight_actor and actor2 != spotlight_actor:
+                        edge_opacity = 0.1
+                        edge_color = '#334155'
+
+                edge_traces.append(go.Scatter(
+                    x=[x0, x1, None], y=[y0, y1, None],
+                    line=dict(width=edge_width, color=edge_color),
+                    opacity=edge_opacity,
+                    hoverinfo='text',
+                    hovertext=f"{actor1}-{actor2}<br>Interactions: {count}<br>Fatalities: {fatalities}",
+                    mode='lines'
+                ))
+
+            node_color_map = {"State Forces": "#ef4444", "Resistance": "#3b82f6", "EAOs": "#10b981", "Civilians": "#94a3b8", "Protesters": "#f59e0b", "Other Groups": "#475569"}
+            node_trace = go.Scatter(
+                x=[pos[node][0] for node in G.nodes()],
+                y=[pos[node][1] for node in G.nodes()],
+                mode='markers+text',
+                text=[node for node in G.nodes()],
+                textposition="top center",
+                hoverinfo='text',
+                hovertext=[f"{node}: {sum(d['interaction_count'] for u, v, d in G.edges(node, data=True))} interactions" for node in G.nodes()],
+                marker=dict(
+                    showscale=False,
+                    color=[node_color_map.get(node, '#64748b') for node in G.nodes()],
+                    size=[15 + (sum(d['interaction_count'] for u, v, d in G.edges(node, data=True)) / adj['interaction_count'].max() * 30) for node in G.nodes()],
+                    line_width=2,
+                    opacity=[1.0 if spotlight_actor == "All" or node == spotlight_actor else 0.3 for node in G.nodes()]
+                )
+            )
+
+            fig_net = go.Figure(data=edge_traces + [node_trace],
+                                layout=go.Layout(showlegend=False, hovermode='closest',
+                                                 margin=dict(b=0, l=0, r=0, t=0),
+                                                 xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                                                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                                                 paper_bgcolor='rgba(0,0,0,0)',
+                                                 plot_bgcolor='rgba(0,0,0,0)'))
             st.plotly_chart(fig_net, use_container_width=True)
         else:
             st.info("Insufficient interaction data for network mapping.")
 
     with tab4:
+        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['STABILITY']}")
         st.subheader(L["stab_title"])
         st.markdown(L["stab_desc"])
         stability_df = df.groupby('admin1').agg({'event_id_cnty': 'count','fatalities': 'sum'}).rename(columns={'event_id_cnty': 'event_count'})
@@ -409,6 +549,7 @@ else:
         st.plotly_chart(fig_stab, use_container_width=True)
 
     with tab5:
+        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['SDG 3: HEALTH IMPACT']}")
         st.subheader(L["health_title"])
         st.markdown(L["health_desc"])
         
@@ -418,7 +559,26 @@ else:
             h_col1, h_col2 = st.columns([2, 1])
             with h_col1:
                 st.caption("Geospatial Distribution of Health-Impacting Incidents")
-                fig_h_geo = px.scatter_mapbox(health_df, lat="latitude", lon="longitude", color="event_type", size="fatalities", hover_name="location", hover_data=["notes"], zoom=5, height=500, mapbox_style="carto-darkmatter")
+                fig_h_geo = px.scatter_mapbox(
+                    health_df, 
+                    lat="latitude", 
+                    lon="longitude", 
+                    color="event_type", 
+                    size="fatalities", 
+                    hover_name="location", 
+                    hover_data={
+                        "event_date": "|%B %d, %Y",
+                        "admin1": True,
+                        "actor1": True,
+                        "fatalities": True,
+                        "notes": False,
+                        "latitude": False,
+                        "longitude": False
+                    }, 
+                    zoom=5, 
+                    height=500, 
+                    mapbox_style="carto-darkmatter"
+                )
                 fig_h_geo.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
                 st.plotly_chart(fig_h_geo, use_container_width=True)
             
@@ -430,12 +590,56 @@ else:
                 st.plotly_chart(fig_h_bar, use_container_width=True)
                 
             st.markdown("---")
-            st.caption("Recent Health-Related Narrative Insights (NLP Filtered)")
-            st.dataframe(health_df[['event_date', 'location', 'notes']].sort_values('event_date', ascending=False).head(15), use_container_width=True)
+            
+            # --- Humanitarian Spotlight Explorer ---
+            st.markdown("### <i class='fas fa-magnifying-glass-location' style='color:#10b981'></i> HUMANITARIAN SPOTLIGHT EXPLORER", unsafe_allow_html=True)
+            st.caption("Select an incident from the list to reveal the full verified forensic narrative and health impact details.")
+            
+            # Prepare options for selection
+            health_df['display_name'] = health_df['event_date'].dt.strftime('%Y-%m-%d') + " | " + health_df['location'] + " (" + health_df['event_type'] + ")"
+            selected_incident_name = st.selectbox("Search Incident Log", health_df['display_name'].tolist())
+            
+            selected_row = health_df[health_df['display_name'] == selected_incident_name].iloc[0]
+            
+            # Display the Spotlight Card
+            st.markdown(f"""
+            <div class="spotlight-card">
+                <div class="spotlight-header">
+                    <div class="spotlight-title">{selected_row['location']} Engagement</div>
+                    <div class="spotlight-meta">{selected_row['event_date'].strftime('%B %d, %Y')} | {selected_row['admin1']} Region</div>
+                </div>
+                <div class="spotlight-note">
+                    "{selected_row['notes']}"
+                </div>
+                <div class="spotlight-grid">
+                    <div class="spotlight-stat">
+                        <div class="spotlight-stat-label">Primary Actor</div>
+                        <div class="spotlight-stat-value">{selected_row['actor1']}</div>
+                    </div>
+                    <div class="spotlight-stat">
+                        <div class="spotlight-stat-label">Secondary Actor</div>
+                        <div class="spotlight-stat-value">{selected_row['actor2'] if pd.notna(selected_row['actor2']) else 'None Reported'}</div>
+                    </div>
+                    <div class="spotlight-stat">
+                        <div class="spotlight-stat-label">Event Classification</div>
+                        <div class="spotlight-stat-value">{selected_row['event_type']}</div>
+                    </div>
+                    <div class="spotlight-stat">
+                        <div class="spotlight-stat-label">Fatalities</div>
+                        <div class="spotlight-stat-value" style="color:#ef4444">{int(selected_row['fatalities'])} Verified</div>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            with st.expander("View Full Filtered Health Records (Tabular)"):
+                st.dataframe(health_df[['event_date', 'location', 'notes']].sort_values('event_date', ascending=False), use_container_width=True)
         else:
             st.info("No medical-impact incidents detected in current filtered data.")
 
     with tab6:
+        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['METHODOLOGY']}")
         st.markdown('<p class="main-header">ANALYTICAL METHODOLOGY</p>', unsafe_allow_html=True)
         st.markdown("""
         ### 1. Big Data Architecture & ETL Pipeline
@@ -455,9 +659,17 @@ else:
         The dashboard utilizes two primary models for stability assessment:
         - **Intensity Mapping:** Using Gaussian kernels to calculate incident density, highlighting "hotzones" where kinetic engagements are most concentrated.
         - **Temporal Resampling:** Using Month End (ME) intervals to smooth daily reporting noise and reveal systemic shifts in conflict velocity.
+
+        ### 4. Analytical Limitations & Considerations
+        This framework is designed for strategic humanitarian analysis, and users should be aware of the following data nuances:
+        - **Geospatial Centroiding:** Incident coordinates often represent the center of a township or village ('centroid'), not a precise tactical location. The maps therefore indicate **regional clusters of risk** rather than exact GPS points.
+        - **NLP Keyword Logic:** The SDG 3 engine flags events by matching keywords (e.g., "hospital," "clinic"). It reliably identifies "Health-Proximity Incidents" but does not distinguish context (e.g., "hospital hit" vs. "security near hospital").
+        - **Reporting Lag:** Data for the most recent 7-14 days may be incomplete pending source verification. A downward trend in the latest period often reflects this **verification delay**, not a definitive decrease in conflict.
+        - **Severity Index Nuance:** The Severity Index is sensitive to low event counts. A region with one event and five fatalities will rank higher than a region with 20 events and nine fatalities. It is a measure of **lethality, not necessarily overall stability.**
         """)
 
     with tab7:
+        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['POLICY']}")
         st.markdown('<p class="main-header">ANALYTICAL POLICY & ETHICAL FRAMEWORK</p>', unsafe_allow_html=True)
         st.markdown("""
         ### 1. Statement of Institutional Neutrality
@@ -477,6 +689,7 @@ else:
         """)
 
     with tab8:
+        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['RECORDS']}")
         st.subheader(L["records_title"])
         st.markdown(L["records_desc"])
         st.dataframe(df[['event_date', 'event_type', 'actor1', 'actor2', 'admin1', 'location', 'fatalities', 'notes']], use_container_width=True, height=600)

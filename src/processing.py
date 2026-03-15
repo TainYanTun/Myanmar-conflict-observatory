@@ -38,11 +38,26 @@ def extract_health_impacts(text_series):
     Identifies incidents specifically impacting healthcare infrastructure and well-being.
     Aligned with SDG 3: Health and Well-being.
     """
-    health_keywords = ['hospital', 'clinic', 'medical', 'doctor', 'nurse', 'health', 'ambulance', 'medicine', 'patient', 'pharmacy', 'red cross', 'who ', 'unicef', 'displacement', 'malnutrition', 'injury', 'wounded']
+    # Use word boundaries \b to avoid matching sub-strings
+    health_keywords = [
+        r'\bhospital\b', r'\bclinic\b', r'\bmedical\b', r'\bdoctor\b', r'\bnurse\b', 
+        r'\bhealth\b', r'\bambulance\b', r'\bmedicine\b', r'\bpatient\b', r'\bpharmacy\b', 
+        r'\bred cross\b', r'\bworld health organization\b', r'\bwho-led\b', r'\bunicef\b', 
+        r'\bdisplacement\b', r'\bmalnutrition\b', r'\binjury\b', r'\bwounded\b',
+        r'\bhealthcare\b', r'\bsanitation\b', r'\bvaccination\b', r'\bepidemic\b',
+        r'\bairstrike near hospital\b', r'\bshelling near hospital\b'
+    ]
     
-    # Create a pattern
+    # Create a pattern that handles case insensitivity and word boundaries
     pattern = '|'.join(health_keywords)
     
-    # Filter series
-    health_incidents = text_series.fillna('').str.lower().str.contains(pattern, case=False)
+    # Filter series - Note: we use regex=True to support \b
+    health_incidents = text_series.fillna('').str.lower().str.contains(pattern, case=False, regex=True)
+    
+    # Additional precision: if it matched 'who', ensure it's likely the organization
+    # ACLED notes usually capitalize WHO if it's the org, but str.lower() removes that.
+    # However, 'who' as a pronoun is extremely common. 
+    # Let's check if 'who' is preceded or followed by other medical context if possible, 
+    # or just rely on the other 20+ keywords which are more specific.
+    
     return health_incidents

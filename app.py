@@ -124,6 +124,55 @@ LANG_DICT = {
             "METHODOLOGY": "Detailed technical explanation of the data pipeline, ETL logic, and analytical models used in this observatory.",
             "POLICY": "The ethical framework and neutral stance governing the use of this conflict data for humanitarian research.",
             "RECORDS": "Direct access to the raw filtered incident logs for manual verification and research."
+        },
+        "network_guide": {
+            "title": "How to interpret this network?",
+            "rep_title": "What the Connections Represent:",
+            "edges": "**Edges (Lines):** Each line represents a kinetic engagement (battle, violence, or explosion) between two actors.",
+            "thickness": "**Thickness:** Proportional to **Lethality**. Thicker lines indicate that interactions between those groups resulted in higher fatalities.",
+            "node_size": "**Node Size:** Represents the total **Interaction Volume** of that actor across all filtered events.",
+            "strat_title": "Strategic Inferences:",
+            "hubs": "**Conflict Hubs:** Actors with many thick connections are the primary drivers of regional instability.",
+            "encirclement": "**Encirclement:** Spotlighting an actor reveals which groups are actively resisting them in the chosen area.",
+            "risk": "**Humanitarian Risk:** Thick connections to 'Civilians' reveal high-fatality targeting or collateral damage zones."
+        },
+        "severity_guide": {
+            "title": "How to interpret the Severity Index?",
+            "formula_title": "The Calculation:",
+            "formula": "**Severity Index = Total Fatalities ÷ Total Events**",
+            "meaning_title": "What it reveals:",
+            "lethality": "**Lethality vs. Frequency:** A region might have 100 small protests (high frequency) but 0 deaths. Another might have 1 airstrike (low frequency) with 20 deaths. The Index highlights the latter as a higher-severity zone.",
+            "thresholds": "**Interpreting Scores:** A score > 1.0 indicates that, on average, every single conflict event in that region results in at least one death, signaling a high-intensity combat zone."
+        },
+        "geo_guide": {
+            "title": "How to use the geospatial maps?",
+            "intensity": "**Incident Intensity:** This heatmap shows where conflict is physically concentrated. Darker red areas indicate higher density of events.",
+            "expansion": "**Conflict Expansion:** The animation shows the geographic spread of conflict since February 2021. Use this to identify how the frontlines have shifted over time.",
+            "sdg3_overlay": "**Health Proximity:** Green markers indicate incidents occurring near medical infrastructure, identifying specific risk zones for SDG 3."
+        },
+        "temp_guide": {
+            "title": "How to read the temporal charts?",
+            "frequency": "**Conflict Rhythm:** Spikes in the line chart indicate specific periods of escalation or offensive operations.",
+            "keywords": "**Narrative Themes:** The NLP keyword chart extracts common terms from conflict notes, revealing the dominant themes (e.g., 'airstrike', 'landmine', 'ambush') for the selected period."
+        },
+        "sdg3_guide": {
+            "title": "Understanding SDG 3 monitoring",
+            "extraction": "**NLP Extraction:** This tab filters for incidents where narrative notes mention healthcare terms (hospitals, clinics, medical staff, ambulances).",
+            "impact": "**Healthcare Disruption:** Use this to assess how kinetic engagements are degrading the public health infrastructure and preventing civilian access to medical care."
+        },
+        "method_guide": {
+            "title": "Technical Methodology",
+            "pipeline": "**Data Pipeline:** Raw ACLED data is ingested, cleaned for naming inconsistencies, and mapped to a standardized actor taxonomy.",
+            "limitations": "**Accuracy Note:** Locations represent the centroid of a village or township. Maps indicate regional clusters of risk, not exact tactical GPS coordinates."
+        },
+        "policy_guide": {
+            "title": "Ethical Framework",
+            "neutrality": "**Institutional Neutrality:** This observatory is an independent research project and does not coordinate with any political or military entity.",
+            "do_no_harm": "**Do No Harm:** Data is for strategic humanitarian analysis only. Use for tactical coordination is strictly prohibited."
+        },
+        "records_guide": {
+            "title": "Data Records Explorer",
+            "transparency": "**Verification:** This tab provides direct access to the filtered incident logs, allowing researchers to verify individual events and read the full narrative notes."
         }
     },
     "မြန်မာဘာသာ": {
@@ -162,6 +211,55 @@ LANG_DICT = {
             "METHODOLOGY": "ဤလေ့လာမှုတွင် အသုံးပြုထားသော ဒေတာနည်းပညာ၊ ETL လုပ်ငန်းစဉ်နှင့် ခွဲခြမ်းစိတ်ဖြာမှုပုံစံများကို နည်းပညာပိုင်းအရ ရှင်းလင်းချက်။",
             "POLICY": "လူသားချင်းစာနာထောက်ထားမှုဆိုင်ရာ သုတေသနအတွက် ဤပဋိပက္ခဒေတာကို အသုံးပြုရာတွင် လိုက်နာရမည့် ကျင့်ဝတ်မူဘောင်နှင့် ကြားနေရပ်တည်ချက်။",
             "RECORDS": "စစ်ထုတ်ထားသော ဖြစ်ရပ်မှတ်တမ်းများကို တိုက်ရိုက်ကြည့်ရှု စစ်ဆေးနိုင်ခြင်း။"
+        },
+        "network_guide": {
+            "title": "ဤကွန်ရက်ကို မည်သို့အဓိပ္ပာယ်ဖွင့်ဆိုမည်နည်း။",
+            "rep_title": "ဆက်သွယ်မှုများက ဘာကိုကိုယ်စားပြုသလဲ-",
+            "edges": "**မျဉ်းကြောင်းများ-** မျဉ်းကြောင်းတစ်ခုစီသည် အဖွဲ့နှစ်ခုအကြား တိုက်ပွဲ၊ အကြမ်းဖက်မှု သို့မဟုတ် ပေါက်ကွဲမှုစသည့် တိုက်ရိုက်ပဋိပက္ခဖြစ်စဉ်ကို ကိုယ်စားပြုသည်။",
+            "thickness": "**အထူ-** သေဆုံးမှုနှုန်းနှင့် တိုက်ရိုက်အချိုးကျသည်။ မျဉ်းကြောင်းပိုထူခြင်းသည် ထိုအဖွဲ့များအကြား ဖြစ်ပွားသော ပဋိပက္ခများတွင် သေဆုံးမှုပိုမိုများပြားကြောင်း ဖော်ပြသည်။",
+            "node_size": "**အမှတ် (Node) အရွယ်အစား-** ရွေးချယ်ထားသော အဖြစ်အပျက်များအတွင်း ထိုအဖွဲ့၏ စုစုပေါင်းလှုပ်ရှားမှုပမာဏကို ဖော်ပြသည်။",
+            "strat_title": "မဟာဗျူဟာမြောက် သုံးသပ်ချက်များ-",
+            "hubs": "**ပဋိပက္ခဗဟိုချက်များ-** ထူထဲသောဆက်သွယ်မှုမျဉ်းများစွာရှိသောအဖွဲ့များသည် ထိုဒေသမတည်ငြိမ်မှု၏ အဓိကလက်သည်များဖြစ်သည်။",
+            "encirclement": "**ဝိုင်းရံပိတ်ဆို့မှု-** အဖွဲ့တစ်ခုကို သီးသန့်ရွေးချယ်ကြည့်ရှုခြင်းဖြင့် ၎င်းတို့ကို မည်သည့်အဖွဲ့များက ပြင်းပြင်းထန်ထန် ခုခံနေသည်ကို သိရှိနိုင်သည်။",
+            "risk": "**လူသားချင်းစာနာထောက်ထားမှုဆိုင်ရာ စိုးရိမ်ရမှု-** 'အရပ်သားများ' နှင့် ထူထဲစွာဆက်သွယ်နေသောမျဉ်းများသည် အရပ်သားများကို ပစ်မှတ်ထားခြင်း သို့မဟုတ် ဘေးထွက်ဆိုးကျိုးကြောင့် သေဆုံးမှုများပြားသောနေရာများကို ဖော်ပြသည်။"
+        },
+        "severity_guide": {
+            "title": "ပြင်းထန်မှုညွှန်းကိန်းကို မည်သို့အဓိပ္ပာယ်ဖွင့်ဆိုမည်နည်း။",
+            "formula_title": "တွက်ချက်ပုံ-",
+            "formula": "**ပြင်းထန်မှုညွှန်းကိန်း = စုစုပေါင်းသေဆုံးမှု ÷ စုစုပေါင်းဖြစ်စဉ်အရေအတွက်**",
+            "meaning_title": "ဘာကိုဖော်ပြသလဲ-",
+            "lethality": "**သေဆုံးမှုနှုန်း နှင့် အကြိမ်ရေ-** ဒေသတစ်ခုတွင် ဆန္ဒပြပွဲ ၁၀၀ (အကြိမ်ရေများ) ဖြစ်ပွားသော်လည်း သေဆုံးသူမရှိနိုင်ပါ။ အခြားဒေသတစ်ခုတွင် လေကြောင်းတိုက်ခိုက်မှု ၁ ကြိမ် (အကြိမ်ရေနည်း) ဖြစ်ပွားပြီး လူ ၂၀ သေဆုံးနိုင်သည်။ ဤညွှန်းကိန်းသည် ဒုတိယဒေသကို ပြင်းထန်မှုပိုမိုမြင့်မားသောဇုန်အဖြစ် ဖော်ပြသည်။",
+            "thresholds": "**ရမှတ်များကို သုံးသပ်ခြင်း-** ရမှတ် ၁.၀ ထက်ကျော်လွန်ပါက ပျမ်းမျှအားဖြင့် ထိုဒေသရှိ ပဋိပက္ခဖြစ်စဉ်တိုင်းတွင် အနည်းဆုံး လူ ၁ ဦး သေဆုံးကြောင်း ဖော်ပြပြီး ၎င်းသည် ပြင်းထန်သော တိုက်ပွဲနယ်မြေဖြစ်ကြောင်း ညွှန်ပြသည်။"
+        },
+        "geo_guide": {
+            "title": "ပထဝီဝင်မြေပုံများကို မည်သို့အသုံးပြုမည်နည်း။",
+            "intensity": "**ဖြစ်ရပ်ပြင်းအား-** ဤအပူမြေပုံ (Heatmap) သည် ပဋိပက္ခများ မည်သည့်နေရာတွင် အဓိကစုပြုံနေသည်ကို ဖော်ပြသည်။ အနီရောင်ပိုရင့်သောနေရာများသည် ဖြစ်ရပ်ပိုမိုများပြားသောနေရာများဖြစ်သည်။",
+            "expansion": "**ပဋိပက္ခနယ်မြေကျယ်ပြန့်လာမှု-** ၂၀၂၁ ခုနှစ် ဖေဖော်ဝါရီလမှစ၍ ပဋိပက္ခများ ပထဝီဝင်အရ မည်သို့ပြန့်နှံ့လာသည်ကို အချိန်နှင့်အမျှ ပြသထားသည်။ ရှေ့တန်းတိုက်ပွဲနယ်မြေများ မည်သို့ပြောင်းလဲလာသည်ကို ကြည့်ရှုနိုင်သည်။",
+            "sdg3_overlay": "**ကျန်းမာရေးနှင့်နီးစပ်မှု-** အစိမ်းရောင်အမှတ်အသားများသည် ကျန်းမာရေးဆိုင်ရာအခြေခံအဆောက်အအုံများနှင့် နီးစပ်သောနေရာများတွင် ဖြစ်ပွားသောဖြစ်ရပ်များကို ဖော်ပြပြီး SDG 3 အတွက် အန္တရာယ်ရှိသောဇုန်များကို ခွဲခြားပေးသည်။"
+        },
+        "temp_guide": {
+            "title": "အချိန်ကာလဇယားများကို မည်သို့ဖတ်မည်နည်း။",
+            "frequency": "**ပဋိပက္ခ၏ စီးချက်-** မျဉ်းကွေးဇယားရှိ အတက်အကျများသည် ပဋိပက္ခများ သိသိသာသာ မြင့်တက်လာသော သို့မဟုတ် ထိုးစစ်ဆင်မှုများရှိသော အချိန်ကာလများကို ဖော်ပြသည်။",
+            "keywords": "**အဓိကအကြောင်းအရာများ-** NLP စကားလုံးဇယားသည် ပဋိပက္ခမှတ်တမ်းများမှ အသုံးများသော စကားလုံးများကို ထုတ်ယူဖော်ပြပြီး (ဥပမာ- 'လေကြောင်းတိုက်ခိုက်မှု'၊ 'မိုင်း'၊ 'ခြုံခိုတိုက်ခိုက်မှု') ထိုကာလ၏ အဓိကဖြစ်ရပ်ပုံစံများကို ဖော်ပြသည်။"
+        },
+        "sdg3_guide": {
+            "title": "SDG 3 စောင့်ကြည့်လေ့လာမှုကို နားလည်ခြင်း",
+            "extraction": "**NLP စနစ်ဖြင့် ထုတ်ယူခြင်း-** ဤနေရာတွင် ကျန်းမာရေးဆိုင်ရာ စကားလုံးများ (ဆေးရုံ၊ ဆေးခန်း၊ ကျန်းမာရေးဝန်ထမ်း၊ လူနာတင်ယာဉ်) ပါဝင်သော ဖြစ်ရပ်များကိုသာ စစ်ထုတ်ပြသထားသည်။",
+            "impact": "**ကျန်းမာရေးစနစ် ထိခိုက်မှု-** တိုက်ရိုက်ပဋိပက္ခများကြောင့် ပြည်သူ့ကျန်းမာရေးအဆောက်အအုံများ မည်သို့ပျက်စီးနေပြီး အရပ်သားများ ဆေးကုသမှုရယူရန် မည်သို့အတားအဆီးဖြစ်နေသည်ကို ဆန်းစစ်နိုင်သည်။"
+        },
+        "method_guide": {
+            "title": "နည်းပညာပိုင်းဆိုင်ရာ လုပ်ထုံးလုပ်နည်းများ",
+            "pipeline": "**ဒေတာလုပ်ငန်းစဉ်-** ACLED မှရရှိသော အချက်အလက်များကို ရယူပြီး အဖွဲ့အစည်းအမည်များ မှားယွင်းမှုမရှိစေရန် သန့်စင်ကာ စံသတ်မှတ်ထားသော အဖွဲ့အစည်းအမျိုးအစားများအဖြစ် သတ်မှတ်သည်။",
+            "limitations": "**တိကျမှုဆိုင်ရာ မှတ်ချက်-** တည်နေရာများသည် ကျေးရွာ သို့မဟုတ် မြို့နယ်၏ ဗဟိုချက်များကိုသာ ကိုယ်စားပြုသည်။ ထို့ကြောင့် မြေပုံများသည် တိကျသော စစ်ရေးတည်နေရာထက် ဒေသအလိုက် အန္တရာယ်ရှိသော ဇုန်များကိုသာ ဖော်ပြသည်။"
+        },
+        "policy_guide": {
+            "title": "ကျင့်ဝတ်ဆိုင်ရာ မူဘောင်",
+            "neutrality": "**ကြားနေရပ်တည်မှု-** ဤစောင့်ကြည့်လေ့လာရေးအဖွဲ့သည် လွတ်လပ်သော သုတေသနပရောဂျက်ဖြစ်ပြီး မည်သည့်နိုင်ငံရေး သို့မဟုတ် စစ်ရေးအဖွဲ့အစည်းနှင့်မျှ ဆက်စပ်မှုမရှိပါ။",
+            "do_no_harm": "**ဘေးအန္တရာယ်မဖြစ်စေရေး (Do No Harm)-** ဒေတာများကို လူသားချင်းစာနာထောက်ထားမှုဆိုင်ရာ မဟာဗျူဟာမြောက်ဆန်းစစ်ရန်အတွက်သာ အသုံးပြုရန်ဖြစ်သည်။ စစ်ရေးကိစ္စများအတွက် အသုံးပြုခြင်းကို ပြင်းထန်စွာ တားမြစ်သည်။"
+        },
+        "records_guide": {
+            "title": "ဒေတာမှတ်တမ်းများ ရှာဖွေခြင်း",
+            "transparency": "**စစ်ဆေးအတည်ပြုခြင်း-** ဤနေရာတွင် စစ်ထုတ်ထားသော ဖြစ်ရပ်မှတ်တမ်းများကို တိုက်ရိုက်ကြည့်ရှုနိုင်ပြီး အဖြစ်အပျက်တစ်ခုစီ၏ အသေးစိတ်မှတ်တမ်းများကို ဖတ်ရှုစစ်ဆေးနိုင်သည်။"
         }
     }
 }
@@ -329,8 +427,17 @@ else:
 
     with tab1:
         st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['GEOSPATIAL']}")
-        col_m1, col_m2 = st.columns(2)
-        with col_m1:
+
+        # --- Geospatial Interpretation Guide ---
+        with st.expander(L["geo_guide"]["title"]):
+            st.markdown(f"""
+            *   {L["geo_guide"]["intensity"]}
+            *   {L["geo_guide"]["expansion"]}
+            *   {L["geo_guide"]["sdg3_overlay"]}
+            """)
+
+        col1, col2 = st.columns(2)
+        with col1:
             st.caption("Humanitarian Conflict Overlay (Heatmap: Fatalities | Points: Health Impacts)")
             
             # 1. Base Layer: Density Heatmap of all fatalities
@@ -364,7 +471,7 @@ else:
                 legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(0,0,0,0.5)")
             )
             st.plotly_chart(fig_heat, use_container_width=True)
-        with col_m2:
+        with col2:
             st.caption(L["geo_expansion"])
             df_anim = df.sort_values('event_date')
             fig_anim = px.scatter_mapbox(
@@ -395,7 +502,15 @@ else:
 
     with tab2:
         st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['TEMPORAL']}")
-        st.caption(L["temp_freq"])
+
+        # --- Temporal Interpretation Guide ---
+        with st.expander(L["temp_guide"]["title"]):
+            st.markdown(f"""
+            *   {L["temp_guide"]["frequency"]}
+            *   {L["temp_guide"]["keywords"]}
+            """)
+
+        st.subheader(L["temp_freq"])
         
         # Prepare monthly stats
         monthly_events = df.resample('ME', on='event_date').size().reset_index(name='event_count')
@@ -457,7 +572,7 @@ else:
             st.plotly_chart(fig_pie, use_container_width=True)
 
         st.markdown("---")
-        st.info(f"**{selected_lang} Guidance:** Use the dropdown to spotlight an actor. Edge thickness is weighted by total fatalities in those interactions.", icon="💡")
+        st.info(f"**{selected_lang} Guidance:** Use the dropdown to spotlight an actor. Edge thickness is weighted by total fatalities in those interactions.")
         st.caption(L["actor_net"])
         
         # --- Actor Network Enhancements ---
@@ -469,6 +584,24 @@ else:
         # Dropdown for actor spotlight
         actor_list = sorted(pd.concat([interactions['actor1_clean'], interactions['actor2_clean']]).unique())
         spotlight_actor = st.selectbox("Spotlight Actor:", ["All"] + actor_list)
+
+        # --- Network Interpretation Guide ---
+        with st.expander(L["network_guide"]["title"]):
+            col_g1, col_g2 = st.columns(2)
+            with col_g1:
+                st.markdown(f"""
+                **{L["network_guide"]["rep_title"]}**
+                *   {L["network_guide"]["edges"]}
+                *   {L["network_guide"]["thickness"]}
+                *   {L["network_guide"]["node_size"]}
+                """)
+            with col_g2:
+                st.markdown(f"""
+                **{L["network_guide"]["strat_title"]}**
+                *   {L["network_guide"]["hubs"]}
+                *   {L["network_guide"]["encirclement"]}
+                *   {L["network_guide"]["risk"]}
+                """)
 
         if not interactions.empty:
             # Aggregate by both interaction count and total fatalities
@@ -541,6 +674,18 @@ else:
         st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['STABILITY']}")
         st.subheader(L["stab_title"])
         st.markdown(L["stab_desc"])
+
+        # --- Severity Interpretation Guide ---
+        with st.expander(L["severity_guide"]["title"]):
+            col_s1, col_s2 = st.columns(2)
+            with col_s1:
+                st.markdown(f"**{L['severity_guide']['formula_title']}**")
+                st.code(L['severity_guide']['formula'])
+            with col_s2:
+                st.markdown(f"**{L['severity_guide']['meaning_title']}**")
+                st.markdown(f"{L['severity_guide']['lethality']}")
+                st.markdown(f"{L['severity_guide']['thresholds']}")
+
         stability_df = df.groupby('admin1').agg({'event_id_cnty': 'count','fatalities': 'sum'}).rename(columns={'event_id_cnty': 'event_count'})
         stability_df['Severity_Index'] = (stability_df['fatalities'] / stability_df['event_count']).round(2)
         stability_df = stability_df.sort_values('Severity_Index', ascending=False)
@@ -552,9 +697,15 @@ else:
         st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['SDG 3: HEALTH IMPACT']}")
         st.subheader(L["health_title"])
         st.markdown(L["health_desc"])
-        
-        health_df = df[health_hits].copy()
-        
+
+        # --- SDG 3 Interpretation Guide ---
+        with st.expander(L["sdg3_guide"]["title"]):
+            st.markdown(f"""
+            *   {L["sdg3_guide"]["extraction"]}
+            *   {L["sdg3_guide"]["impact"]}
+            """)
+
+        health_df = df[health_hits].copy()        
         if not health_df.empty:
             h_col1, h_col2 = st.columns([2, 1])
             with h_col1:
@@ -640,7 +791,15 @@ else:
 
     with tab6:
         st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['METHODOLOGY']}")
-        st.markdown('<p class="main-header">ANALYTICAL METHODOLOGY</p>', unsafe_allow_html=True)
+
+        # --- Methodology Interpretation Guide ---
+        with st.expander(L["method_guide"]["title"]):
+            st.markdown(f"""
+            *   {L["method_guide"]["pipeline"]}
+            *   {L["method_guide"]["limitations"]}
+            """)
+
+        st.markdown(f'<p class="main-header">{L["title"]} | RESEARCH METHODOLOGY</p>', unsafe_allow_html=True)
         st.markdown("""
         ### 1. Big Data Architecture & ETL Pipeline
         This observatory utilizes a modern data engineering pipeline designed to handle the Volume, Velocity, and Variety of conflict logs. The system employs a semi-automated Extract, Transform, Load (ETL) process:
@@ -670,6 +829,14 @@ else:
 
     with tab7:
         st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['POLICY']}")
+
+        # --- Policy Interpretation Guide ---
+        with st.expander(L["policy_guide"]["title"]):
+            st.markdown(f"""
+            *   {L["policy_guide"]["neutrality"]}
+            *   {L["policy_guide"]["do_no_harm"]}
+            """)
+
         st.markdown('<p class="main-header">ANALYTICAL POLICY & ETHICAL FRAMEWORK</p>', unsafe_allow_html=True)
         st.markdown("""
         ### 1. Statement of Institutional Neutrality
@@ -690,6 +857,11 @@ else:
 
     with tab8:
         st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['RECORDS']}")
+
+        # --- Records Interpretation Guide ---
+        with st.expander(L["records_guide"]["title"]):
+            st.markdown(f"*   {L['records_guide']['transparency']}")
+
         st.subheader(L["records_title"])
         st.markdown(L["records_desc"])
         st.dataframe(df[['event_date', 'event_type', 'actor1', 'actor2', 'admin1', 'location', 'fatalities', 'notes']], use_container_width=True, height=600)

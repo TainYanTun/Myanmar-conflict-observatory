@@ -5,11 +5,10 @@ seaborn
 plotly
 scipy
 networkx
-ipykernel
 geopandas
 folium
-nbformat>=4.2.0
-ipywidgets
 streamlit
-streamlit
+sqlalchemy
+psycopg2-binary
+python-dotenv
 kaggle

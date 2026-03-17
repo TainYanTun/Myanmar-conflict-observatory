@@ -7,6 +7,8 @@ from sqlalchemy import create_engine
 import os
 import glob
 import time
+import kagglehub
+from kagglehub import KaggleDatasetAdapter
 from datetime import datetime
 from dotenv import load_dotenv
 from src.processing import categorize_actor, extract_keywords, extract_health_impacts
@@ -29,24 +31,19 @@ def display_briefing_gate():
     <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 40px;">
         <!-- Section 1: SDG 3 Alignment -->
         <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 30px; border-radius: 16px;">
-            <div style="display: flex; align-items: flex-start; gap: 20px;">
-                <div style="background: #10b981; color: white; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.2rem;">
-                    <i class="fas fa-heart-pulse"></i>
-                </div>
-                <div>
-                    <h4 style="margin-top:0; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">SDG 3: THE WELL-BEING IMPERATIVE</h4>
-                    <p style="font-size: 0.95rem; line-height: 1.7; opacity: 0.8; margin-bottom: 15px;">
-                        Conflict is a direct barrier to <b>SDG 3 (Good Health and Well-being)</b>. This observatory tracks kinetic engagements to assess their impact on public health infrastructure and human survival.
-                    </p>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: rgba(128, 128, 128, 0.05); padding: 15px; border-radius: 10px;">
-                        <div>
-                            <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Direct Health Impact</span>
-                            <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">Monitoring fatalities and injuries as primary indicators of regional health crises.</p>
-                        </div>
-                        <div>
-                            <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Infrastructure Risk</span>
-                            <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">Mapping conflict hotspots to identify vulnerable clinics and healthcare access points.</p>
-                        </div>
+            <div style="flex: 1;">
+                <h4 style="margin-top:0; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">SDG 3: THE WELL-BEING IMPERATIVE</h4>
+                <p style="font-size: 0.95rem; line-height: 1.7; opacity: 0.8; margin-bottom: 15px;">
+                    This observatory is specifically designed to support <b>UN SDG Target 3.d</b>: <i>"Strengthen the capacity for early warning, risk reduction and management of national and global health risks."</i>
+                </p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: rgba(128, 128, 128, 0.05); padding: 15px; border-radius: 10px;">
+                    <div>
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Direct Health Impact</span>
+                        <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">Monitoring fatalities and injuries as primary indicators of regional health crises.</p>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Infrastructure Risk</span>
+                        <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">Mapping conflict hotspots to identify vulnerable clinics and healthcare access points.</p>
                     </div>
                 </div>
             </div>
@@ -157,8 +154,15 @@ LANG_DICT = {
         },
         "sdg3_guide": {
             "title": "Understanding SDG 3 monitoring",
-            "extraction": "**NLP Extraction:** This tab filters for incidents where narrative notes mention healthcare terms (hospitals, clinics, medical staff, ambulances).",
-            "impact": "**Healthcare Disruption:** Use this to assess how kinetic engagements are degrading the public health infrastructure and preventing civilian access to medical care."
+            "extraction": "**NLP Extraction:** This tab filters for incidents impacting direct health (hospitals, medical staff) and systemic well-being (sexual violence, arrests, abductions, and looting).",
+            "impact": "**Humanitarian Disruption:** Use this to assess how kinetic engagements are degrading both physical health infrastructure and the broader social well-being of civilians."
+        },
+        "sdg3_logic": {
+            "title": "Data Logic: Why 15,000+ SDG 3 Incidents?",
+            "p1": "Users may notice that the number of **SDG 3 Incidents** is lower than the total **Fatalities**. This is statistically logical:",
+            "item1": "**Metric Difference:** Fatalities represent a count of **individuals** lost, while SDG 3 Incidents represent a count of **specific events** (e.g., one hospital bombing, one mass arrest).",
+            "item2": "**Strategic Focus:** While thousands die in remote jungle battles (Military vs. EAOs), this observatory only flags an event as an 'SDG 3 Incident' if it directly impacts civilian health infrastructure or systemic social well-being (e.g., arrests, looting, or healthcare disruption).",
+            "item3": "**Humanitarian Collapse:** The ratio of ~15,000 humanitarian incidents to ~77,000 deaths illustrates a dual-crisis: a high-lethality conventional war occurring simultaneously with a systemic campaign against the social and medical foundations of the civilian population."
         },
         "method_guide": {
             "title": "Technical Methodology",
@@ -244,8 +248,15 @@ LANG_DICT = {
         },
         "sdg3_guide": {
             "title": "SDG 3 စောင့်ကြည့်လေ့လာမှုကို နားလည်ခြင်း",
-            "extraction": "**NLP စနစ်ဖြင့် ထုတ်ယူခြင်း-** ဤနေရာတွင် ကျန်းမာရေးဆိုင်ရာ စကားလုံးများ (ဆေးရုံ၊ ဆေးခန်း၊ ကျန်းမာရေးဝန်ထမ်း၊ လူနာတင်ယာဉ်) ပါဝင်သော ဖြစ်ရပ်များကိုသာ စစ်ထုတ်ပြသထားသည်။",
-            "impact": "**ကျန်းမာရေးစနစ် ထိခိုက်မှု-** တိုက်ရိုက်ပဋိပက္ခများကြောင့် ပြည်သူ့ကျန်းမာရေးအဆောက်အအုံများ မည်သို့ပျက်စီးနေပြီး အရပ်သားများ ဆေးကုသမှုရယူရန် မည်သို့အတားအဆီးဖြစ်နေသည်ကို ဆန်းစစ်နိုင်သည်။"
+            "extraction": "**NLP စနစ်ဖြင့် ထုတ်ယူခြင်း-** ဤနေရာတွင် တိုက်ရိုက်ကျန်းမာရေး (ဆေးရုံ၊ ကျန်းမာရေးဝန်ထမ်း) နှင့် အခြေခံလူမှုဘဝတည်ငြိမ်မှု (လိင်ပိုင်းဆိုင်ရာအကြမ်းဖက်မှု၊ ဖမ်းဆီးမှု၊ ပြန်ပေးဆွဲမှု နှင့် လုယက်မှု) ကို ထိခိုက်စေသောဖြစ်ရပ်များကို စစ်ထုတ်ပြသထားသည်။",
+            "impact": "**လူသားချင်းစာနာမှုဆိုင်ရာ ထိခိုက်မှု-** တိုက်ရိုက်ပဋိပက္ခများကြောင့် ပြည်သူ့ကျန်းမာရေးအဆောက်အအုံများသာမက အရပ်သားများ၏ ဘေးကင်းလုံခြုံရေးနှင့် လူမှုဘဝတည်ငြိမ်မှု မည်သို့ပျက်စီးနေသည်ကို ဆန်းစစ်နိုင်သည်။"
+        },
+        "sdg3_logic": {
+            "title": "ဒေတာဆိုင်ရာ ရှင်းလင်းချက်- SDG 3 ဖြစ်စဉ် ၁၅,၀၀၀ ကျော် ဖြစ်ပွားရခြင်း အကြောင်းရင်း",
+            "p1": "စုစုပေါင်းသေဆုံးမှုအရေအတွက်ထက် **SDG 3 ဖြစ်စဉ်များ** က ပိုနည်းနေသည်ကို အသုံးပြုသူများ သတိပြုမိနိုင်ပါသည်။ ၎င်းမှာ အောက်ပါအချက်များကြောင့် ဖြစ်သည်-",
+            "item1": "**တိုင်းတာပုံကွာခြားချက်-** သေဆုံးမှုမှာ **လူဦးရေ** ကို ရေတွက်ခြင်းဖြစ်ပြီး SDG 3 ဖြစ်စဉ်မှာ **ဖြစ်ရပ်** (ဥပမာ - ဆေးရုံဗုံးကြဲခံရမှု ၁ ကြိမ်၊ အစုလိုက်အပြုံလိုက် ဖမ်းဆီးမှု ၁ ကြိမ်) ကို ရေတွက်ခြင်းဖြစ်သည်။",
+            "item2": "**မဟာဗျူဟာမြောက် အဓိကထားမှု-** တောတွင်းတိုက်ပွဲများတွင် လူထောင်ပေါင်းများစွာ သေဆုံးနိုင်သော်လည်း ဤစောင့်ကြည့်ရေးစနစ်သည် အရပ်သားကျန်းမာရေးနှင့် လူမှုဘဝတည်ငြိမ်မှုကို (ဥပမာ- ဖမ်းဆီးမှု၊ လုယက်မှု၊ ဆေးကုသမှုအဟန့်အတား) တိုက်ရိုက်ထိခိုက်မှသာ SDG 3 ဖြစ်စဉ်အဖြစ် သတ်မှတ်သည်။",
+            "item3": "**လူသားချင်းစာနာမှုဆိုင်ရာ ပျက်သုဉ်းမှု-** သေဆုံးသူ ၇၇,၀၀၀ ကျော်နှင့် လူသားချင်းစာနာမှုဖြစ်စဉ် ၁၅,၀၀၀ ကျော်၏ အချိုးအစားမှာ ပြင်းထန်သောစစ်ပွဲနှင့်အတူ အရပ်သားများ၏ လူမှုဘဝနှင့် ကျန်းမာရေးစနစ်ကို စနစ်တကျဖျက်ဆီးနေသည့် အကျပ်အတည်းနှစ်ရပ်ကို တပြိုင်နက် ဖော်ပြနေခြင်းဖြစ်သည်။"
         },
         "method_guide": {
             "title": "နည်းပညာပိုင်းဆိုင်ရာ လုပ်ထုံးလုပ်နည်းများ",
@@ -336,14 +347,38 @@ def load_data():
     except Exception as e:
         st.warning(f"Database unavailable or empty, falling back to local files: {e}")
 
-    # 2. Fallback: Check local directory
-    data_dir = os.path.join(os.getcwd(), "data")
-    files = glob.glob(os.path.join(data_dir, "*.csv"))
+    # 2. Fallback: Check local directory and notebooks/data
+    search_paths = [
+        os.path.join(os.getcwd(), "data"),
+        os.path.join(os.getcwd(), "notebooks", "data")
+    ]
+    files = []
+    for path in search_paths:
+        files.extend(glob.glob(os.path.join(path, "*.csv")))
     
     # 3. Fallback: Check Kaggle standard input path
     if not files:
         kaggle_dir = "/kaggle/input/myanmar-conflict-observatory/"
         files = glob.glob(os.path.join(kaggle_dir, "*.csv"))
+    
+    # 4. Fallback: Cloud download using kagglehub
+    if not files:
+        try:
+            # We use the dataset provided in the user prompt
+            df = kagglehub.load_dataset(
+                KaggleDatasetAdapter.PANDAS,
+                "tainyantun/acled-dataset-for-myanmar",
+                "" # Use empty string for main file
+            )
+            if not df.empty:
+                df = df[df['country'] == 'Myanmar']
+                df['event_date'] = pd.to_datetime(df['event_date'])
+                df = df[df['event_date'] >= '2021-02-01']
+                df['year_month'] = df['event_date'].dt.strftime('%Y-%m')
+                update_time = df['event_date'].max().strftime('%Y-%m-%d %H:%M')
+                return df, update_time
+        except Exception as e:
+            st.warning(f"KaggleHub Cloud fallback failed: {e}")
         
     if not files: return None, None
     
@@ -363,26 +398,42 @@ df_raw, update_time = load_data()
 
 @st.cache_data
 def calculate_network_layout(adj_df):
-    """Calculates the network layout using interaction_count for weighting."""
+    """Calculates the network layout with a more compact, circular tendency to avoid horizontal stretching."""
     G = nx.Graph()
     for _, row in adj_df.iterrows():
-        # Use 'interaction_count' for layout weighting, 'total_fatalities' is for visual edge thickness
-        G.add_edge(row['actor1_clean'], row['actor2_clean'], weight=row['interaction_count'], interaction_count=row['interaction_count'])
-    # The layout algorithm uses the 'weight' attribute internally
-    pos = nx.spring_layout(G, seed=42)
+        # Filter for significant interactions to reduce clutter
+        if row['interaction_count'] > 0: 
+            G.add_edge(row['actor1_clean'], row['actor2_clean'], weight=row['interaction_count'], interaction_count=row['interaction_count'])
+    
+    # Use a smaller k for tighter clustering (more circular)
+    pos = nx.spring_layout(G, k=0.8, iterations=100, seed=42)
     return G, pos
 
 if df_raw is None:
     st.error("Data source missing. Ensure dataset is in /data or Kaggle input folder.")
 else:
+    # Central Color Map for all Actor Visualizations
+    node_color_map = {
+        "State Forces": "#ef4444", 
+        "Pro-Junta Militia": "#fca5a5", # Lighter red
+        "Resistance": "#3b82f6", 
+        "EAOs": "#10b981", 
+        "Civilians": "#94a3b8", 
+        "Protesters": "#f59e0b", 
+        "Rioters": "#d97706", # Darker orange
+        "Unidentified": "#1e293b", # Very dark
+        "Other Groups": "#475569"
+    }
+
     df_raw['actor1_clean'] = df_raw['actor1'].apply(categorize_actor)
+    df_raw['actor2_clean'] = df_raw['actor2'].apply(categorize_actor)
     latest_event_date = df_raw['event_date'].max().strftime('%B %d, %Y')
 
     # --- Sidebar ---
     with st.sidebar:
         selected_lang = st.selectbox("Language / ဘာသာစကား", ["English", "မြန်မာဘာသာ"])
         L = LANG_DICT[selected_lang]
-        
+
         st.markdown(f'<i class="fas fa-sliders-h"></i> **{L["params"]}**', unsafe_allow_html=True)
         min_date, max_date = df_raw['event_date'].min().date(), df_raw['event_date'].max().date()
         date_range = st.date_input(L["period"], [min_date, max_date])
@@ -395,6 +446,12 @@ else:
         st.markdown("---")
         st.caption("Myanmar Conflict Observatory v1.8 (NLP Enabled)")
         st.caption("Independent Research Project")
+        
+        st.markdown("---")
+        st.markdown("**RESOURCES**")
+        st.markdown("[Kaggle Dataset](https://www.kaggle.com/datasets/tainyantun/acled-dataset-for-myanmar)")
+        st.markdown("[GitHub Repository](https://github.com/TainYanTun/Myanmar-conflict-observatory)")
+        st.markdown("---")
 
     # --- Filter Logic ---
     df = df_raw.copy()
@@ -407,17 +464,19 @@ else:
     st.markdown(f'<p class="main-header">{L["title"]}</p>', unsafe_allow_html=True)
     st.markdown(f'<p class="sub-header">{L["sub"]} | DATA CURRENT AS OF: {latest_event_date}</p>', unsafe_allow_html=True)
 
+    # --- Pre-calculations ---
+    health_hits = extract_health_impacts(df)
+
     # --- Metrics ---
     m_col1, m_col2, m_col3, m_col4 = st.columns(4)
     with m_col1: st.markdown(f'<div class="metric-card"><i class="fas fa-bullseye metric-icon"></i><div class="metric-content"><div class="metric-label">{L["events"]}</div><div class="metric-value">{len(df):,}</div></div></div>', unsafe_allow_html=True)
     with m_col2: st.markdown(f'<div class="metric-card"><i class="fas fa-skull metric-icon" style="color:#ef4444"></i><div class="metric-content"><div class="metric-label">{L["fatalities"]}</div><div class="metric-value">{int(df["fatalities"].sum()):,}</div></div></div>', unsafe_allow_html=True)
-    
+
     # SDG 3 Specific Metric
-    health_hits = extract_health_impacts(df['notes'])
     health_count = health_hits.sum()
     with m_col3: st.markdown(f'<div class="metric-card"><i class="fas fa-house-medical metric-icon" style="color:#10b981"></i><div class="metric-content"><div class="metric-label">SDG 3 Incidents</div><div class="metric-value">{health_count}</div></div></div>', unsafe_allow_html=True)
-    
-    with m_col4: st.markdown(f'<div class="metric-card"><i class="fas fa-users metric-icon"></i><div class="metric-content"><div class="metric-label">{L["active_groups"]}</div><div class="metric-value">{df["actor1"].nunique()}</div></div></div>', unsafe_allow_html=True)
+
+    with m_col4: st.markdown(f'<div class="metric-card"><i class="fas fa-users metric-icon"></i><div class="metric-content"><div class="metric-label">{L["active_groups"]}</div><div class="metric-value">{df["actor1"].nunique():,} Entities</div></div></div>', unsafe_allow_html=True)
 
     # --- Analysis Tabs ---
     st.markdown("<br>", unsafe_allow_html=True)
@@ -478,12 +537,12 @@ else:
                 df_anim, 
                 lat="latitude", 
                 lon="longitude", 
-                color="actor1_clean", 
-                size="fatalities", 
-                animation_frame="year_month", 
+                color="actor1_clean",
+                size="fatalities",
+                animation_frame="year_month",
                 hover_name="location",
-                hover_data={
-                    "event_date": "|%B %d, %Y", 
+                color_discrete_map=node_color_map,
+                hover_data={                    "event_date": "|%B %d, %Y", 
                     "event_type": True,
                     "actor1": True,
                     "actor2": True,
@@ -494,8 +553,7 @@ else:
                 },
                 zoom=5, 
                 height=600, 
-                mapbox_style="carto-darkmatter", 
-                color_discrete_map={"State Forces": "#ef4444", "Resistance": "#3b82f6", "EAOs": "#10b981", "Civilians": "#94a3b8", "Protesters": "#f59e0b", "Other Groups": "#475569"}
+                mapbox_style="carto-darkmatter"
             )
             fig_anim.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
             st.plotly_chart(fig_anim, use_container_width=True)
@@ -561,9 +619,27 @@ else:
         c1, c2 = st.columns(2)
         with c1:
             st.caption(L["actor_impact"])
-            actor_stats = df.groupby('actor1_clean')['fatalities'].sum().reset_index().sort_values('fatalities')
-            fig_bar = px.bar(actor_stats, x='fatalities', y='actor1_clean', orientation='h', color_discrete_sequence=["#ef4444"])
-            fig_bar.update_layout(plotly_layout, xaxis_title="Reported Fatalities", yaxis_title="")
+            st.info("Impact is calculated as the sum of fatalities in all events where the category participated (either as Actor 1 or Actor 2).")
+            
+            # Combine impacts for both Actor 1 and Actor 2 to be consistent
+            a1_impact = df.groupby('actor1_clean')['fatalities'].sum().reset_index().rename(columns={'actor1_clean': 'actor'})
+            a2_impact = df.groupby('actor2_clean')['fatalities'].sum().reset_index().rename(columns={'actor2_clean': 'actor'})
+            
+            actor_stats = pd.concat([a1_impact, a2_impact]).groupby('actor')['fatalities'].sum().reset_index()
+            
+            # Remove "Unidentified" and "Other Groups" from the primary impact chart to focus on kinetic actors
+            # OR keep them but sort them. Let's keep them but ensure they are included.
+            actor_stats = actor_stats[actor_stats['actor'] != 'Unidentified'].sort_values('fatalities')
+            
+            fig_bar = px.bar(
+                actor_stats, 
+                x='fatalities', 
+                y='actor', 
+                orientation='h',
+                color='actor',
+                color_discrete_map=node_color_map
+            )
+            fig_bar.update_layout(plotly_layout, xaxis_title="Fatalities in involved events", yaxis_title="", showlegend=False)
             st.plotly_chart(fig_bar, use_container_width=True)
         with c2:
             st.caption(L["actor_comp"])
@@ -576,10 +652,7 @@ else:
         st.caption(L["actor_net"])
         
         # --- Actor Network Enhancements ---
-        df_net = df.copy()
-        df_net['actor2_clean'] = df_net['actor2'].apply(categorize_actor)
-        
-        interactions = df_net[(df_net['actor1_clean'] != df_net['actor2_clean']) & (df_net['actor2_clean'] != 'Unidentified')]
+        interactions = df[(df['actor1_clean'] != df['actor2_clean']) & (df['actor2_clean'] != 'Unidentified')]
         
         # Dropdown for actor spotlight
         actor_list = sorted(pd.concat([interactions['actor1_clean'], interactions['actor2_clean']]).unique())
@@ -609,6 +682,10 @@ else:
                 interaction_count=('event_id_cnty', 'count'),
                 total_fatalities=('fatalities', 'sum')
             ).reset_index()
+
+            # Optional: Further filter 'adj' to show only significant connections (e.g., > 2 interactions)
+            # to prevent the "hairball" effect while keeping the nodes
+            adj = adj[adj['interaction_count'] >= 2]
 
             G, pos = calculate_network_layout(adj)
             
@@ -641,7 +718,6 @@ else:
                     mode='lines'
                 ))
 
-            node_color_map = {"State Forces": "#ef4444", "Resistance": "#3b82f6", "EAOs": "#10b981", "Civilians": "#94a3b8", "Protesters": "#f59e0b", "Other Groups": "#475569"}
             node_trace = go.Scatter(
                 x=[pos[node][0] for node in G.nodes()],
                 y=[pos[node][1] for node in G.nodes()],
@@ -698,11 +774,33 @@ else:
         st.subheader(L["health_title"])
         st.markdown(L["health_desc"])
 
+        health_df = df[health_hits].copy()
+        if not health_df.empty:
+            csv = health_df.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="Download Health Impact Report (CSV)",
+                data=csv,
+                file_name=f"MCO_Health_Impact_Report_{datetime.now().strftime('%Y%m%d')}.csv",
+                mime='text/csv',
+                key='download-csv-health'
+            )
+
         # --- SDG 3 Interpretation Guide ---
         with st.expander(L["sdg3_guide"]["title"]):
             st.markdown(f"""
             *   {L["sdg3_guide"]["extraction"]}
             *   {L["sdg3_guide"]["impact"]}
+            """)
+            
+            st.markdown("---")
+            st.markdown(f"""
+            **{L['sdg3_logic']['title']}**
+            
+            {L['sdg3_logic']['p1']}
+            
+            1.  {L['sdg3_logic']['item1']}
+            2.  {L['sdg3_logic']['item2']}
+            3.  {L['sdg3_logic']['item3']}
             """)
 
         health_df = df[health_hits].copy()        
@@ -739,7 +837,26 @@ else:
                 fig_h_bar = px.bar(h_stats, x='count', y='admin1', orientation='h', color='count', color_continuous_scale="Viridis")
                 fig_h_bar.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, showlegend=False)
                 st.plotly_chart(fig_h_bar, use_container_width=True)
-                
+
+            st.markdown("---")
+            
+            # --- Health Vulnerability Trend & Scorecard ---
+            v_col1, v_col2 = st.columns([1, 1])
+            with v_col1:
+                st.caption("Temporal Trend: Health-Impacting Incidents")
+                h_trend = health_df.set_index('event_date').resample('M').size().reset_index(name='count')
+                fig_h_trend = px.area(h_trend, x='event_date', y='count', color_discrete_sequence=['#10b981'])
+                fig_h_trend.update_layout(plotly_layout, xaxis_title="", yaxis_title="Events / Month")
+                st.plotly_chart(fig_h_trend, use_container_width=True)
+            
+            with v_col2:
+                st.caption("Regional Health Vulnerability Scorecard")
+                # Score = (Health Incidents * 0.7) + (Fatalities * 0.3)
+                v_score = health_df.groupby('admin1').agg({'event_id_cnty': 'count', 'fatalities': 'sum'}).rename(columns={'event_id_cnty': 'health_events'})
+                v_score['Score'] = ((v_score['health_events'] * 0.7) + (v_score['fatalities'] * 0.3)).round(1)
+                v_score = v_score.sort_values('Score', ascending=False).head(5)
+                st.dataframe(v_score, use_container_width=True)
+
             st.markdown("---")
             
             # --- Humanitarian Spotlight Explorer ---
@@ -800,10 +917,36 @@ else:
             """)
 
         st.markdown(f'<p class="main-header">{L["title"]} | RESEARCH METHODOLOGY</p>', unsafe_allow_html=True)
+
+        # --- Data Integrity Audit ---
+        st.markdown("### DATA INTEGRITY AUDIT")
+        st.caption("Verification of Geospatial and Temporal Data Quality")
+        audit_col1, audit_col2 = st.columns(2)
+        with audit_col1:
+            if 'geo_precision' in df.columns:
+                precision_map = {1: "Precise Location", 2: "Near Town/Village", 3: "District Level"}
+                precision_counts = df['geo_precision'].map(precision_map).value_counts().reset_index()
+                fig_prec = px.pie(precision_counts, values='count', names='geo_precision', title="Geospatial Coordinate Precision", hole=0.4, color_discrete_sequence=px.colors.sequential.RdBu)
+                fig_prec.update_layout(plotly_layout)
+                st.plotly_chart(fig_prec, use_container_width=True)
+        with audit_col2:
+            st.markdown("""
+            **Precision Protocol:**
+            - **Level 1 (Precise):** Verified at the exact street, building, or village square level.
+            - **Level 2 (Near):** Verified as occurring in the immediate vicinity of a named settlement.
+            - **Level 3 (District):** Approximate location used when only regional reporting is available.
+            
+            *A higher ratio of Level 1 & 2 data indicates a robust forensic foundation for humanitarian planning.*
+            """)
+        st.markdown("---")
+
         st.markdown("""
         ### 1. Big Data Architecture & ETL Pipeline
-        This observatory utilizes a modern data engineering pipeline designed to handle the Volume, Velocity, and Variety of conflict logs. The system employs a semi-automated Extract, Transform, Load (ETL) process:
-        - **Extraction:** The framework monitors a local directory for ACLED CSV files, which contain high-resolution geospatial and temporal metadata.
+        This observatory utilizes a modern data engineering pipeline designed to handle the Volume, Velocity, and Variety of conflict logs. The system employs a hybrid ingestion protocol (Local + Cloud):
+        - **Extraction:** The framework monitors three primary sources:
+            1. **Local CSV/DB:** High-performance local access for offline research.
+            2. **Kaggle Input:** Automated detection for Kaggle Notebook environments.
+            3. **Kaggle Cloud (kagglehub):** Dynamic remote ingestion from the `acled-dataset-for-myanmar` repository for cloud-native deployment.
         - **Transformation:** Raw logs are processed using Python (Pandas/NumPy). This includes cleaning non-standard date formats, filtering by sovereign boundaries (Myanmar), and isolating the post-coup temporal scope (Post-Feb 1, 2021).
         - **Ingestion:** Data is optimized for real-time visualization by pre-calculating monthly aggregates and administrative level intensities.
 
@@ -855,13 +998,4 @@ else:
         - **Usage Risk:** No party involved in the development of this observatory shall be held liable for any damages resulting from the use or interpretation of these visualizations.
         """)
 
-    with tab8:
-        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['RECORDS']}")
 
-        # --- Records Interpretation Guide ---
-        with st.expander(L["records_guide"]["title"]):
-            st.markdown(f"*   {L['records_guide']['transparency']}")
-
-        st.subheader(L["records_title"])
-        st.markdown(L["records_desc"])
-        st.dataframe(df[['event_date', 'event_type', 'actor1', 'actor2', 'admin1', 'location', 'fatalities', 'notes']], use_container_width=True, height=600)

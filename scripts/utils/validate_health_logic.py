@@ -24,7 +24,7 @@ def validate_health_logic():
     print(f"Total events in Myanmar (post-coup): {len(df)}")
     
     # Apply health impact extraction
-    health_mask = extract_health_impacts(df['notes'])
+    health_mask = extract_health_impacts(df)
     health_df = df[health_mask]
     
     health_count = len(health_df)

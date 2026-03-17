@@ -2,6 +2,9 @@
 
 # Myanmar Conflict Observatory (MCO)
 
+[![Kaggle Dataset](https://img.shields.io/badge/Kaggle-Dataset-blue?logo=kaggle)](https://www.kaggle.com/datasets/tainyantun/acled-dataset-for-myanmar)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/TainYanTun/Myanmar-conflict-observatory)
+
 This project serves as an analytical toolkit and visualization hub for conflict data in Myanmar. The primary focus is to transform raw, complex datasets into structured insights and accessible visualizations.
 The core dataset is sourced from ACLED (Armed Conflict Location & Event Data Project), specifically focusing on the timeframe following the military takeover on February 1, 2021.
 
@@ -45,7 +48,8 @@ Below are the core analytical components currently implemented or in the advance
      - Humanitarian Trend Monitoring: Analyzing narrative event notes to identify regional health-related vulnerabilities.
 
 5. Advanced Insights (Roadmap)
-     The following Natural Language Processing (NLP) components are currently being integrated:
+     The following components are currently being integrated to enhance humanitarian early warning (SDG Target 3.d):
+     - Health Resource Vulnerability Prediction: Using the 'Severity Index' to forecast regions where medical supply chains and staff are most likely to be disrupted based on kinetic event trajectory.
      - Topic Modeling: Categorical classification of events through latent theme discovery in ACLED narratives.
      - Named Entity Recognition (NER): Extraction of specific military units and localized militia names from event notes.
      - Semantic Search: Vector-based search capabilities for qualitative event descriptions.

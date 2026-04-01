@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
 import networkx as nx
@@ -99,7 +100,7 @@ LANG_DICT = {
         "latest": "Latest Event",
         "update": "System Update",
         "keywords_title": "Top Narrative Keywords (NLP-lite Extraction)",
-        "tabs": ["GEOSPATIAL", "TEMPORAL", "ACTORS", "STABILITY", "SDG 3: HEALTH IMPACT", "METHODOLOGY", "POLICY", "RECORDS"],
+        "tabs": ["EARLY WARNING (SDG 3.D)", "GEOSPATIAL", "TEMPORAL", "ACTORS", "STABILITY", "SDG 3: HEALTH IMPACT", "METHODOLOGY", "POLICY", "RECORDS"],
         "geo_intensity": "Incident Intensity (Density Mapping)",
         "geo_expansion": "Temporal Conflict Expansion (Animation)",
         "temp_freq": "Conflict Frequency and Impact Over Time",
@@ -113,6 +114,7 @@ LANG_DICT = {
         "records_title": "DATA RECORDS EXPLORER",
         "records_desc": "Filtered incident logs based on current parameters.",
         "tab_explanations": {
+            "EARLY WARNING (SDG 3.D)": "Utilizes statistical Z-Score anomaly detection and linear regression to project conflict trajectory and identify high-risk surges in regional violence.",
             "GEOSPATIAL": "Overlays general conflict density (red) with specific health-impacting incidents (green). The animation shows how conflict has expanded geographically over time.",
             "TEMPORAL": "Tracks the rhythm of conflict. Peaks in the line chart indicate surges in violence. The keyword chart uses NLP to identify common narrative themes.",
             "ACTORS": "Identifies the groups involved. The network map visualizes interactions between actors to reveal the underlying power dynamics of the conflict.",
@@ -193,7 +195,7 @@ LANG_DICT = {
         "latest": "နောက်ဆုံးဖြစ်ရပ်",
         "update": "စနစ်အား အပ်ဒိတ်လုပ်ချိန်",
         "keywords_title": "အဓိက ပါဝင်သော စကားလုံးများ (NLP-lite ခွဲခြမ်းစိတ်ဖြာမှု)",
-        "tabs": ["ပထဝီဝင်အနေအထား", "အချိန်ကာလ", "ပါဝင်ပတ်သက်သူများ", "တည်ငြိမ်မှု", "ကျန်းမာရေးသက်ရောက်မှု (SDG 3)", "လုပ်ထုံးလုပ်နည်း", "မူဝါဒ", "မှတ်တမ်းများ"],
+        "tabs": ["ကြိုတင်သတိပေးချက် (SDG 3.D)", "ပထဝီဝင်အနေအထား", "အချိန်ကာလ", "ပါဝင်ပတ်သက်သူများ", "တည်ငြိမ်မှု", "ကျန်းမာရေးသက်ရောက်မှု (SDG 3)", "လုပ်ထုံးလုပ်နည်း", "မူဝါဒ", "မှတ်တမ်းများ"],
         "geo_intensity": "ဖြစ်ရပ်ပြင်းအား (သိပ်သည်းဆပြမြေပုံ)",
         "geo_expansion": "ပဋိပက္ခနယ်မြေကျယ်ပြန့်လာမှု (အချိန်နှင့်အမျှ)",
         "temp_freq": "ပဋိပက္ခအကြိမ်ရေနှင့် သက်ရောက်မှု (အချိန်နှင့်အမျှ)",
@@ -207,6 +209,7 @@ LANG_DICT = {
         "records_title": "ဒေတာမှတ်တမ်းများ ရှာဖွေခြင်း",
         "records_desc": "ရွေးချယ်ထားသော ကန့်သတ်ချက်များအပေါ် အခြေခံသည့် ဖြစ်ရပ်မှတ်တမ်းများ",
         "tab_explanations": {
+            "ကြိုတင်သတိပေးချက် (SDG 3.D)": "ပဋိပက္ခလမ်းကြောင်းများကို ခန့်မှန်းရန်နှင့် ဒေသတွင်းအကြမ်းဖက်မှုများ မြင့်တက်လာနိုင်ခြေကို သိရှိနိုင်ရန် စာရင်းအင်းဆိုင်ရာ (Z-Score) ပုံစံများဖြင့် တွက်ချက်ဖော်ပြသည်။",
             "GEOSPATIAL": "ပဋိပက္ခပြင်းထန်မှု (အနီရောင်) နှင့် ကျန်းမာရေးထိခိုက်မှု (အစိမ်းရောင်) ကို ပေါင်းစပ်ပြသထားသည်။ အချိန်နှင့်အမျှ ပဋိပက္ခကျယ်ပြန့်လာမှုကိုလည်း ကြည့်ရှုနိုင်သည်။",
             "TEMPORAL": "ပဋိပက္ခဖြစ်ပွားမှုအရှိန်ကို ခြေရာခံသည်။ မြင်းကွေးဇယားရှိ အတက်အကျများသည် အကြမ်းဖက်မှု မြင့်တက်လာမှုကို ဖော်ပြပြီး စကားလုံးဇယားသည် အဓိကအကြောင်းအရာများကို NLP ဖြင့် ဖော်ပြသည်။",
             "ACTORS": "ပါဝင်ပတ်သက်သူများကို ခွဲခြားပြသသည်။ ကွန်ရက်မြေပုံသည် အဖွဲ့အစည်းများအကြား အပြန်အလှန်ဆက်နွယ်မှုနှင့် အားပြိုင်မှုများကို ဖော်ပြသည်။",
@@ -325,6 +328,15 @@ if not st.session_state.gate_passed:
 # --- Post-Gate CSS Reset ---
 st.markdown("<style>[data-testid='stAppViewContainer'] { overflow: auto !important; height: auto !important; position: static !important; } [data-testid='stSidebar'] { display: block !important; } [data-testid='stHeader'] { display: flex !important; }</style>", unsafe_allow_html=True)
 
+# --- Custom UI Components ---
+def guidance_box(text, icon="info-circle"):
+    st.markdown(f"""
+    <div style="padding: 15px; border-radius: 10px; background: rgba(128, 128, 128, 0.03); border: 1px solid rgba(128, 128, 128, 0.1); margin-bottom: 20px; display: flex; align-items: start; gap: 12px;">
+        <i class="fas fa-{icon}" style="margin-top: 3px; opacity: 0.5; color: #10b981;"></i>
+        <div style="font-size: 0.85rem; line-height: 1.5; opacity: 0.8;">{text}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
 # --- Data Engine (SQL & CSV Fallback) ---
 @st.cache_data
 def load_data():
@@ -345,7 +357,8 @@ def load_data():
                 update_time = df['event_date'].max().strftime('%Y-%m-%d %H:%M')
                 return df, update_time
     except Exception as e:
-        st.warning(f"Database unavailable or empty, falling back to local files: {e}")
+        # Silently fallback to keep the UI clean, or use guidance_box for critical errors
+        pass
 
     # 2. Fallback: Check local directory and notebooks/data
     search_paths = [
@@ -377,22 +390,31 @@ def load_data():
                 df['year_month'] = df['event_date'].dt.strftime('%Y-%m')
                 update_time = df['event_date'].max().strftime('%Y-%m-%d %H:%M')
                 return df, update_time
-        except Exception as e:
-            st.warning(f"KaggleHub Cloud fallback failed: {e}")
+        except Exception:
+            pass
         
     if not files: return None, None
     
-    latest_file = max(files, key=os.path.getmtime)
-    file_mod_time = os.path.getmtime(latest_file)
-    df = pd.read_csv(latest_file)
-    df = df[df['country'] == 'Myanmar']
-    df['event_date'] = pd.to_datetime(df['event_date'])
-    df = df[df['event_date'] >= '2021-02-01']
-    df['year_month'] = df['event_date'].dt.strftime('%Y-%m')
+    # Sort files by modification time, newest first
+    files.sort(key=os.path.getmtime, reverse=True)
     
-    # Format update_time for CSV fallback
-    update_time = pd.to_datetime(file_mod_time, unit='s').strftime('%Y-%m-%d %H:%M')
-    return df, update_time
+    for latest_file in files:
+        try:
+            file_mod_time = os.path.getmtime(latest_file)
+            df = pd.read_csv(latest_file)
+            if 'country' in df.columns:
+                df = df[df['country'] == 'Myanmar']
+                df['event_date'] = pd.to_datetime(df['event_date'])
+                df = df[df['event_date'] >= '2021-02-01']
+                df['year_month'] = df['event_date'].dt.strftime('%Y-%m')
+                
+                # Format update_time for CSV fallback
+                update_time = pd.to_datetime(file_mod_time, unit='s').strftime('%Y-%m-%d %H:%M')
+                return df, update_time
+        except Exception as e:
+            continue
+
+    return None, None
 
 df_raw, update_time = load_data()
 
@@ -414,15 +436,15 @@ if df_raw is None:
 else:
     # Central Color Map for all Actor Visualizations
     node_color_map = {
-        "State Forces": "#ef4444", 
-        "Pro-Junta Militia": "#fca5a5", # Lighter red
-        "Resistance": "#3b82f6", 
-        "EAOs": "#10b981", 
-        "Civilians": "#94a3b8", 
-        "Protesters": "#f59e0b", 
-        "Rioters": "#d97706", # Darker orange
-        "Unidentified": "#1e293b", # Very dark
-        "Other Groups": "#475569"
+        "State Forces": "#1e293b", # Dark Navy
+        "Pro-Junta Militia": "#991b1b", # Muted Crimson
+        "Resistance": "#10b981", # Emerald
+        "EAOs": "#0369a1", # Deep Sky Blue
+        "Civilians": "#f59e0b", # Amber
+        "Protesters": "#8b5cf6", # Muted Violet
+        "Rioters": "#f97316", # Orange
+        "Unidentified": "#475569", # Muted Grey
+        "Other Groups": "#64748b"
     }
 
     df_raw['actor1_clean'] = df_raw['actor1'].apply(categorize_actor)
@@ -470,22 +492,129 @@ else:
     # --- Metrics ---
     m_col1, m_col2, m_col3, m_col4 = st.columns(4)
     with m_col1: st.markdown(f'<div class="metric-card"><i class="fas fa-bullseye metric-icon"></i><div class="metric-content"><div class="metric-label">{L["events"]}</div><div class="metric-value">{len(df):,}</div></div></div>', unsafe_allow_html=True)
-    with m_col2: st.markdown(f'<div class="metric-card"><i class="fas fa-skull metric-icon" style="color:#ef4444"></i><div class="metric-content"><div class="metric-label">{L["fatalities"]}</div><div class="metric-value">{int(df["fatalities"].sum()):,}</div></div></div>', unsafe_allow_html=True)
+    with m_col2: st.markdown(f'<div class="metric-card"><i class="fas fa-skull metric-icon"></i><div class="metric-content"><div class="metric-label">{L["fatalities"]}</div><div class="metric-value">{int(df["fatalities"].sum()):,}</div></div></div>', unsafe_allow_html=True)
 
-    # SDG 3 Specific Metric
+    # SDG 3 Specific Metric & Alert Status
     health_count = health_hits.sum()
-    with m_col3: st.markdown(f'<div class="metric-card"><i class="fas fa-house-medical metric-icon" style="color:#10b981"></i><div class="metric-content"><div class="metric-label">SDG 3 Incidents</div><div class="metric-value">{health_count}</div></div></div>', unsafe_allow_html=True)
+    alert_status = "CRITICAL" if health_count > 100 else "ELEVATED" if health_count > 20 else "STABLE"
+    
+    with m_col3: st.markdown(f'<div class="metric-card"><i class="fas fa-house-medical metric-icon"></i><div class="metric-content"><div class="metric-label">SDG 3 Incidents</div><div class="metric-value">{health_count}</div></div></div>', unsafe_allow_html=True)
 
-    with m_col4: st.markdown(f'<div class="metric-card"><i class="fas fa-users metric-icon"></i><div class="metric-content"><div class="metric-label">{L["active_groups"]}</div><div class="metric-value">{df["actor1"].nunique():,} Entities</div></div></div>', unsafe_allow_html=True)
+    with m_col4: st.markdown(f'<div class="metric-card"><i class="fas fa-triangle-exclamation metric-icon"></i><div class="metric-content"><div class="metric-label">Alert Status</div><div class="metric-value">{alert_status}</div></div></div>', unsafe_allow_html=True)
 
     # --- Analysis Tabs ---
     st.markdown("<br>", unsafe_allow_html=True)
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(L["tabs"])
+    tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(L["tabs"])
 
     plotly_layout = {"paper_bgcolor": "rgba(0,0,0,0)", "plot_bgcolor": "rgba(0,0,0,0)", "font": {"color": "#94a3b8"}}
 
+    with tab0:
+        st.markdown(f"### {L['tabs'][0]}", unsafe_allow_html=True)
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations'][L['tabs'][0]]}")
+        
+        # --- Statistical Engine Logic ---
+        if not df.empty:
+            # 1. Z-Score Anomaly Detection (Last 90 Days)
+            df_90 = df[df['event_date'] > (df['event_date'].max() - pd.Timedelta(days=90))]
+            weekly_counts = df_90.groupby(['admin1', pd.Grouper(key='event_date', freq='W')]).size().reset_index(name='count')
+            
+            anomalies = []
+            max_z = 0
+            alert_region = None
+            for region in weekly_counts['admin1'].unique():
+                reg_data = weekly_counts[weekly_counts['admin1'] == region]['count']
+                if len(reg_data) > 4:
+                    mean, std = reg_data.mean(), reg_data.std()
+                    current = reg_data.iloc[-1]
+                    z_score = (current - mean) / std if std > 0 else 0
+                    if z_score > 1.5:
+                        anomalies.append({"Region": region, "Z-Score": round(z_score, 2), "Status": "Surge Detected"})
+                        if z_score > max_z:
+                            max_z = z_score
+                            alert_region = region
+
+            # 2. Linear Regression (Next 7 Days Projection)
+            df_trend = df[df['event_date'] > (df['event_date'].max() - pd.Timedelta(days=28))]
+            weekly_fats = df_trend.groupby(pd.Grouper(key='event_date', freq='W'))['fatalities'].sum().reset_index()
+            
+            fig_proj = None
+            trend_status = "Stable"
+            if len(weekly_fats) >= 2:
+                x = np.arange(len(weekly_fats))
+                y = weekly_fats['fatalities'].values
+                slope, intercept = np.polyfit(x, y, 1)
+                projection = max(0, slope * (len(weekly_fats)) + intercept)
+                trend_status = "Escalating" if slope > 0.5 else "De-escalating" if slope < -0.5 else "Stable"
+                
+                # Visual Projection Chart
+                fig_proj = go.Figure()
+                fig_proj.add_trace(go.Scatter(x=weekly_fats['event_date'], y=y, name="Historical fatalities", line=dict(color="#94a3b8")))
+                
+                # Add Projection Dotted Line
+                future_date = weekly_fats['event_date'].iloc[-1] + pd.Timedelta(days=7)
+                fig_proj.add_trace(go.Scatter(
+                    x=[weekly_fats['event_date'].iloc[-1], future_date],
+                    y=[y[-1], projection],
+                    name="7-Day Projection",
+                    line=dict(color="#10b981", dash='dash')
+                ))
+                fig_proj.update_layout(plotly_layout, title="Fatality Trajectory & Risk Projection")
+            
+            # 3. Risk Matrix (Frequency vs. Lethality)
+            risk_df = df.groupby('admin1').agg({'event_id_cnty': 'count','fatalities': 'sum'}).rename(columns={'event_id_cnty': 'Frequency'})
+            risk_df['Lethality'] = (risk_df['fatalities'] / risk_df['Frequency']).round(2)
+            fig_matrix = px.scatter(risk_df.reset_index(), x="Frequency", y="Lethality", text="admin1", size="fatalities", color="Lethality", color_continuous_scale="Reds")
+            fig_matrix.update_traces(textposition='top center')
+            fig_matrix.add_hline(y=risk_df['Lethality'].mean(), line_dash="dash", annotation_text="Baseline Lethality")
+            fig_matrix.update_layout(plotly_layout, title="Regional Risk Matrix (SDG 3.D Early Warning)")
+
+            # --- SITREP Summary ---
+            st.markdown(f"""
+            <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                <h5 style="margin-top:0; color:#10b981; font-weight:800; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em;">Automated Intelligence Summary (SDG 3.D)</h5>
+                <p style="font-size:0.9rem; margin-bottom:0;">
+                    The current national fatality trajectory is <b>{trend_status.lower()}</b>. 
+                    {f"A critical kinetic anomaly has been detected in <b>{alert_region}</b> (Z-Score: {max_z:.2f}), signaling an elevated risk to public health access and humanitarian stability in the coming week." if alert_region else "No statistical surges detected above the 90-day baseline."}
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # --- UI Layout ---
+            col_a1, col_a2 = st.columns([1, 1.5])
+            with col_a1:
+                st.markdown("#### High-Risk Anomalies")
+                if anomalies:
+                    st.table(pd.DataFrame(anomalies))
+                else:
+                    st.success("No critical kinetic anomalies detected in the last 7 days.")
+                
+                if alert_region:
+                    st.markdown(f"#### Township Drill-Down: {alert_region}")
+                    t_df = df[df['admin1'] == alert_region].groupby('admin2').size().reset_index(name='events').sort_values('events', ascending=False).head(5)
+                    st.caption("Top 5 Townships with highest event volume in the anomaly region.")
+                    st.dataframe(t_df, hide_index=True, use_container_width=True)
+
+                st.markdown("---")
+                st.markdown("#### Early Warning Methodology")
+                st.caption("""
+                - **Z-Score:** Flags regions where violence has surged > 1.5 standard deviations above their 90-day mean.
+                - **Projection:** Uses least-squares regression on the last 4 weeks of fatalities to model momentum.
+                - **Risk Matrix:** Quadrant analysis identifying high-frequency/high-lethality 'Red Zones'.
+                """)
+
+            with col_a2:
+                if fig_proj:
+                    st.plotly_chart(fig_proj, use_container_width=True)
+                else:
+                    guidance_box("Insufficient temporal data for 7-day projection.", icon="exclamation-triangle")
+
+            st.markdown("---")
+            st.plotly_chart(fig_matrix, use_container_width=True)
+        else:
+            guidance_box("Insufficient data for statistical projection.", icon="exclamation-triangle")
+
     with tab1:
-        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['GEOSPATIAL']}")
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['GEOSPATIAL']}")
 
         # --- Geospatial Interpretation Guide ---
         with st.expander(L["geo_guide"]["title"]):
@@ -559,7 +688,7 @@ else:
             st.plotly_chart(fig_anim, use_container_width=True)
 
     with tab2:
-        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['TEMPORAL']}")
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['TEMPORAL']}")
 
         # --- Temporal Interpretation Guide ---
         with st.expander(L["temp_guide"]["title"]):
@@ -615,11 +744,11 @@ else:
             st.plotly_chart(fig_kw, use_container_width=True)
 
     with tab3:
-        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['ACTORS']}")
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['ACTORS']}")
         c1, c2 = st.columns(2)
         with c1:
             st.caption(L["actor_impact"])
-            st.info("Impact is calculated as the sum of fatalities in all events where the category participated (either as Actor 1 or Actor 2).")
+            guidance_box("Impact is calculated as the sum of fatalities in all events where the category participated.")
             
             # Combine impacts for both Actor 1 and Actor 2 to be consistent
             a1_impact = df.groupby('actor1_clean')['fatalities'].sum().reset_index().rename(columns={'actor1_clean': 'actor'})
@@ -648,7 +777,7 @@ else:
             st.plotly_chart(fig_pie, use_container_width=True)
 
         st.markdown("---")
-        st.info(f"**{selected_lang} Guidance:** Use the dropdown to spotlight an actor. Edge thickness is weighted by total fatalities in those interactions.")
+        guidance_box(f"**{selected_lang} Guidance:** Use the dropdown to spotlight an actor. Edge thickness is weighted by total fatalities.")
         st.caption(L["actor_net"])
         
         # --- Actor Network Enhancements ---
@@ -744,10 +873,10 @@ else:
                                                  plot_bgcolor='rgba(0,0,0,0)'))
             st.plotly_chart(fig_net, use_container_width=True)
         else:
-            st.info("Insufficient interaction data for network mapping.")
+            guidance_box("Insufficient interaction data for network mapping.", icon="exclamation-triangle")
 
     with tab4:
-        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['STABILITY']}")
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['STABILITY']}")
         st.subheader(L["stab_title"])
         st.markdown(L["stab_desc"])
 
@@ -770,8 +899,18 @@ else:
         st.plotly_chart(fig_stab, use_container_width=True)
 
     with tab5:
-        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['SDG 3: HEALTH IMPACT']}")
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['SDG 3: HEALTH IMPACT']}")
         st.subheader(L["health_title"])
+        
+        # --- UN Target Alignment Badges ---
+        st.markdown("""
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.2);">TARGET 3.D: EARLY WARNING</div>
+            <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.2);">TARGET 3.8: HEALTH ACCESS</div>
+            <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(59, 130, 246, 0.2);">SDG 16: PEACE & JUSTICE</div>
+        </div>
+        """, unsafe_allow_html=True)
+
         st.markdown(L["health_desc"])
 
         health_df = df[health_hits].copy()
@@ -832,24 +971,6 @@ else:
                 st.plotly_chart(fig_h_geo, use_container_width=True)
             
             with h_col2:
-                st.caption("Top Affected Regions (Medical Infrastructure)")
-                h_stats = health_df.groupby('admin1').size().reset_index(name='count').sort_values('count', ascending=False)
-                fig_h_bar = px.bar(h_stats, x='count', y='admin1', orientation='h', color='count', color_continuous_scale="Viridis")
-                fig_h_bar.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, showlegend=False)
-                st.plotly_chart(fig_h_bar, use_container_width=True)
-
-            st.markdown("---")
-            
-            # --- Health Vulnerability Trend & Scorecard ---
-            v_col1, v_col2 = st.columns([1, 1])
-            with v_col1:
-                st.caption("Temporal Trend: Health-Impacting Incidents")
-                h_trend = health_df.set_index('event_date').resample('M').size().reset_index(name='count')
-                fig_h_trend = px.area(h_trend, x='event_date', y='count', color_discrete_sequence=['#10b981'])
-                fig_h_trend.update_layout(plotly_layout, xaxis_title="", yaxis_title="Events / Month")
-                st.plotly_chart(fig_h_trend, use_container_width=True)
-            
-            with v_col2:
                 st.caption("Regional Health Vulnerability Scorecard")
                 # Score = (Health Incidents * 0.7) + (Fatalities * 0.3)
                 v_score = health_df.groupby('admin1').agg({'event_id_cnty': 'count', 'fatalities': 'sum'}).rename(columns={'event_id_cnty': 'health_events'})
@@ -858,6 +979,23 @@ else:
                 st.dataframe(v_score, use_container_width=True)
 
             st.markdown("---")
+            
+            # --- Health Narrative Keywords & Temporal ---
+            h_kw_col1, h_kw_col2 = st.columns([1, 1])
+            with h_kw_col1:
+                st.caption("Health-Specific Narrative Keywords")
+                h_kw_df = extract_keywords(health_df['notes'], top_n=10)
+                if not h_kw_df.empty:
+                    fig_h_kw = px.bar(h_kw_df, x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Viridis")
+                    fig_h_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=350, showlegend=False)
+                    st.plotly_chart(fig_h_kw, use_container_width=True)
+            
+            with h_kw_col2:
+                st.caption("Temporal Trend: Health-Impacting Incidents")
+                h_trend = health_df.set_index('event_date').resample('M').size().reset_index(name='count')
+                fig_h_trend = px.area(h_trend, x='event_date', y='count', color_discrete_sequence=['#10b981'])
+                fig_h_trend.update_layout(plotly_layout, xaxis_title="", yaxis_title="Events / Month", height=350)
+                st.plotly_chart(fig_h_trend, use_container_width=True)
             
             # --- Humanitarian Spotlight Explorer ---
             st.markdown("### <i class='fas fa-magnifying-glass-location' style='color:#10b981'></i> HUMANITARIAN SPOTLIGHT EXPLORER", unsafe_allow_html=True)
@@ -904,10 +1042,10 @@ else:
             with st.expander("View Full Filtered Health Records (Tabular)"):
                 st.dataframe(health_df[['event_date', 'location', 'notes']].sort_values('event_date', ascending=False), use_container_width=True)
         else:
-            st.info("No medical-impact incidents detected in current filtered data.")
+            guidance_box("No medical-impact incidents detected in current filtered data.")
 
     with tab6:
-        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['METHODOLOGY']}")
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['METHODOLOGY']}")
 
         # --- Methodology Interpretation Guide ---
         with st.expander(L["method_guide"]["title"]):
@@ -971,7 +1109,7 @@ else:
         """)
 
     with tab7:
-        st.info(f"**{selected_lang} Guidance:** {L['tab_explanations']['POLICY']}")
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['POLICY']}")
 
         # --- Policy Interpretation Guide ---
         with st.expander(L["policy_guide"]["title"]):
@@ -997,5 +1135,11 @@ else:
         - **Data Integrity:** While we employ rigorous Big Data engineering techniques, the authors make no guarantees regarding the absolute accuracy or completeness of the source material.
         - **Usage Risk:** No party involved in the development of this observatory shall be held liable for any damages resulting from the use or interpretation of these visualizations.
         """)
+
+    with tab8:
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['RECORDS']}")
+        st.subheader(L["records_title"])
+        st.markdown(L["records_desc"])
+        st.dataframe(df.sort_values('event_date', ascending=False), use_container_width=True)
 
 

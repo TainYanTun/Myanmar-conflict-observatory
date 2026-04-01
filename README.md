@@ -10,6 +10,68 @@ The core dataset is sourced from ACLED (Armed Conflict Location & Event Data Pro
 
 The goal is to provide researchers, journalists, and analysts with a clear picture of conflict trends, geographical hotspots, and actor dynamics, updated through a robust technical framework.
 
+## System Architecture
+
+The Myanmar Conflict Observatory is built on a robust, multi-layered data pipeline designed for high availability and forensic accuracy.
+
+```mermaid
+graph TD
+    subgraph SDG_2030_Goal ["0. STRATEGIC ALIGNMENT (UN SDG 2030)"]
+        SDG3["SDG 3.d: Early Warning & Risk Management"]
+        SDG16["SDG 16.1: Reduce All Forms of Violence"]
+    end
+
+    subgraph Data_Ingestion_Layer ["1. DATA INGESTION & RESILIENCE"]
+        DB[(PostgreSQL Live)] -->|Primary| Fallback{Data Sync Engine}
+        Local[Local CSV Data] -->|Secondary| Fallback
+        Kaggle[KaggleHub Cloud] -->|Cloud Fallback| Fallback
+    end
+
+    subgraph Processing_Engine ["2. INTELLIGENCE ENGINE (Python/Pandas)"]
+        Fallback --> Logic[Actor Normalization Protocol]
+        Logic --> NLP[NLP-Lite: SDG 3 Extraction]
+        NLP --> Clean[Verified Forensic Dataset]
+    end
+
+    subgraph Analytical_Models ["3. ANALYTICAL MODELS"]
+        Clean --> Geo[Geospatial Heatmapping]
+        Clean --> Temp[Temporal Trend Analysis]
+        Clean --> Net[Actor Interaction Networks]
+        Clean --> Stat[Z-Score Anomaly Detection]
+    end
+
+    subgraph Presentation_Layer ["4. MISSION UI (Streamlit)"]
+        Geo & Temp & Net & Stat --> Dashboard[Bilingual Dashboard: EN/MM]
+        Dashboard --> CSS[Custom Forensic CSS]
+        Dashboard --> Export[SITREP PDF Export]
+    end
+
+    SDG3 -.-> Stat
+    SDG3 -.-> NLP
+    SDG16 -.-> Geo
+    
+    style Dashboard fill:#10b981,stroke:#059669,stroke-width:4px,color:#fff
+    style DB fill:#1e293b,color:#fff
+    style NLP fill:#3b82f6,color:#fff
+    style SDG_2030_Goal fill:#f8fafc,stroke:#cbd5e1,stroke-dasharray: 5 5
+```
+
+## UN SDG 2030 Strategic Alignment
+
+This project is purpose-built to support the **United Nations 2030 Agenda for Sustainable Development**, specifically focusing on the intersection of conflict and health.
+
+### **Primary Goal: SDG 3 (Good Health & Well-being)**
+*   **Target 3.d:** *Strengthen the capacity of all countries... for early warning, risk reduction and management of national and global health risks.*
+    *   **Our Contribution:** The **Early Warning (SDG 3.D)** tab uses Z-Score anomaly detection to identify surges in violence that threaten medical infrastructure, acting as a real-time risk assessment tool for humanitarian responders.
+*   **Target 3.8:** *Achieve universal health coverage... access to quality essential health-care services.*
+    *   **Our Contribution:** By mapping conflict "Hotspots" against medical infrastructure narratives, we identify regions where health coverage is being systemically disrupted by kinetic engagements.
+
+### **Secondary Goal: SDG 16 (Peace, Justice & Strong Institutions)**
+*   **Target 16.1:** *Significantly reduce all forms of violence and related death rates everywhere.*
+    *   **Our Contribution:** Through the **Actor Interaction Network**, we provide a transparent, data-driven record of violence, supporting the "Peace & Justice" mandate by documenting the human cost of conflict with forensic clarity.
+
+---
+
 ### Project Status & Data Infrastructure
 
      Start Date: February 1, 2021 (Coup d'état).

@@ -26,20 +26,21 @@
 
 .metric-card:hover {
     transform: translateY(-4px);
-    border-color: rgba(239, 68, 68, 0.4);
+    border-color: rgba(16, 185, 129, 0.4);
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
     background: rgba(128, 128, 128, 0.08);
 }
 
 .metric-icon { 
-    font-size: 2rem; 
-    color: #ef4444; 
-    background: rgba(239, 68, 68, 0.1);
-    padding: 12px;
-    border-radius: 10px;
+    font-size: 1.5rem; 
+    color: #10b981; 
+    background: rgba(16, 185, 129, 0.05);
+    padding: 10px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
+    border: 1px solid rgba(16, 185, 129, 0.1);
 }
 
 .metric-content { 
@@ -100,8 +101,9 @@
 }
 
 .stTabs [aria-selected="true"] { 
-    background-color: #ef4444 !important;
-    color: white !important;
+    background-color: rgba(16, 185, 129, 0.1) !important;
+    color: #10b981 !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
 }
 
 .stTabs [data-baseweb="tab-highlight"] { 

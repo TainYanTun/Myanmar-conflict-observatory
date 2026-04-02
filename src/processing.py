@@ -53,13 +53,65 @@ def categorize_actor(actor_name):
     else:
         return 'Other Groups'
 
+# ==========================================
+# NEW DYNAMIC CLEANING FUNCTIONS
+# ==========================================
+def dynamic_actor2_cleaner(row):
+    """Cleans actor2 field by inferring opponent based on event type if missing."""
+    EVENT_ACTOR_MAP = {
+        'protest': 'Unopposed Protest',
+        'battle': 'Unknown Opponent (Missing Data)',
+        'strategic development': 'Strategic Movement (No Opponent)',
+        'explosion': 'Remote Attack (No Direct Opponent)'
+    }
+    if pd.notna(row['actor2']) and str(row['actor2']).strip() != '':
+        return row['actor2']
+    
+    event = str(row['event_type']).lower()
+    for key, label in EVENT_ACTOR_MAP.items():
+        if key in event:
+            return label
+    return "No Opponent Identified"
+
+def extract_social_features(df):
+    """Extracts social impact features from the tags column."""
+    social_map = {
+        'is_women_targeted': 'women targeted',
+        'women_political_party': 'political party',
+        'women_girls': 'girls',
+        'women_relatives': 'relatives',
+        'is_armed_presence': 'armed presence'
+    }
+    for col, keyword in social_map.items():
+        df[col] = df['tags'].fillna('').str.contains(keyword, case=False, na=False)
+    return df
+
 def clean_conflict_data(df):
     """
     Standard cleaning logic for Myanmar conflict data.
     """
-    df = df[df['country'] == 'Myanmar']
+    import re
+    df = df[df['country'] == 'Myanmar'].copy()
     df['event_date'] = pd.to_datetime(df['event_date'])
     df = df[df['event_date'] >= '2021-02-01']
+    
+    # Fill basic geographic nulls
+    df['admin3'] = df['admin3'].fillna("Unknown Township")
+    df['civilian_targeting'] = df['civilian_targeting'].fillna("Not Targeted")
+    
+    # Actor/Visualization Logic
+    df['actor2_viz'] = df.apply(dynamic_actor2_cleaner, axis=1)
+    df['assoc_actor_1_viz'] = df['assoc_actor_1'].fillna("Sole Actor")
+    df['assoc_actor_2_viz'] = df['assoc_actor_2'].fillna("Sole Actor")
+    df['inter2_viz'] = df['inter2'].fillna("No Interaction/Single Actor")
+    
+    # Actor Categorization
+    df['actor1_clean'] = df['actor1'].apply(categorize_actor)
+    df['actor2_clean'] = df['actor2'].apply(categorize_actor)
+    
+    # Social Features
+    df = extract_social_features(df)
+    
     return df
 
 def extract_keywords(text_series, top_n=20):

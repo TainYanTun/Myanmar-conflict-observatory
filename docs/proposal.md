@@ -165,8 +165,9 @@ The primary dataset is the **ACLED Myanmar dataset**.
 
 **Update Mechanism**
 
-- Semi-automated script for manual upload of ACLED Excel files
-- ETL pipeline updates the database automatically
+- Automated API ingestion via ACLED OAuth2 protocol.
+- Standardized ETL pipeline for real-time data cleaning and normalization.
+- PostgreSQL database integration for optimized spatiotemporal querying.
 
 **Attributes**
 

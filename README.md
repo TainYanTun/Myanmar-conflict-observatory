@@ -76,25 +76,39 @@ This project is purpose-built to support the **United Nations 2030 Agenda for Su
 
      Start Date: February 1, 2021 (Coup d'état).
      End Date: Current Date (Rolling update).
-     Update Mechanism: Automated ETL pipeline via PostgreSQL database ingestion. 
+     Update Mechanism: Automated API ingestion via ACLED OAuth2 and PostgreSQL pipeline. 
      Database: PostgreSQL with SQLAlchemy ORM for scalable and performant data retrieval.
      Architecture: Modularized directory structure (src, docs, notebooks, scripts) for enterprise-grade maintainability.
               
-This project utilizes data from the Armed Conflict Location & Event Data Project (ACLED).
+This project utilizes live data from the Armed Conflict Location & Event Data Project (ACLED) API.
 
-     Provider: ACLED 
-     Location: Myanmar
-     Timeframe: Feb 1, 2021 – Present
-     License: The analysis code in this repository is open source. However, ACLED data is proprietary. Users must register with ACLED to access the raw data files. This repository does not redistribute the raw proprietary data files.
-     
+## Setup & Installation
+
+To run this project locally or in a containerized environment, you must configure your ACLED credentials:
+
+1. **Register with ACLED:** Obtain an account at [acleddata.com](https://acleddata.com/).
+2. **Configure Environment:** Create a `.env` file in the root directory (refer to `.env.example`):
+   ```env
+   ACLED_EMAIL=your_email@example.com
+   ACLED_PASSWORD=your_password
+   DB_URL=postgresql://admin:secure_password@localhost:5432/conflict_db
+   ```
+3. **Automated Data Update:** Run the extraction script to fetch the latest conflict logs:
+   ```bash
+   python update_data.py
+   ```
+4. **Launch Dashboard:**
+   ```bash
+   streamlit run app.py
+   ```
+
 ### Possibilities & Scope
 
-Below are the core analytical components currently implemented or in the advanced roadmap:
+Below are the core analytical components currently implemented:
 
 1. Temporal Analysis
      - Conflict Frequency: Time-series evaluations tracking the number of conflict events per day/week/month.
      - Fatality Trends: Analysis of reported fatalities over time to identify spikes in violence.
-     - Event Typology: Breakdown of event types (e.g., Battles, Violence against civilians, Protests, Riots).
 
 2. Geospatial Analysis
      - Conflict Hotspots: Mapping events to identify high-risk regions at State/Region and Township levels.
@@ -103,18 +117,12 @@ Below are the core analytical components currently implemented or in the advance
 
 3. Actor Dynamics
      - Actor Interaction: Interactive network graphs mapping engagements between State Forces, Resistance (PDFs), and EAOs.
-     - Engagement Composition: Sunburst visualizations of event types and sub-event categories.
+     - Semantic Normalization: Automated clustering of fragmented local groups into high-level taxonomies.
 
 4. SDG 3: Health & Well-being (Hackathon Special)
      - Health Infrastructure Impact: Tracking kinetic incidents specifically affecting hospitals, clinics, and medical staff.
-     - Humanitarian Trend Monitoring: Analyzing narrative event notes to identify regional health-related vulnerabilities.
-
-5. Advanced Insights (Roadmap)
-     The following components are currently being integrated to enhance humanitarian early warning (SDG Target 3.d):
-     - Health Resource Vulnerability Prediction: Using the 'Severity Index' to forecast regions where medical supply chains and staff are most likely to be disrupted based on kinetic event trajectory.
-     - Topic Modeling: Categorical classification of events through latent theme discovery in ACLED narratives.
-     - Named Entity Recognition (NER): Extraction of specific military units and localized militia names from event notes.
-     - Semantic Search: Vector-based search capabilities for qualitative event descriptions.
+     - Social Impact Analysis: NLP extraction of gender-specific targeting (women and girls) and systemic well-being indicators.
+     - Early Warning System: Z-Score anomaly detection for proactive risk management (SDG Target 3.d).
 
 ### Project Organization
 

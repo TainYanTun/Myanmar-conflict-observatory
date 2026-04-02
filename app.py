@@ -100,7 +100,7 @@ LANG_DICT = {
         "latest": "Latest Event",
         "update": "System Update",
         "keywords_title": "Top Narrative Keywords (NLP-lite Extraction)",
-        "tabs": ["EARLY WARNING (SDG 3.D)", "GEOSPATIAL", "TEMPORAL", "ACTORS", "STABILITY", "SDG 3: HEALTH IMPACT", "METHODOLOGY", "POLICY", "RECORDS"],
+        "tabs": ["EARLY WARNING (SDG 3.D)", "GEOSPATIAL", "TEMPORAL", "ACTORS", "STABILITY", "SDG 3: HEALTH IMPACT", "SOCIAL IMPACT", "METHODOLOGY", "POLICY", "RECORDS"],
         "geo_intensity": "Incident Intensity (Density Mapping)",
         "geo_expansion": "Temporal Conflict Expansion (Animation)",
         "temp_freq": "Conflict Frequency and Impact Over Time",
@@ -111,6 +111,8 @@ LANG_DICT = {
         "stab_desc": "The **Severity Index** is the ratio of fatalities to total conflict events. A higher score indicates areas where kinetic engagements are more lethal. Use this to distinguish between high-frequency low-impact areas and high-lethality conflict zones.",
         "health_title": "SDG 3: CONFLICT-INDUCED HEALTH IMPACTS",
         "health_desc": "Incidents impacting medical infrastructure, healthcare staff, and human well-being. This analysis uses an NLP engine to extract healthcare-related narratives (Hospital, Clinic, Medical, etc.) from event notes.",
+        "social_title": "SOCIAL IMPACT & CROWD DYNAMICS",
+        "social_desc": "Analysis of gender-specific targeting, political participation, and crowd sizes extracted from conflict narratives and tags.",
         "records_title": "DATA RECORDS EXPLORER",
         "records_desc": "Filtered incident logs based on current parameters.",
         "tab_explanations": {
@@ -120,6 +122,7 @@ LANG_DICT = {
             "ACTORS": "Identifies the groups involved. The network map visualizes interactions between actors to reveal the underlying power dynamics of the conflict.",
             "STABILITY": "Ranks regions by lethality using the Severity Index (Fatalities ÷ Events). This distinguishes high-frequency areas from high-lethality 'Red Zones'.",
             "SDG 3: HEALTH IMPACT": "Focused specifically on SDG 3. This filters for incidents disrupting hospitals, medical infrastructure, and healthcare personnel.",
+            "SOCIAL IMPACT": "Tracks gender-specific targeting (women and girls) and crowd dynamics in protests and other conflict events.",
             "METHODOLOGY": "Detailed technical explanation of the data pipeline, ETL logic, and analytical models used in this observatory.",
             "POLICY": "The ethical framework and neutral stance governing the use of this conflict data for humanitarian research.",
             "RECORDS": "Direct access to the raw filtered incident logs for manual verification and research."
@@ -195,7 +198,7 @@ LANG_DICT = {
         "latest": "နောက်ဆုံးဖြစ်ရပ်",
         "update": "စနစ်အား အပ်ဒိတ်လုပ်ချိန်",
         "keywords_title": "အဓိက ပါဝင်သော စကားလုံးများ (NLP-lite ခွဲခြမ်းစိတ်ဖြာမှု)",
-        "tabs": ["ကြိုတင်သတိပေးချက် (SDG 3.D)", "ပထဝီဝင်အနေအထား", "အချိန်ကာလ", "ပါဝင်ပတ်သက်သူများ", "တည်ငြိမ်မှု", "ကျန်းမာရေးသက်ရောက်မှု (SDG 3)", "လုပ်ထုံးလုပ်နည်း", "မူဝါဒ", "မှတ်တမ်းများ"],
+        "tabs": ["ကြိုတင်သတိပေးချက် (SDG 3.D)", "ပထဝီဝင်အနေအထား", "အချိန်ကာလ", "ပါဝင်ပတ်သက်သူများ", "တည်ငြိမ်မှု", "ကျန်းမာရေးသက်ရောက်မှု (SDG 3)", "လူမှုဘဝသက်ရောက်မှု", "လုပ်ထုံးလုပ်နည်း", "မူဝါဒ", "မှတ်တမ်းများ"],
         "geo_intensity": "ဖြစ်ရပ်ပြင်းအား (သိပ်သည်းဆပြမြေပုံ)",
         "geo_expansion": "ပဋိပက္ခနယ်မြေကျယ်ပြန့်လာမှု (အချိန်နှင့်အမျှ)",
         "temp_freq": "ပဋိပက္ခအကြိမ်ရေနှင့် သက်ရောက်မှု (အချိန်နှင့်အမျှ)",
@@ -206,6 +209,8 @@ LANG_DICT = {
         "stab_desc": "**ပြင်းထန်မှုညွှန်းကိန်း** သည် သေဆုံးမှုနှင့် ဖြစ်ရပ်အရေအတွက် အချိုးဖြစ်သည်။ ဤညွှန်းကိန်းမြင့်မားခြင်းသည် ထိုဒေသရှိ ပဋိပက္ခများတွင် အသက်အန္တရာယ် ပိုမိုပြင်းထန်ကြောင်း ဖော်ပြသည်။",
         "health_title": "SDG 3: ပဋိပက္ခကြောင့် ကျန်းမာရေးအပေါ်သက်ရောက်မှုများ",
         "health_desc": "ဆေးရုံ၊ ဆေးခန်း၊ ကျန်းမာရေးဝန်ထမ်းများနှင့် လူမှုဘဝတည်ငြိမ်မှုအပေါ် ထိခိုက်စေသော ဖြစ်ရပ်များ။ ဤခွဲခြမ်းစိတ်ဖြာမှုသည် အဖြစ်အပျက်မှတ်တမ်းများမှ ကျန်းမာရေးဆိုင်ရာ အချက်အလက်များကို (NLP) နည်းပညာဖြင့် ထုတ်ယူဖော်ပြခြင်းဖြစ်သည်။",
+        "social_title": "လူမှုဘဝသက်ရောက်မှုနှင့် လူစုလူဝေးလှုပ်ရှားမှုများ",
+        "social_desc": "အမျိုးသမီးများကို ပစ်မှတ်ထားမှု၊ နိုင်ငံရေးတွင် ပါဝင်မှုနှင့် လူစုလူဝေးပမာဏများကို ခွဲခြမ်းစိတ်ဖြာခြင်း။",
         "records_title": "ဒေတာမှတ်တမ်းများ ရှာဖွေခြင်း",
         "records_desc": "ရွေးချယ်ထားသော ကန့်သတ်ချက်များအပေါ် အခြေခံသည့် ဖြစ်ရပ်မှတ်တမ်းများ",
         "tab_explanations": {
@@ -215,6 +220,7 @@ LANG_DICT = {
             "ACTORS": "ပါဝင်ပတ်သက်သူများကို ခွဲခြားပြသသည်။ ကွန်ရက်မြေပုံသည် အဖွဲ့အစည်းများအကြား အပြန်အလှန်ဆက်နွယ်မှုနှင့် အားပြိုင်မှုများကို ဖော်ပြသည်။",
             "STABILITY": "ဒေသအလိုက် အသက်အန္တရာယ်ပြင်းထန်မှုကို တွက်ချက်ပြသသည်။ ၎င်းသည် ဖြစ်ရပ်အရေအတွက်ထက် သေဆုံးမှုနှုန်းမြင့်မားသည့် 'ပြင်းထန်ဇုန်' များကို ခွဲခြားသိမြင်စေသည်။",
             "SDG 3: HEALTH IMPACT": "SDG 3 ကို အဓိကထားသည်။ ဆေးရုံ၊ ဆေးခန်းနှင့် ကျန်းမာရေးဝန်ထမ်းများအပေါ် ထိခိုက်စေသော ဖြစ်ရပ်များကိုသာ သီးသန့်စစ်ထုတ်ပြသသည်။",
+            "လူမှုဘဝသက်ရောက်မှု": "အမျိုးသမီးများနှင့် မိန်းကလေးငယ်များကို ပစ်မှတ်ထားမှုနှင့် ဆန္ဒပြပွဲများရှိ လူစုလူဝေးအခြေအနေများကို စောင့်ကြည့်ခြင်း။",
             "METHODOLOGY": "ဤလေ့လာမှုတွင် အသုံးပြုထားသော ဒေတာနည်းပညာ၊ ETL လုပ်ငန်းစဉ်နှင့် ခွဲခြမ်းစိတ်ဖြာမှုပုံစံများကို နည်းပညာပိုင်းအရ ရှင်းလင်းချက်။",
             "POLICY": "လူသားချင်းစာနာထောက်ထားမှုဆိုင်ရာ သုတေသနအတွက် ဤပဋိပက္ခဒေတာကို အသုံးပြုရာတွင် လိုက်နာရမည့် ကျင့်ဝတ်မူဘောင်နှင့် ကြားနေရပ်တည်ချက်။",
             "RECORDS": "စစ်ထုတ်ထားသော ဖြစ်ရပ်မှတ်တမ်းများကို တိုက်ရိုက်ကြည့်ရှု စစ်ဆေးနိုင်ခြင်း။"
@@ -504,7 +510,7 @@ else:
 
     # --- Analysis Tabs ---
     st.markdown("<br>", unsafe_allow_html=True)
-    tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(L["tabs"])
+    tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs(L["tabs"])
 
     plotly_layout = {"paper_bgcolor": "rgba(0,0,0,0)", "plot_bgcolor": "rgba(0,0,0,0)", "font": {"color": "#94a3b8"}}
 
@@ -1045,6 +1051,41 @@ else:
             guidance_box("No medical-impact incidents detected in current filtered data.")
 
     with tab6:
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['SOCIAL IMPACT']}")
+        st.subheader(L["social_title"])
+        st.markdown(L["social_desc"])
+
+        # 1. Social Impact Summary Metrics
+        s_col1, s_col2, s_col3 = st.columns(3)
+        with s_col1:
+            women_targeted = df['is_women_targeted'].sum()
+            st.metric("Women Targeted Events", f"{women_targeted:,}")
+        with s_col2:
+            political_party = df['women_political_party'].sum()
+            st.metric("Political Party Targets", f"{political_party:,}")
+        with s_col3:
+            armed_presence = df['is_armed_presence'].sum()
+            st.metric("Armed Presence Reported", f"{armed_presence:,}")
+
+        st.markdown("---")
+
+        # 2. Social Features Bar Chart
+        st.caption("Social Vulnerability Indicators (NLP Extracted)")
+        social_stats = pd.DataFrame({
+            'Category': ['Women Targeted', 'Girls', 'Relatives', 'Political Party'],
+            'Count': [
+                df['is_women_targeted'].sum(),
+                df['women_girls'].sum(),
+                df['women_relatives'].sum(),
+                df['women_political_party'].sum()
+            ]
+        }).sort_values('Count', ascending=True)
+        
+        fig_social = px.bar(social_stats, x='Count', y='Category', orientation='h', color='Count', color_continuous_scale="Purples")
+        fig_social.update_layout(plotly_layout, showlegend=False)
+        st.plotly_chart(fig_social, use_container_width=True)
+
+    with tab7:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['METHODOLOGY']}")
 
         # --- Methodology Interpretation Guide ---
@@ -1108,7 +1149,7 @@ else:
         - **Severity Index Nuance:** The Severity Index is sensitive to low event counts. A region with one event and five fatalities will rank higher than a region with 20 events and nine fatalities. It is a measure of **lethality, not necessarily overall stability.**
         """)
 
-    with tab7:
+    with tab8:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['POLICY']}")
 
         # --- Policy Interpretation Guide ---
@@ -1136,7 +1177,7 @@ else:
         - **Usage Risk:** No party involved in the development of this observatory shall be held liable for any damages resulting from the use or interpretation of these visualizations.
         """)
 
-    with tab8:
+    with tab9:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['RECORDS']}")
         st.subheader(L["records_title"])
         st.markdown(L["records_desc"])

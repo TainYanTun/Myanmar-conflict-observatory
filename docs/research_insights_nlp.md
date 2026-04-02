@@ -1,21 +1,22 @@
 # NLP Integration Strategy: Myanmar Conflict Observatory
 
 This document outlines the strategic framework for incorporating **Natural Language Processing (NLP)** into the Myanmar Conflict Observatory, as discussed for the project's analytical roadmap.
-
 ## 1. Overview
-The ACLED dataset provides a rich `notes` column containing detailed qualitative descriptions of each conflict event. By applying NLP techniques, we can transform these unstructured narratives into structured insights, revealing patterns that traditional categorical data (e.g., event types) may overlook.
+The ACLED dataset provides a rich `notes` column containing detailed qualitative descriptions of each conflict event. By applying NLP techniques, we have already begun transforming these unstructured narratives into structured insights, revealing patterns that traditional categorical data (e.g., event types) may overlook.
 
 ---
 
-## 2. Core NLP Analytical Pillars
+## 2. Core NLP Analytical Pillars (Implemented & Future)
 
-### 2.1 Topic Modeling (Theme Extraction)
-Discover the latent nature of conflict events beyond high-level categories.
-- **Objective:** Identify recurring themes such as "Airstrikes/Aviation," "Internet Blackouts," "Arrests of Local Leaders," or "Displacement."
-- **Techniques:** Latent Dirichlet Allocation (LDA), BERTopic, or Non-Negative Matrix Factorization (NMF).
-- **Visualization:** Word clouds, topic-over-time trend lines, or thematic bar charts.
+### 2.1 Keyword-Based Feature Extraction (Implemented)
+Specialized regex-based NLP engines to identify specific impacts.
+- **SDG 3 Health Impacts:** Automated extraction of incidents impacting medical infrastructure (hospitals, clinics) and personnel.
+- **Social Vulnerability:** Extraction of indicators such as "Women Targeted," "Girls," and "Political Party" involvement.
+- **Status:** Integrated into `src/processing.py` and visualized in the **SDG 3** and **SOCIAL IMPACT** tabs.
 
-### 2.2 Named Entity Recognition (NER)
+### 2.2 Topic Modeling (Theme Extraction - Roadmap)
+...
+
 Extract specific sub-entities mentioned in event narratives.
 - **Objective:** Identify specific military units (e.g., "Light Infantry Battalion 77"), local PDF group names, specific commanders, or key landmarks.
 - **Techniques:** spaCy (rule-based and statistical), HuggingFace Transformers (BERT-based models).

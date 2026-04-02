@@ -31,6 +31,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy the rest of the application and set ownership to the non-root user
 COPY --chown=appuser:appgroup . .
 
+# Ensure startup script is executable
+RUN chmod +x startup.sh
+
 # Switch to the non-root user
 USER appuser
 
@@ -41,4 +44,4 @@ EXPOSE 8501
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
 # Entrypoint for the application
-CMD ["streamlit", "run", "app.py"]
+CMD ["./startup.sh"]

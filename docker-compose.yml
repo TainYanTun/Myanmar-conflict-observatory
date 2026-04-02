@@ -23,6 +23,8 @@ services:
     restart: always
     environment:
       DB_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      ACLED_EMAIL: ${ACLED_EMAIL}
+      ACLED_PASSWORD: ${ACLED_PASSWORD}
     ports:
       - "8501:8501"
     volumes:

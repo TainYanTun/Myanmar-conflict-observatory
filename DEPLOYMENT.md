@@ -20,15 +20,21 @@ Railway is ideal for this project because it natively supports `docker-compose.y
 4.  **Networking:** Railway automatically handles the internal DNS so `app` can talk to `db`.
 
 ### Option B: Render.com
-Render is excellent for a split-service architecture (Web + Managed DB).
-
-1.  **New PostgreSQL:** Create a "Managed PostgreSQL" instance first. Copy the **Internal Database URL**.
-2.  **New Web Service:** Create a "Web Service" pointing to your repository.
-3.  **Docker Command:** Select "Docker" as the runtime.
-4.  **Environment Variables:**
-    - Set `DB_URL` to the Internal Database URL copied in step 1.
-    - Set `ACLED_EMAIL` and `ACLED_PASSWORD`.
+...
 5.  **Health Check:** Set the health check path to `/_stcore/health`.
+
+### Option C: Streamlit Community Cloud (Fastest & Free)
+Ideal for quick sharing without Docker or complex infrastructure.
+
+1.  **GitHub:** Push your code to a public GitHub repository.
+2.  **Deploy:** Log in to [share.streamlit.io](https://share.streamlit.io/) and select your repo.
+3.  **Secrets:** In the Streamlit Cloud dashboard, go to **Settings > Secrets** and paste your credentials:
+    ```toml
+    ACLED_EMAIL = "your_email@example.com"
+    ACLED_PASSWORD = "your_password"
+    # Optional: DB_URL if using an external DB like Supabase
+    ```
+4.  **Note:** Streamlit Cloud is ephemeral. Any data downloaded by `update_data.py` will be lost when the app restarts. For persistence, use the "Kaggle Fallback" or an external DB.
 
 ---
 

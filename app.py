@@ -19,32 +19,32 @@ load_dotenv()
 DB_URL = os.getenv("DB_URL")
 
 # --- Function Definitions ---
-def display_briefing_gate():
-    """Displays the humanitarian mission briefing overlay."""
-    st.markdown("""
+def display_briefing_gate(L):
+    """Displays the humanitarian mission briefing overlay with localization."""
+    st.markdown(f"""
 <div style="padding: 50px; border-radius: 24px; background: rgba(128, 128, 128, 0.02); border: 1px solid rgba(128, 128, 128, 0.2); backdrop-filter: blur(20px); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); font-family: 'Inter', sans-serif;">
     <div style="text-align: center; margin-bottom: 40px;">
-        <div style="display: inline-block; background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px 16px; border-radius: 99px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 20px; border: 1px solid rgba(10, 185, 129, 0.2);">SDG 3: GOOD HEALTH & WELL-BEING FOCUS</div>
-        <h1 style="font-weight: 900; letter-spacing: -0.05em; margin-bottom: 10px; font-size: 3rem;">HUMANITARIAN MISSION BRIEFING</h1>
-        <p style="opacity: 0.5; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4em; font-size: 0.7rem; margin-bottom: 30px;">Conflict-Induced Health Crisis Monitoring | v1.8 (Hackathon Edition)</p>
+        <div style="display: inline-block; background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px 16px; border-radius: 99px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 20px; border: 1px solid rgba(10, 185, 129, 0.2);">{L['gate_sdg3_focus']}</div>
+        <h1 style="font-weight: 900; letter-spacing: -0.05em; margin-bottom: 10px; font-size: 3rem;">{L['gate_title']}</h1>
+        <p style="opacity: 0.5; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4em; font-size: 0.7rem; margin-bottom: 30px;">{L['gate_sub']}</p>
         <div style="height: 2px; width: 60px; background: #10b981; margin: 0 auto; border-radius: 2px;"></div>
     </div>
     <div style="display: grid; grid-template-columns: 1fr; gap: 30px; margin-bottom: 40px;">
         <!-- Section 1: SDG 3 Alignment -->
         <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 30px; border-radius: 16px;">
             <div style="flex: 1;">
-                <h4 style="margin-top:0; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">SDG 3: THE WELL-BEING IMPERATIVE</h4>
+                <h4 style="margin-top:0; font-weight: 800; font-size: 1.25rem; letter-spacing: -0.02em;">{L['gate_wellbeing']}</h4>
                 <p style="font-size: 0.95rem; line-height: 1.7; opacity: 0.8; margin-bottom: 15px;">
-                    This observatory is specifically designed to support <b>UN SDG Target 3.d</b>: <i>"Strengthen the capacity for early warning, risk reduction and management of national and global health risks."</i>
+                    {L['gate_sdg3_desc']}
                 </p>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; background: rgba(128, 128, 128, 0.05); padding: 15px; border-radius: 10px;">
                     <div>
-                        <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Direct Health Impact</span>
-                        <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">Monitoring fatalities and injuries as primary indicators of regional health crises.</p>
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">{L['gate_direct_impact']}</span>
+                        <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">{L['gate_direct_desc']}</p>
                     </div>
                     <div>
-                        <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">Infrastructure Risk</span>
-                        <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">Mapping conflict hotspots to identify vulnerable clinics and healthcare access points.</p>
+                        <span style="font-size: 0.7rem; font-weight: 800; color: #10b981; text-transform: uppercase;">{L['gate_infra_risk']}</span>
+                        <p style="font-size: 0.8rem; margin: 5px 0 0 0; opacity: 0.7;">{L['gate_infra_desc']}</p>
                     </div>
                 </div>
             </div>
@@ -53,23 +53,23 @@ def display_briefing_gate():
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
             <div style="background: rgba(128, 128, 128, 0.03); padding: 25px; border-radius: 16px; border: 1px solid rgba(128, 128, 128, 0.1);">
                 <i class="fas fa-microscope" style="opacity: 0.5; font-size: 1.2rem; margin-bottom: 15px;"></i>
-                <h5 style="margin-top: 0; font-weight: 800; font-size: 1rem;">VERIFIED FLOOR PROTOCOL</h5>
-                <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 0;">We utilize a forensic verification threshold, recording only corroborated data to ensure humanitarian response is based on accurate, confirmed insights.</p>
+                <h5 style="margin-top: 0; font-weight: 800; font-size: 1rem;">{L['gate_protocol']}</h5>
+                <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 0;">{L['gate_protocol_desc']}</p>
             </div>
             <div style="background: rgba(128, 128, 128, 0.03); padding: 25px; border-radius: 16px; border: 1px solid rgba(128, 128, 128, 0.1);">
                 <i class="fas fa-hand-holding-heart" style="opacity: 0.5; font-size: 1.2rem; margin-bottom: 15px;"></i>
-                <h5 style="margin-top: 0; font-weight: 800; font-size: 1rem;">ETHICAL HUMANITARIANISM</h5>
-                <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 0;">This data is for academic and humanitarian strategic planning. Use for tactical coordination is strictly prohibited to preserve 'Do No Harm' principles.</p>
+                <h5 style="margin-top: 0; font-weight: 800; font-size: 1rem;">{L['gate_ethics']}</h5>
+                <p style="font-size: 0.85rem; opacity: 0.6; line-height: 1.6; margin-bottom: 0;">{L['gate_ethics_desc']}</p>
             </div>
         </div>
         <!-- Section 3: Professional Disclaimer -->
         <div style="padding: 20px 30px; border-radius: 12px; border: 1px dashed rgba(128, 128, 128, 0.3); background: rgba(128, 128, 128, 0.02);">
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
                 <i class="fas fa-circle-info" style="opacity: 0.4; font-size: 0.9rem;"></i>
-                <h5 style="opacity: 0.7; margin: 0; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">Hackathon Submission & Disclaimer</h5>
+                <h5 style="opacity: 0.7; margin: 0; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">{L['gate_disclaimer']}</h5>
             </div>
             <p style="font-size: 0.8rem; opacity: 0.5; line-height: 1.6; margin-bottom: 0;">
-                Developed for the GNEC Hackathon 2026. This observatory transforms raw conflict logs into humanitarian insights to support SDG 3 objectives in crisis-affected regions of Myanmar.
+                {L['gate_disclaimer_desc']}
             </p>
         </div>
     </div>
@@ -113,6 +113,34 @@ LANG_DICT = {
         "health_desc": "Incidents impacting medical infrastructure, healthcare staff, and human well-being. This analysis uses an NLP engine to extract healthcare-related narratives (Hospital, Clinic, Medical, etc.) from event notes.",
         "records_title": "DATA RECORDS EXPLORER",
         "records_desc": "Filtered incident logs based on current parameters.",
+        "gate_title": "HUMANITARIAN MISSION BRIEFING",
+        "gate_sub": "Conflict-Induced Health Crisis Monitoring | v1.8 (Hackathon Edition)",
+        "gate_sdg3_focus": "SDG 3: GOOD HEALTH & WELL-BEING FOCUS",
+        "gate_wellbeing": "SDG 3: THE WELL-BEING IMPERATIVE",
+        "gate_sdg3_desc": "This observatory is specifically designed to support <b>UN SDG Target 3.d</b>: <i>\"Strengthen the capacity for early warning, risk reduction and management of national and global health risks.\"</i>",
+        "gate_direct_impact": "Direct Health Impact",
+        "gate_direct_desc": "Monitoring fatalities and injuries as primary indicators of regional health crises.",
+        "gate_infra_risk": "Infrastructure Risk",
+        "gate_infra_desc": "Mapping conflict hotspots to identify vulnerable clinics and healthcare access points.",
+        "gate_protocol": "VERIFIED FLOOR PROTOCOL",
+        "gate_protocol_desc": "We utilize a forensic verification threshold, recording only corroborated data to ensure humanitarian response is based on accurate, confirmed insights.",
+        "gate_ethics": "ETHICAL HUMANITARIANISM",
+        "gate_ethics_desc": "This data is for academic and humanitarian strategic planning. Use for tactical coordination is strictly prohibited to preserve 'Do No Harm' principles.",
+        "gate_disclaimer": "Hackathon Submission & Disclaimer",
+        "gate_disclaimer_desc": "Developed for the GNEC Hackathon 2026. This observatory transforms raw conflict logs into humanitarian insights to support SDG 3 objectives.",
+        "gate_btn_init": "INITIALIZING SECURE PROTOCOLS",
+        "gate_btn_auth": "AUTHORIZE SYSTEM ACCESS",
+        "data_error_title": "Data Source Missing",
+        "data_error_desc": """
+        The observatory cannot find a valid conflict dataset. Please follow these steps to resolve the issue:
+        
+        1. **Local Deployment:** Ensure a `.csv` data file exists in the `/data` folder.
+        2. **Cloud Deployment (Streamlit Cloud):**
+           - Go to **App Settings > Secrets**.
+           - Add your `DB_URL` for PostgreSQL access.
+           - If using the Kaggle fallback, ensure `KAGGLE_USERNAME` and `KAGGLE_KEY` are set in Secrets.
+        3. **Manual Check:** Run `python update_data.py` locally to fetch the latest data before pushing to GitHub.
+        """,
         "tab_explanations": {
             "EARLY WARNING (SDG 3.D)": "Utilizes statistical Z-Score anomaly detection and linear regression to project conflict trajectory and identify high-risk surges in regional violence.",
             "GEOSPATIAL": "Overlays general conflict density (red) with specific health-impacting incidents (green). The animation shows how conflict has expanded geographically over time.",
@@ -208,6 +236,34 @@ LANG_DICT = {
         "health_desc": "ဆေးရုံ၊ ဆေးခန်း၊ ကျန်းမာရေးဝန်ထမ်းများနှင့် လူမှုဘဝတည်ငြိမ်မှုအပေါ် ထိခိုက်စေသော ဖြစ်ရပ်များ။ ဤခွဲခြမ်းစိတ်ဖြာမှုသည် အဖြစ်အပျက်မှတ်တမ်းများမှ ကျန်းမာရေးဆိုင်ရာ အချက်အလက်များကို (NLP) နည်းပညာဖြင့် ထုတ်ယူဖော်ပြခြင်းဖြစ်သည်။",
         "records_title": "ဒေတာမှတ်တမ်းများ ရှာဖွေခြင်း",
         "records_desc": "ရွေးချယ်ထားသော ကန့်သတ်ချက်များအပေါ် အခြေခံသည့် ဖြစ်ရပ်မှတ်တမ်းများ",
+        "gate_title": "လူသားချင်းစာနာမှုဆိုင်ရာ မစ်ရှင်ရှင်းလင်းချက်",
+        "gate_sub": "ပဋိပက္ခကြောင့် ဖြစ်ပေါ်လာသော ကျန်းမာရေးအကျပ်အတည်းကို စောင့်ကြည့်ခြင်း | v1.8 (Hackathon Edition)",
+        "gate_sdg3_focus": "SDG 3: ကျန်းမာရေးနှင့် သုခကို အဓိကထားခြင်း",
+        "gate_wellbeing": "ကျန်းမာရေးနှင့် သုခဆိုင်ရာ လိုအပ်ချက်",
+        "gate_sdg3_desc": "ဤစောင့်ကြည့်လေ့လာရေးစနစ်သည် <b>ကုလသမဂ္ဂ SDG ရည်မှန်းချက် ၃.ဃ</b> ကို အထောက်အကူပြုရန် ရည်ရွယ်ပါသည် - <i>\"နိုင်ငံအဆင့်နှင့် ကမ္ဘာလုံးဆိုင်ရာ ကျန်းမာရေးအန္တရာယ်များအတွက် ကြိုတင်သတိပေးခြင်း၊ လျှော့ချခြင်းနှင့် စီမံခန့်ခွဲခြင်းဆိုင်ရာ စွမ်းဆောင်ရည်များကို မြှင့်တင်ရန်။\"</i>",
+        "gate_direct_impact": "တိုက်ရိုက်ကျန်းမာရေးသက်ရောက်မှု",
+        "gate_direct_desc": "ဒေသတွင်း ကျန်းမာရေးအကျပ်အတည်း၏ အဓိကညွှန်းကိန်းများဖြစ်သော သေဆုံးမှုနှင့် ဒဏ်ရာရရှိမှုများကို စောင့်ကြည့်ခြင်း။",
+        "gate_infra_risk": "အခြေခံအဆောက်အအုံဆိုင်ရာ အန္တရာယ်",
+        "gate_infra_desc": "ဆေးခန်းများနှင့် ကျန်းမာရေးဝန်ဆောင်မှုများကို ထိခိုက်နိုင်ခြေရှိသော ပဋိပက္ခပြင်းထန်သည့်နေရာများကို မြေပုံထုတ်ခြင်း။",
+        "gate_protocol": "အတည်ပြုပြီးသော အချက်အလက်မူဝါဒ",
+        "gate_protocol_desc": "လူသားချင်းစာနာမှုဆိုင်ရာ အကူအညီများအတွက် တိကျမှန်ကန်သော အချက်အလက်များကိုသာ အသုံးပြုရန် အတည်ပြုပြီးသော အချက်အလက်များကိုသာ မှတ်တမ်းတင်ပါသည်။",
+        "gate_ethics": "လူသားချင်းစာနာမှုဆိုင်ရာ ကျင့်ဝတ်",
+        "gate_ethics_desc": "ဤဒေတာများကို ပညာရပ်ဆိုင်ရာနှင့် လူသားချင်းစာနာမှုဆိုင်ရာ စီမံကိန်းများအတွက်သာ အသုံးပြုရန်ဖြစ်သည်။ စစ်ရေးကိစ္စများအတွက် အသုံးပြုခြင်းကို တားမြစ်သည်။",
+        "gate_disclaimer": "Hackathon တင်သွင်းမှုနှင့် ငြင်းဆိုချက်",
+        "gate_disclaimer_desc": "GNEC Hackathon 2026 အတွက် တီထွင်ထားခြင်း ဖြစ်သည်။ ပဋိပက္ခဖြစ်ပွားရာဒေသများရှိ SDG 3 ရည်မှန်းချက်များကို အထောက်အကူပြုရန်ဖြစ်သည်။",
+        "gate_btn_init": "စနစ်ကို စတင်ပြင်ဆင်နေသည်",
+        "gate_btn_auth": "စနစ်သို့ ဝင်ရောက်ခွင့်ပြုရန်",
+        "data_error_title": "ဒေတာအရင်းအမြစ် ရှာမတွေ့ပါ",
+        "data_error_desc": """
+        စောင့်ကြည့်လေ့လာရေးစနစ်သည် မှန်ကန်သော ဒေတာအုပ်စုကို ရှာမတွေ့ပါ။ ပြဿနာကို ဖြေရှင်းရန် အောက်ပါအချက်များကို စစ်ဆေးပါ-
+        
+        ၁။ **Local Deployment:** `/data` ဖိုဒါထဲတွင် `.csv` ဖိုင်ရှိမရှိ စစ်ဆေးပါ။
+        ၂။ **Cloud Deployment (Streamlit Cloud):** 
+           - **App Settings > Secrets** သို့သွားပါ။
+           - PostgreSQL အတွက် `DB_URL` ကို ထည့်သွင်းပါ။
+           - Kaggle အသုံးပြုမည်ဆိုပါက `KAGGLE_USERNAME` နှင့် `KAGGLE_KEY` တို့ကို ထည့်သွင်းပါ။
+        ၃။ **Manual Check:** GitHub သို့ မတင်မီ `python update_data.py` ကို အသုံးပြု၍ နောက်ဆုံးရဒေတာများကို ရယူပါ။
+        """,
         "tab_explanations": {
             "ကြိုတင်သတိပေးချက် (SDG 3.D)": "ပဋိပက္ခလမ်းကြောင်းများကို ခန့်မှန်းရန်နှင့် ဒေသတွင်းအကြမ်းဖက်မှုများ မြင့်တက်လာနိုင်ခြေကို သိရှိနိုင်ရန် စာရင်းအင်းဆိုင်ရာ (Z-Score) ပုံစံများဖြင့် တွက်ချက်ဖော်ပြသည်။",
             "GEOSPATIAL": "ပဋိပက္ခပြင်းထန်မှု (အနီရောင်) နှင့် ကျန်းမာရေးထိခိုက်မှု (အစိမ်းရောင်) ကို ပေါင်းစပ်ပြသထားသည်။ အချိန်နှင့်အမျှ ပဋိပက္ခကျယ်ပြန့်လာမှုကိုလည်း ကြည့်ရှုနိုင်သည်။",
@@ -307,7 +363,7 @@ if not st.session_state.gate_passed:
     _, col_center, _ = st.columns([1, 10, 1])
     
     with col_center:
-        display_briefing_gate()
+        display_briefing_gate(LANG_DICT["English"])
         
         st.markdown("<br>", unsafe_allow_html=True)
         elapsed = time.time() - st.session_state.start_time

@@ -438,7 +438,18 @@ def calculate_network_layout(adj_df):
     return G, pos
 
 if df_raw is None:
-    st.error("Data source missing. Ensure dataset is in /data or Kaggle input folder.")
+    st.error("### ⚠️ Data Source Missing")
+    st.markdown("""
+    The observatory cannot find a valid conflict dataset. Please follow these steps to resolve the issue:
+    
+    1. **Local Deployment:** Ensure a `.csv` data file exists in the `/data` folder.
+    2. **Cloud Deployment (Streamlit Cloud):**
+       - Go to **App Settings > Secrets**.
+       - Add your `DB_URL` for PostgreSQL access.
+       - If using the Kaggle fallback, ensure `KAGGLE_USERNAME` and `KAGGLE_KEY` are set in Secrets.
+    3. **Manual Check:** Run `python update_data.py` locally to fetch the latest data before pushing to GitHub.
+    """)
+    st.stop()
 else:
     # Central Color Map for all Actor Visualizations
     node_color_map = {

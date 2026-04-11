@@ -22,13 +22,14 @@ graph TD
     end
 
     subgraph Data_Ingestion_Layer ["1. DATA INGESTION & RESILIENCE"]
-        DB[(PostgreSQL Live)] -->|Primary| Fallback{Data Sync Engine}
-        Local[Local CSV Data] -->|Secondary| Fallback
-        Kaggle[KaggleHub Cloud] -->|Cloud Fallback| Fallback
+        GHA[GitHub Actions: Daily Sync] -->|Trigger| Sync[Data Sync Engine]
+        DB[(PostgreSQL Live)] -->|Primary| Sync
+        Local[Local CSV Data] -->|Secondary| Sync
+        Kaggle[KaggleHub Cloud] -->|Cloud Fallback| Sync
     end
 
     subgraph Processing_Engine ["2. INTELLIGENCE ENGINE (Python/Pandas)"]
-        Fallback --> Logic[Actor Normalization Protocol]
+        Sync --> Logic[Actor Normalization Protocol]
         Logic --> NLP[NLP-Lite: SDG 3 Extraction]
         NLP --> Clean[Verified Forensic Dataset]
     end
@@ -43,7 +44,7 @@ graph TD
     subgraph Presentation_Layer ["4. MISSION UI (Streamlit)"]
         Geo & Temp & Net & Stat --> Dashboard[Bilingual Dashboard: EN/MM]
         Dashboard --> CSS[Custom Forensic CSS]
-        Dashboard --> Export[SITREP PDF Export]
+        Dashboard --> Export[High-Res Export Engine: 3x Scale]
     end
 
     SDG3 -.-> Stat
@@ -53,6 +54,7 @@ graph TD
     style Dashboard fill:#10b981,stroke:#059669,stroke-width:4px,color:#fff
     style DB fill:#1e293b,color:#fff
     style NLP fill:#3b82f6,color:#fff
+    style GHA fill:#24292e,color:#fff
     style SDG_2030_Goal fill:#f8fafc,stroke:#cbd5e1,stroke-dasharray: 5 5
 ```
 
@@ -76,8 +78,8 @@ This project is purpose-built to support the **United Nations 2030 Agenda for Su
 
      Start Date: February 1, 2021 (Coup d'état).
      End Date: Current Date (Rolling update).
-     Update Mechanism: Automated API ingestion via ACLED OAuth2 and PostgreSQL pipeline. 
-     Database: PostgreSQL with SQLAlchemy ORM for scalable and performant data retrieval.
+     Update Mechanism: Automated daily API ingestion via GitHub Actions and ACLED OAuth2. 
+     Database: PostgreSQL (Supabase) with SQLAlchemy ORM for scalable retrieval.
      Architecture: Modularized directory structure (src, docs, notebooks, scripts) for enterprise-grade maintainability.
               
 This project utilizes live data from the Armed Conflict Location & Event Data Project (ACLED) API.

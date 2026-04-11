@@ -207,7 +207,8 @@ LANG_DICT = {
         "records_guide": {
             "title": "Data Records Explorer",
             "transparency": "**Verification:** This tab provides direct access to the filtered incident logs, allowing researchers to verify individual events and read the full narrative notes."
-        }
+        },
+        "download_high_res": "Download High-Res PNG"
     },
     "မြန်မာဘာသာ": {
         "title": "မြန်မာနိုင်ငံ ပဋိပက္ခ စောင့်ကြည့်လေ့လာရေးအဖွဲ့",
@@ -330,7 +331,8 @@ LANG_DICT = {
         "records_guide": {
             "title": "ဒေတာမှတ်တမ်းများ ရှာဖွေခြင်း",
             "transparency": "**စစ်ဆေးအတည်ပြုခြင်း-** ဤနေရာတွင် စစ်ထုတ်ထားသော ဖြစ်ရပ်မှတ်တမ်းများကို တိုက်ရိုက်ကြည့်ရှုနိုင်ပြီး အဖြစ်အပျက်တစ်ခုစီ၏ အသေးစိတ်မှတ်တမ်းများကို ဖတ်ရှုစစ်ဆေးနိုင်သည်။"
-        }
+        },
+        "download_high_res": "PNG ပုံကို ကြည်လင်ပြတ်သားစွာ ရယူရန်"
     }
 }
 
@@ -339,6 +341,8 @@ def local_css(file_name):
     if os.path.exists(file_name):
         with open(file_name) as f:
             st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+high_res_config = {'toImageButtonOptions': {'format': 'png', 'scale': 3}}
 
 st.markdown('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">', unsafe_allow_html=True)
 local_css("assets/style.css")
@@ -671,12 +675,12 @@ else:
 
             with col_a2:
                 if fig_proj:
-                    st.plotly_chart(fig_proj, use_container_width=True)
+                    st.plotly_chart(fig_proj, use_container_width=True, config=high_res_config)
                 else:
                     guidance_box("Insufficient temporal data for 7-day projection.", icon="exclamation-triangle")
 
             st.markdown("---")
-            st.plotly_chart(fig_matrix, use_container_width=True)
+            st.plotly_chart(fig_matrix, use_container_width=True, config=high_res_config)
         else:
             guidance_box("Insufficient data for statistical projection.", icon="exclamation-triangle")
 
@@ -725,7 +729,7 @@ else:
                 coloraxis_showscale=False,
                 legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(0,0,0,0.5)")
             )
-            st.plotly_chart(fig_heat, use_container_width=True)
+            st.plotly_chart(fig_heat, use_container_width=True, config=high_res_config)
         with col2:
             st.caption(L["geo_expansion"])
             df_anim = df.sort_values('event_date')
@@ -752,7 +756,7 @@ else:
                 mapbox_style="carto-darkmatter"
             )
             fig_anim.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-            st.plotly_chart(fig_anim, use_container_width=True)
+            st.plotly_chart(fig_anim, use_container_width=True, config=high_res_config)
 
     with tab2:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['TEMPORAL']}")
@@ -800,7 +804,7 @@ else:
             hovermode="x unified",
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
-        st.plotly_chart(fig_line, use_container_width=True)
+        st.plotly_chart(fig_line, use_container_width=True, config=high_res_config)
         
         st.markdown("---")
         st.caption(L["keywords_title"])
@@ -808,7 +812,7 @@ else:
         if not kw_df.empty:
             fig_kw = px.bar(kw_df, x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Greys")
             fig_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=400)
-            st.plotly_chart(fig_kw, use_container_width=True)
+            st.plotly_chart(fig_kw, use_container_width=True, config=high_res_config)
 
     with tab3:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['ACTORS']}")
@@ -836,12 +840,12 @@ else:
                 color_discrete_map=node_color_map
             )
             fig_bar.update_layout(plotly_layout, xaxis_title="Fatalities in involved events", yaxis_title="", showlegend=False)
-            st.plotly_chart(fig_bar, use_container_width=True)
+            st.plotly_chart(fig_bar, use_container_width=True, config=high_res_config)
         with c2:
             st.caption(L["actor_comp"])
             fig_pie = px.sunburst(df, path=['event_type', 'sub_event_type'], values='fatalities', color_discrete_sequence=["#334155", "#475569", "#64748b", "#94a3b8"])
             fig_pie.update_layout(plotly_layout, margin={"r":0,"t":0,"l":0,"b":0})
-            st.plotly_chart(fig_pie, use_container_width=True)
+            st.plotly_chart(fig_pie, use_container_width=True, config=high_res_config)
 
         st.markdown("---")
         guidance_box(f"**{selected_lang} Guidance:** Use the dropdown to spotlight an actor. Edge thickness is weighted by total fatalities.")
@@ -938,7 +942,7 @@ else:
                                                  yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                                                  paper_bgcolor='rgba(0,0,0,0)',
                                                  plot_bgcolor='rgba(0,0,0,0)'))
-            st.plotly_chart(fig_net, use_container_width=True)
+            st.plotly_chart(fig_net, use_container_width=True, config=high_res_config)
         else:
             guidance_box("Insufficient interaction data for network mapping.", icon="exclamation-triangle")
 
@@ -963,7 +967,7 @@ else:
         stability_df = stability_df.sort_values('Severity_Index', ascending=False)
         fig_stab = px.bar(stability_df.reset_index(), x='admin1', y='Severity_Index', color='Severity_Index', color_continuous_scale="Reds")
         fig_stab.update_layout(plotly_layout)
-        st.plotly_chart(fig_stab, use_container_width=True)
+        st.plotly_chart(fig_stab, use_container_width=True, config=high_res_config)
 
     with tab5:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['SDG 3: HEALTH IMPACT']}")
@@ -1035,7 +1039,7 @@ else:
                     mapbox_style="carto-darkmatter"
                 )
                 fig_h_geo.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-                st.plotly_chart(fig_h_geo, use_container_width=True)
+                st.plotly_chart(fig_h_geo, use_container_width=True, config=high_res_config)
             
             with h_col2:
                 st.caption("Regional Health Vulnerability Scorecard")
@@ -1055,14 +1059,14 @@ else:
                 if not h_kw_df.empty:
                     fig_h_kw = px.bar(h_kw_df, x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Viridis")
                     fig_h_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=350, showlegend=False)
-                    st.plotly_chart(fig_h_kw, use_container_width=True)
+                    st.plotly_chart(fig_h_kw, use_container_width=True, config=high_res_config)
             
             with h_kw_col2:
                 st.caption("Temporal Trend: Health-Impacting Incidents")
                 h_trend = health_df.set_index('event_date').resample('ME').size().reset_index(name='count')
                 fig_h_trend = px.area(h_trend, x='event_date', y='count', color_discrete_sequence=['#10b981'])
                 fig_h_trend.update_layout(plotly_layout, xaxis_title="", yaxis_title="Events / Month", height=350)
-                st.plotly_chart(fig_h_trend, use_container_width=True)
+                st.plotly_chart(fig_h_trend, use_container_width=True, config=high_res_config)
             
             # --- Humanitarian Spotlight Explorer ---
             st.markdown("### <i class='fas fa-magnifying-glass-location' style='color:#10b981'></i> HUMANITARIAN SPOTLIGHT EXPLORER", unsafe_allow_html=True)

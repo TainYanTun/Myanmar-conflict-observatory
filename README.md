@@ -12,50 +12,64 @@ The goal is to provide researchers, journalists, and analysts with a clear pictu
 
 ## System Architecture
 
-The Myanmar Conflict Observatory is built on a robust, multi-layered data pipeline designed for high availability and forensic accuracy.
+The Myanmar Conflict Observatory is built on a modular, four-tier data pipeline designed for high availability and forensic accuracy.
 
 ```mermaid
-graph TD
-    subgraph SDG_2030_Goal ["0. STRATEGIC ALIGNMENT (UN SDG 2030)"]
-        SDG3["SDG 3.d: Early Warning & Risk Management"]
-        SDG16["SDG 16.1: Reduce All Forms of Violence"]
+flowchart TD
+    %% 0. STRATEGIC ALIGNMENT
+    subgraph SDG ["0. STRATEGIC ALIGNMENT"]
+        direction TB
+        SDG3(SDG 3.d: Early Warning)
+        SDG16(SDG 16.1: Peace & Justice)
     end
 
-    subgraph Data_Ingestion_Layer ["1. DATA INGESTION & RESILIENCE"]
-        GHA[GitHub Actions: Daily Sync] -->|Trigger| Sync[Data Sync Engine]
-        DB[(PostgreSQL Live)] -->|Primary| Sync
-        Local[Local CSV Data] -->|Secondary| Sync
-        Kaggle[KaggleHub Cloud] -->|Cloud Fallback| Sync
+    %% 1. DATA INGESTION & RESILIENCE
+    subgraph Ingestion ["1. DATA INGESTION & RESILIENCE"]
+        direction TB
+        GHA{{GitHub Actions}} -->|Sync| Sync[Data Sync Engine]
+        DB[(Supabase Cloud)] --- Sync
+        Kaggle[(Kaggle Cloud)] --- Sync
     end
 
-    subgraph Processing_Engine ["2. INTELLIGENCE ENGINE (Python/Pandas)"]
-        Sync --> Logic[Actor Normalization Protocol]
-        Logic --> NLP[NLP-Lite: SDG 3 Extraction]
-        NLP --> Clean[Verified Forensic Dataset]
+    %% 2. INTELLIGENCE ENGINE
+    subgraph Intelligence ["2. INTELLIGENCE ENGINE"]
+        direction TB
+        Sync --> Actor[Actor Normalization]
+        Actor --> NLP[NLP Extraction]
     end
 
-    subgraph Analytical_Models ["3. ANALYTICAL MODELS"]
-        Clean --> Geo[Geospatial Heatmapping]
-        Clean --> Temp[Temporal Trend Analysis]
-        Clean --> Net[Actor Interaction Networks]
-        Clean --> Stat[Z-Score Anomaly Detection]
+    %% 3. ANALYTICAL MODELS
+    subgraph Analytics ["3. ANALYTICAL MODELS"]
+        direction TB
+        NLP --> Geo[Geospatial]
+        NLP --> Temp[Temporal]
+        NLP --> Net[Actor Network]
+        NLP --> Stat[Z-Score]
     end
 
-    subgraph Presentation_Layer ["4. MISSION UI (Streamlit)"]
-        Geo & Temp & Net & Stat --> Dashboard[Bilingual Dashboard: EN/MM]
-        Dashboard --> CSS[Custom Forensic CSS]
-        Dashboard --> Export[High-Res Export Engine: 3x Scale]
+    %% 4. MISSION CONTROL
+    subgraph UI ["4. MISSION CONTROL"]
+        direction TB
+        Geo & Temp & Net & Stat --> Dashboard[Streamlit Dashboard]
     end
 
+    %% SPACERS
+    SDG ~~~ Ingestion
+    Ingestion ~~~ Intelligence
+    Intelligence ~~~ Analytics
+    Analytics ~~~ UI
+
+    %% STRATEGIC MAPPINGS
     SDG3 -.-> Stat
-    SDG3 -.-> NLP
     SDG16 -.-> Geo
-    
-    style Dashboard fill:#10b981,stroke:#059669,stroke-width:4px,color:#fff
-    style DB fill:#1e293b,color:#fff
-    style NLP fill:#3b82f6,color:#fff
-    style GHA fill:#24292e,color:#fff
-    style SDG_2030_Goal fill:#f8fafc,stroke:#cbd5e1,stroke-dasharray: 5 5
+
+    %% CLEAN STYLING
+    style Dashboard fill:#10b981,color:#fff,stroke:#059669
+    style SDG fill:none,stroke:#cbd5e1,stroke-dasharray: 5 5
+    style Ingestion fill:none,stroke:#64748b
+    style Intelligence fill:none,stroke:#f97316
+    style Analytics fill:none,stroke:#22c55e
+    style UI fill:none,stroke:#10b981
 ```
 
 ## UN SDG 2030 Strategic Alignment
@@ -145,9 +159,8 @@ The repository has been restructured to support professional development standar
 ### Disclaimer & Ethics
 
      The data analyzed involves real-world violence and human rights issues. The goal of this project is to provide objective clarity for research purposes, not to sensationalize.
-     ACLED data is derived from multiple reports and represents a "Verified Floor"—a conservative confirmed minimum of fatalities.
+     ACLED data is derived from multiple reports and represents a "Verified Floor"—a conservative estimate of confirmed fatalities.
      Visualizations are only as accurate as the underlying data source. All credit for the raw data belongs to ACLED. 
-     
 
 ### License
 

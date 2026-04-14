@@ -579,111 +579,6 @@ else:
     plotly_layout = {"paper_bgcolor": "rgba(0,0,0,0)", "plot_bgcolor": "rgba(0,0,0,0)", "font": {"color": "#94a3b8"}}
 
     with tab0:
-        st.markdown(f"### {L['tabs'][0]}", unsafe_allow_html=True)
-        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations'][L['tabs'][0]]}")
-        
-        # --- Statistical Engine Logic ---
-        if not df.empty:
-            # 1. Z-Score Anomaly Detection (Last 90 Days)
-            df_90 = df[df['event_date'] > (df['event_date'].max() - pd.Timedelta(days=90))]
-            weekly_counts = df_90.groupby(['admin1', pd.Grouper(key='event_date', freq='W')]).size().reset_index(name='count')
-            
-            anomalies = []
-            max_z = 0
-            alert_region = None
-            for region in weekly_counts['admin1'].unique():
-                reg_data = weekly_counts[weekly_counts['admin1'] == region]['count']
-                if len(reg_data) > 4:
-                    mean, std = reg_data.mean(), reg_data.std()
-                    current = reg_data.iloc[-1]
-                    z_score = (current - mean) / std if std > 0 else 0
-                    if z_score > 1.5:
-                        anomalies.append({"Region": region, "Z-Score": round(z_score, 2), "Status": "Surge Detected"})
-                        if z_score > max_z:
-                            max_z = z_score
-                            alert_region = region
-
-            # 2. Linear Regression (Next 7 Days Projection)
-            df_trend = df[df['event_date'] > (df['event_date'].max() - pd.Timedelta(days=28))]
-            weekly_fats = df_trend.groupby(pd.Grouper(key='event_date', freq='W'))['fatalities'].sum().reset_index()
-            
-            fig_proj = None
-            trend_status = "Stable"
-            if len(weekly_fats) >= 2:
-                x = np.arange(len(weekly_fats))
-                y = weekly_fats['fatalities'].values
-                slope, intercept = np.polyfit(x, y, 1)
-                projection = max(0, slope * (len(weekly_fats)) + intercept)
-                trend_status = "Escalating" if slope > 0.5 else "De-escalating" if slope < -0.5 else "Stable"
-                
-                # Visual Projection Chart
-                fig_proj = go.Figure()
-                fig_proj.add_trace(go.Scatter(x=weekly_fats['event_date'], y=y, name="Historical fatalities", line=dict(color="#94a3b8")))
-                
-                # Add Projection Dotted Line
-                future_date = weekly_fats['event_date'].iloc[-1] + pd.Timedelta(days=7)
-                fig_proj.add_trace(go.Scatter(
-                    x=[weekly_fats['event_date'].iloc[-1], future_date],
-                    y=[y[-1], projection],
-                    name="7-Day Projection",
-                    line=dict(color="#10b981", dash='dash')
-                ))
-                fig_proj.update_layout(plotly_layout, title="Fatality Trajectory & Risk Projection")
-            
-            # 3. Risk Matrix (Frequency vs. Lethality)
-            risk_df = df.groupby('admin1').agg({'event_id_cnty': 'count','fatalities': 'sum'}).rename(columns={'event_id_cnty': 'Frequency'})
-            risk_df['Lethality'] = (risk_df['fatalities'] / risk_df['Frequency']).round(2)
-            fig_matrix = px.scatter(risk_df.reset_index(), x="Frequency", y="Lethality", text="admin1", size="fatalities", color="Lethality", color_continuous_scale="Reds")
-            fig_matrix.update_traces(textposition='top center')
-            fig_matrix.add_hline(y=risk_df['Lethality'].mean(), line_dash="dash", annotation_text="Baseline Lethality")
-            fig_matrix.update_layout(plotly_layout, title="Regional Risk Matrix (SDG 3.D)")
-
-            # --- SITREP Summary ---
-            st.markdown(f"""
-            <div style="background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 12px; margin-bottom: 25px;">
-                <h5 style="margin-top:0; color:#10b981; font-weight:800; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em;">Automated Intelligence Summary (SDG 3.D)</h5>
-                <p style="font-size:0.9rem; margin-bottom:0;">
-                    The current national fatality trajectory is <b>{trend_status.lower()}</b>. 
-                    {f"A critical kinetic anomaly has been detected in <b>{alert_region}</b> (Z-Score: {max_z:.2f}), signaling an elevated risk to public health access and humanitarian stability in the coming week." if alert_region else "No statistical surges detected above the 90-day baseline."}
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-
-            # --- UI Layout ---
-            col_a1, col_a2 = st.columns([1, 1.5])
-            with col_a1:
-                st.markdown("#### High-Risk Anomalies")
-                if anomalies:
-                    st.table(pd.DataFrame(anomalies))
-                else:
-                    st.success("No critical kinetic anomalies detected in the last 7 days.")
-                
-                if alert_region:
-                    st.markdown(f"#### Township Drill-Down: {alert_region}")
-                    t_df = df[df['admin1'] == alert_region].groupby('admin2').size().reset_index(name='events').sort_values('events', ascending=False).head(5)
-                    st.caption("Top 5 Townships with highest event volume in the anomaly region.")
-                    st.dataframe(t_df, hide_index=True, use_container_width=True)
-
-                st.markdown("---")
-                st.markdown("#### Methodology")
-                st.caption("""
-                - **Z-Score:** Flags regions where violence has surged > 1.5 standard deviations above their 90-day mean.
-                - **Projection:** Uses least-squares regression on the last 4 weeks of fatalities to model momentum.
-                - **Risk Matrix:** Quadrant analysis identifying high-frequency/high-lethality 'Red Zones'.
-                """)
-
-            with col_a2:
-                if fig_proj:
-                    st.plotly_chart(fig_proj, use_container_width=True, config=high_res_config)
-                else:
-                    guidance_box("Insufficient temporal data for 7-day projection.", icon="exclamation-triangle")
-
-            st.markdown("---")
-            st.plotly_chart(fig_matrix, use_container_width=True, config=high_res_config)
-        else:
-            guidance_box("Insufficient data for statistical projection.", icon="exclamation-triangle")
-
-    with tab1:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['GEOSPATIAL']}")
 
         # --- Geospatial Interpretation Guide ---
@@ -728,7 +623,7 @@ else:
                 coloraxis_showscale=False,
                 legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(0,0,0,0.5)")
             )
-            st.plotly_chart(fig_heat, use_container_width=True, config=high_res_config)
+            st.plotly_chart(fig_heat, width=1000, config=high_res_config)
         with col2:
             st.caption(L["geo_expansion"])
             df_anim = df.sort_values('event_date')
@@ -755,9 +650,63 @@ else:
                 mapbox_style="carto-darkmatter"
             )
             fig_anim.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-            st.plotly_chart(fig_anim, use_container_width=True, config=high_res_config)
+            st.plotly_chart(fig_anim, width=1000, config=high_res_config)
 
-    with tab2:
+    with tab1:
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['TEMPORAL']}")
+
+        # --- Temporal Interpretation Guide ---
+        with st.expander(L["temp_guide"]["title"]):
+            st.markdown(f"""
+            *   {L["temp_guide"]["frequency"]}
+            *   {L["temp_guide"]["keywords"]}
+            """)
+
+        st.subheader(L["temp_freq"])
+        
+        # Prepare monthly stats
+        monthly_events = df.resample('ME', on='event_date').size().reset_index(name='event_count')
+        monthly_fatalities = df.resample('ME', on='event_date')['fatalities'].sum().reset_index()
+        monthly_combined = pd.merge(monthly_events, monthly_fatalities, on='event_date')
+        
+        fig_line = go.Figure()
+        
+        # Add Events Trace
+        fig_line.add_trace(go.Scatter(
+            x=monthly_combined['event_date'], 
+            y=monthly_combined['event_count'],
+            name="Conflict Incidents",
+            mode='lines',
+            line=dict(color='#94a3b8', width=2),
+            hovertemplate="<b>%{x|%B %Y}</b><br>Incidents: %{y}<extra></extra>"
+        ))
+        
+        # Add Fatalities Trace
+        fig_line.add_trace(go.Scatter(
+            x=monthly_combined['event_date'], 
+            y=monthly_combined['fatalities'],
+            name="Verified Fatalities",
+            mode='lines',
+            line=dict(color='#ef4444', width=2),
+            hovertemplate="<b>%{x|%B %Y}</b><br>Fatalities: %{y}<extra></extra>"
+        ))
+        
+        fig_line.update_layout(
+            plotly_layout, 
+            xaxis_title="", 
+            yaxis_title="Volume",
+            hovermode="x unified",
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
+        )
+        st.plotly_chart(fig_line, width=1000, config=high_res_config)
+        
+        st.markdown("---")
+        st.caption(L["keywords_title"])
+        kw_df = extract_keywords(df['notes'])
+        if not kw_df.empty:
+            fig_kw = px.bar(kw_df, x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Greys")
+            fig_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=400)
+            st.plotly_chart(fig_kw, width=1000, config=high_res_config)
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['TEMPORAL']}")
 
         # --- Temporal Interpretation Guide ---

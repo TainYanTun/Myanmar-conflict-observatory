@@ -707,60 +707,6 @@ else:
             fig_kw = px.bar(kw_df, x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Greys")
             fig_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=400)
             st.plotly_chart(fig_kw, width=1000, config=high_res_config)
-        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['TEMPORAL']}")
-
-        # --- Temporal Interpretation Guide ---
-        with st.expander(L["temp_guide"]["title"]):
-            st.markdown(f"""
-            *   {L["temp_guide"]["frequency"]}
-            *   {L["temp_guide"]["keywords"]}
-            """)
-
-        st.subheader(L["temp_freq"])
-        
-        # Prepare monthly stats
-        monthly_events = df.resample('ME', on='event_date').size().reset_index(name='event_count')
-        monthly_fatalities = df.resample('ME', on='event_date')['fatalities'].sum().reset_index()
-        monthly_combined = pd.merge(monthly_events, monthly_fatalities, on='event_date')
-        
-        fig_line = go.Figure()
-        
-        # Add Events Trace
-        fig_line.add_trace(go.Scatter(
-            x=monthly_combined['event_date'], 
-            y=monthly_combined['event_count'],
-            name="Conflict Incidents",
-            mode='lines',
-            line=dict(color='#94a3b8', width=2),
-            hovertemplate="<b>%{x|%B %Y}</b><br>Incidents: %{y}<extra></extra>"
-        ))
-        
-        # Add Fatalities Trace
-        fig_line.add_trace(go.Scatter(
-            x=monthly_combined['event_date'], 
-            y=monthly_combined['fatalities'],
-            name="Verified Fatalities",
-            mode='lines',
-            line=dict(color='#ef4444', width=2),
-            hovertemplate="<b>%{x|%B %Y}</b><br>Fatalities: %{y}<extra></extra>"
-        ))
-        
-        fig_line.update_layout(
-            plotly_layout, 
-            xaxis_title="", 
-            yaxis_title="Volume",
-            hovermode="x unified",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-        )
-        st.plotly_chart(fig_line, use_container_width=True, config=high_res_config)
-        
-        st.markdown("---")
-        st.caption(L["keywords_title"])
-        kw_df = extract_keywords(df['notes'])
-        if not kw_df.empty:
-            fig_kw = px.bar(kw_df, x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Greys")
-            fig_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=400)
-            st.plotly_chart(fig_kw, use_container_width=True, config=high_res_config)
 
     with tab3:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['ACTORS']}")
@@ -793,7 +739,7 @@ else:
             st.caption(L["actor_comp"])
             fig_pie = px.sunburst(df, path=['event_type', 'sub_event_type'], values='fatalities', color_discrete_sequence=["#334155", "#475569", "#64748b", "#94a3b8"])
             fig_pie.update_layout(plotly_layout, margin={"r":0,"t":0,"l":0,"b":0})
-            st.plotly_chart(fig_pie, use_container_width=True, config=high_res_config)
+            st.plotly_chart(fig_pie, width=1000, config=high_res_config)
 
         st.markdown("---")
         guidance_box(f"**{selected_lang} Guidance:** Use the dropdown to spotlight an actor. Edge thickness is weighted by total fatalities.")
@@ -890,7 +836,7 @@ else:
                                                  yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                                                  paper_bgcolor='rgba(0,0,0,0)',
                                                  plot_bgcolor='rgba(0,0,0,0)'))
-            st.plotly_chart(fig_net, use_container_width=True, config=high_res_config)
+            st.plotly_chart(fig_net, width=1000, config=high_res_config)
         else:
             guidance_box("Insufficient interaction data for network mapping.", icon="exclamation-triangle")
 
@@ -1145,7 +1091,7 @@ else:
         - **Verified Floor:** ACLED data represents a "Verified Floor"—a conservative estimate of confirmed fatalities. In areas with restricted access or communication blackouts, actual figures are likely higher.
         """)
 
-    with tab7:
+    with tab6:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['POLICY']}")
 
         # --- Policy Interpretation Guide ---

@@ -45,28 +45,64 @@ def ingest_data():
     except Exception:
         pass # Table might not exist
 
-    # 3. Robust Ingestion (Staging Approach)
-    # Using a staging table ensures the final rename is atomic and indexes/PK are clean
+    # 3. Robust Ingestion (Upsert Approach)
     print(f"Uploading {len(df)} records to staging...")
     df.to_sql('conflict_events_staging', engine, if_exists='replace', index=False)
     
     with engine.connect() as conn:
-        # Define Schema (Primary Key and Indexes) on staging table
-        conn.execute(text("ALTER TABLE conflict_events_staging ADD PRIMARY KEY (event_id_cnty)"))
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_stg_event_date ON conflict_events_staging (event_date)"))
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_stg_admin1 ON conflict_events_staging (admin1)"))
+        # Ensure target table exists with primary key
+        conn.execute(text("""
+            CREATE TABLE IF NOT EXISTS conflict_events (
+                event_id_cnty TEXT PRIMARY KEY,
+                event_date DATE,
+                admin1 TEXT,
+                event_type TEXT,
+                sub_event_type TEXT,
+                actor1 TEXT,
+                assoc_actor_1 TEXT,
+                inter1 INTEGER,
+                actor2 TEXT,
+                assoc_actor_2 TEXT,
+                inter2 INTEGER,
+                interaction INTEGER,
+                iso INTEGER,
+                region TEXT,
+                country TEXT,
+                admin2 TEXT,
+                admin3 TEXT,
+                location TEXT,
+                latitude DOUBLE PRECISION,
+                longitude DOUBLE PRECISION,
+                geo_precision INTEGER,
+                source TEXT,
+                source_scale TEXT,
+                notes TEXT,
+                fatalities INTEGER,
+                tags TEXT,
+                timestamp TIMESTAMP
+            );
+        """))
         
-        # Atomic Swap: Drop old, rename new
-        conn.execute(text("DROP TABLE IF EXISTS conflict_events"))
-        conn.execute(text("ALTER TABLE conflict_events_staging RENAME TO conflict_events"))
+        # Upsert: Insert new records or update existing ones based on primary key
+        # Dynamically build the column list from the dataframe
+        cols = ", ".join(df.columns)
+        update_cols = ", ".join([f"{col} = EXCLUDED.{col}" for col in df.columns if col != 'event_id_cnty'])
         
-        # Standardize Final Indexes
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_event_date ON conflict_events (event_date)"))
-        conn.execute(text("CREATE INDEX IF NOT EXISTS idx_admin1 ON conflict_events (admin1)"))
+        upsert_query = text(f"""
+            INSERT INTO conflict_events ({cols})
+            SELECT {cols} FROM conflict_events_staging
+            ON CONFLICT (event_id_cnty) 
+            DO UPDATE SET {update_cols};
+            
+            DROP TABLE IF EXISTS conflict_events_staging;
+            CREATE INDEX IF NOT EXISTS idx_event_date ON conflict_events (event_date);
+            CREATE INDEX IF NOT EXISTS idx_admin1 ON conflict_events (admin1);
+        """)
         
+        conn.execute(upsert_query)
         conn.commit()
     
-    print(f"Ingestion successful. 'conflict_events' table optimized with Primary Key (event_id_cnty).")
+    print(f"Ingestion successful. 'conflict_events' updated with upsert logic.")
     return True
 
 if __name__ == "__main__":

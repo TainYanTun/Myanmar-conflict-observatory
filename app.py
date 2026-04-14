@@ -100,7 +100,7 @@ LANG_DICT = {
         "latest": "Latest Event",
         "update": "System Update",
         "keywords_title": "Top Narrative Keywords (NLP-lite Extraction)",
-        "tabs": ["EARLY WARNING (SDG 3.D)", "GEOSPATIAL", "TEMPORAL", "ACTORS", "STABILITY", "SDG 3: HEALTH IMPACT", "METHODOLOGY", "POLICY", "RECORDS"],
+        "tabs": ["GEOSPATIAL", "TEMPORAL", "ACTORS", "STABILITY", "SDG 3: HEALTH IMPACT", "METHODOLOGY", "POLICY", "RECORDS"],
         "geo_intensity": "Incident Intensity (Density Mapping)",
         "geo_expansion": "Temporal Conflict Expansion (Animation)",
         "temp_freq": "Conflict Frequency and Impact Over Time",
@@ -117,7 +117,7 @@ LANG_DICT = {
         "gate_sub": "Conflict-Induced Health Crisis Monitoring | v1.8 (Hackathon Edition)",
         "gate_sdg3_focus": "SDG 3: GOOD HEALTH & WELL-BEING FOCUS",
         "gate_wellbeing": "SDG 3: THE WELL-BEING IMPERATIVE",
-        "gate_sdg3_desc": "This observatory is specifically designed to support <b>UN SDG Target 3.d</b>: <i>\"Strengthen the capacity for early warning, risk reduction and management of national and global health risks.\"</i>",
+        "gate_sdg3_desc": "This observatory is specifically designed to support <b>UN SDG Target 3.d</b>: <i>\"Strengthen the capacity for risk reduction and management of national and global health risks.\"</i>",
         "gate_direct_impact": "Direct Health Impact",
         "gate_direct_desc": "Monitoring fatalities and injuries as primary indicators of regional health crises.",
         "gate_infra_risk": "Infrastructure Risk",
@@ -142,7 +142,6 @@ LANG_DICT = {
         3. **Manual Check:** Run `python update_data.py` locally to fetch the latest data before pushing to GitHub.
         """,
         "tab_explanations": {
-            "EARLY WARNING (SDG 3.D)": "Utilizes statistical Z-Score anomaly detection and linear regression to project conflict trajectory and identify high-risk surges in regional violence.",
             "GEOSPATIAL": "Overlays general conflict density (red) with specific health-impacting incidents (green). The animation shows how conflict has expanded geographically over time.",
             "TEMPORAL": "Tracks the rhythm of conflict. Peaks in the line chart indicate surges in violence. The keyword chart uses NLP to identify common narrative themes.",
             "ACTORS": "Identifies the groups involved. The network map visualizes interactions between actors to reveal the underlying power dynamics of the conflict.",
@@ -637,7 +636,7 @@ else:
             fig_matrix = px.scatter(risk_df.reset_index(), x="Frequency", y="Lethality", text="admin1", size="fatalities", color="Lethality", color_continuous_scale="Reds")
             fig_matrix.update_traces(textposition='top center')
             fig_matrix.add_hline(y=risk_df['Lethality'].mean(), line_dash="dash", annotation_text="Baseline Lethality")
-            fig_matrix.update_layout(plotly_layout, title="Regional Risk Matrix (SDG 3.D Early Warning)")
+            fig_matrix.update_layout(plotly_layout, title="Regional Risk Matrix (SDG 3.D)")
 
             # --- SITREP Summary ---
             st.markdown(f"""
@@ -666,7 +665,7 @@ else:
                     st.dataframe(t_df, hide_index=True, use_container_width=True)
 
                 st.markdown("---")
-                st.markdown("#### Early Warning Methodology")
+                st.markdown("#### Methodology")
                 st.caption("""
                 - **Z-Score:** Flags regions where violence has surged > 1.5 standard deviations above their 90-day mean.
                 - **Projection:** Uses least-squares regression on the last 4 weeks of fatalities to model momentum.
@@ -976,7 +975,7 @@ else:
         # --- UN Target Alignment Badges ---
         st.markdown("""
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-            <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.2);">TARGET 3.D: EARLY WARNING</div>
+            <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.2);">TARGET 3.D</div>
             <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.2);">TARGET 3.8: HEALTH ACCESS</div>
             <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(59, 130, 246, 0.2);">SDG 16: PEACE & JUSTICE</div>
         </div>
@@ -1168,7 +1167,7 @@ else:
         The dashboard utilizes two primary models for stability assessment:
         - **Intensity Mapping:** Using Gaussian kernels to calculate incident density, highlighting "hotzones" where kinetic engagements are most concentrated.
         - **Temporal Resampling:** Using Month-End (ME) intervals to smooth daily reporting noise and reveal systemic shifts in conflict velocity and lethality trends.
-        - **Anomaly Detection:** Employs Z-Score statistical analysis to identify regional surges in violence that deviate from historical averages, serving as an early warning system for humanitarian responders.
+        - **Anomaly Detection:** Employs Z-Score statistical analysis to identify regional surges in violence that deviate from historical averages, providing insights for humanitarian responders.
 
         ### 4. Analytical Limitations & Considerations
         This framework is designed for strategic humanitarian analysis, and users should be aware of the following data nuances:

@@ -697,7 +697,7 @@ else:
             hovermode="x unified",
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
-        st.plotly_chart(fig_line, width=1000, config=high_res_config)
+        st.plotly_chart(fig_line, use_container_width=True, config=high_res_config)
         
         st.markdown("---")
         st.caption(L["keywords_title"])
@@ -705,7 +705,7 @@ else:
         if not kw_df.empty:
             fig_kw = px.bar(kw_df, x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Greys")
             fig_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=400)
-            st.plotly_chart(fig_kw, width=1000, config=high_res_config)
+            st.plotly_chart(fig_kw, use_container_width=True, config=high_res_config)
 
     with tab2:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['ACTORS']}")
@@ -875,11 +875,11 @@ else:
         fig_matrix.update_traces(textposition='top center')
         fig_matrix.add_hline(y=risk_matrix['Lethality'].mean(), line_dash="dash", annotation_text="Baseline Lethality")
         fig_matrix.update_layout(plotly_layout)
-        st.plotly_chart(fig_matrix, width=1000, config=high_res_config)
+        st.plotly_chart(fig_matrix, use_container_width=True, config=high_res_config)
 
         fig_stab = px.bar(stability_df.reset_index(), x='admin1', y='Severity_Index', color='Severity_Index', color_continuous_scale="Reds")
         fig_stab.update_layout(plotly_layout)
-        st.plotly_chart(fig_stab, width=1000, config=high_res_config)
+        st.plotly_chart(fig_stab, use_container_width=True, config=high_res_config)
 
     with tab4:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['SDG 3: HEALTH IMPACT']}")

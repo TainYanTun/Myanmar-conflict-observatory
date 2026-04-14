@@ -913,9 +913,28 @@ else:
         stability_df = df.groupby('admin1').agg({'event_id_cnty': 'count','fatalities': 'sum'}).rename(columns={'event_id_cnty': 'event_count'})
         stability_df['Severity_Index'] = (stability_df['fatalities'] / stability_df['event_count']).round(2)
         stability_df = stability_df.sort_values('Severity_Index', ascending=False)
+        
+        # --- Regional Risk Matrix ---
+        st.subheader("Regional Risk Matrix (Frequency vs. Lethality)")
+        risk_matrix = df.groupby('admin1').agg({'event_id_cnty': 'count','fatalities': 'sum'}).rename(columns={'event_id_cnty': 'Frequency'})
+        risk_matrix['Lethality'] = (risk_matrix['fatalities'] / risk_matrix['Frequency']).round(2)
+        fig_matrix = px.scatter(
+            risk_matrix.reset_index(), 
+            x="Frequency", 
+            y="Lethality", 
+            text="admin1", 
+            size="fatalities", 
+            color="Lethality", 
+            color_continuous_scale="Reds"
+        )
+        fig_matrix.update_traces(textposition='top center')
+        fig_matrix.add_hline(y=risk_matrix['Lethality'].mean(), line_dash="dash", annotation_text="Baseline Lethality")
+        fig_matrix.update_layout(plotly_layout)
+        st.plotly_chart(fig_matrix, width=1000, config=high_res_config)
+
         fig_stab = px.bar(stability_df.reset_index(), x='admin1', y='Severity_Index', color='Severity_Index', color_continuous_scale="Reds")
         fig_stab.update_layout(plotly_layout)
-        st.plotly_chart(fig_stab, use_container_width=True, config=high_res_config)
+        st.plotly_chart(fig_stab, width=1000, config=high_res_config)
 
     with tab5:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['SDG 3: HEALTH IMPACT']}")

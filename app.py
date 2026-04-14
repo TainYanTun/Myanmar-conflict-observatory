@@ -574,7 +574,7 @@ else:
 
     # --- Analysis Tabs ---
     st.markdown("<br>", unsafe_allow_html=True)
-    tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs(L["tabs"])
+    tab0, tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(L["tabs"])
 
     plotly_layout = {"paper_bgcolor": "rgba(0,0,0,0)", "plot_bgcolor": "rgba(0,0,0,0)", "font": {"color": "#94a3b8"}}
 
@@ -1205,10 +1205,10 @@ else:
         - **Usage Risk:** No party involved in the development of this observatory shall be held liable for any damages resulting from the use or interpretation of these visualizations.
         """)
 
-    with tab8:
+    with tab7:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['RECORDS']}")
         st.subheader(L["records_title"])
         st.markdown(L["records_desc"])
-        st.dataframe(df.sort_values('event_date', ascending=False), use_container_width=True)
+        st.dataframe(df.sort_values('event_date', ascending=False), width=1000)
 
 

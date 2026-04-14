@@ -100,14 +100,14 @@ LANG_DICT = {
         "latest": "Latest Event",
         "update": "System Update",
         "keywords_title": "Top Narrative Keywords (NLP-lite Extraction)",
-        "tabs": ["GEOSPATIAL", "TEMPORAL", "ACTORS", "STABILITY", "SDG 3: HEALTH IMPACT", "METHODOLOGY", "POLICY", "RECORDS"],
+        "tabs": ["GEOSPATIAL", "TEMPORAL", "ACTORS", "REGIONAL MATRIX", "SDG 3: HEALTH IMPACT", "METHODOLOGY", "POLICY", "RECORDS"],
         "geo_intensity": "Incident Intensity (Density Mapping)",
         "geo_expansion": "Temporal Conflict Expansion (Animation)",
         "temp_freq": "Conflict Frequency and Impact Over Time",
         "actor_impact": "Fatality Impact by Actor Category",
         "actor_comp": "Engagement Composition (Event Types)",
         "actor_net": "ACTOR INTERACTION NETWORK (Conflict Dynamics)",
-        "stab_title": "REGIONAL SEVERITY ASSESSMENT",
+        "stab_title": "REGIONAL RISK MATRIX",
         "stab_desc": "The **Severity Index** is the ratio of fatalities to total conflict events. A higher score indicates areas where kinetic engagements are more lethal. Use this to distinguish between high-frequency low-impact areas and high-lethality conflict zones.",
         "health_title": "SDG 3: CONFLICT-INDUCED HEALTH IMPACTS",
         "health_desc": "Incidents impacting medical infrastructure, healthcare staff, and human well-being. This analysis uses an NLP engine to extract healthcare-related narratives (Hospital, Clinic, Medical, etc.) from event notes.",
@@ -145,7 +145,7 @@ LANG_DICT = {
             "GEOSPATIAL": "Overlays general conflict density (red) with specific health-impacting incidents (green). The animation shows how conflict has expanded geographically over time.",
             "TEMPORAL": "Tracks the rhythm of conflict. Peaks in the line chart indicate surges in violence. The keyword chart uses NLP to identify common narrative themes.",
             "ACTORS": "Identifies the groups involved. The network map visualizes interactions between actors to reveal the underlying power dynamics of the conflict.",
-            "STABILITY": "Ranks regions by lethality using the Severity Index (Fatalities ÷ Events). This distinguishes high-frequency areas from high-lethality 'Red Zones'.",
+            "REGIONAL MATRIX": "Ranks regions by lethality using the Severity Index (Fatalities ÷ Events). This distinguishes high-frequency areas from high-lethality 'Red Zones'.",
             "SDG 3: HEALTH IMPACT": "Focused specifically on SDG 3. This filters for incidents disrupting hospitals, medical infrastructure, and healthcare personnel.",
             "METHODOLOGY": "Detailed technical explanation of the data pipeline, ETL logic, and analytical models used in this observatory.",
             "POLICY": "The ethical framework and neutral stance governing the use of this conflict data for humanitarian research.",
@@ -223,14 +223,14 @@ LANG_DICT = {
         "latest": "နောက်ဆုံးဖြစ်ရပ်",
         "update": "စနစ်အား အပ်ဒိတ်လုပ်ချိန်",
         "keywords_title": "အဓိက ပါဝင်သော စကားလုံးများ (NLP-lite ခွဲခြမ်းစိတ်ဖြာမှု)",
-        "tabs": ["ကြိုတင်သတိပေးချက် (SDG 3.D)", "ပထဝီဝင်အနေအထား", "အချိန်ကာလ", "ပါဝင်ပတ်သက်သူများ", "တည်ငြိမ်မှု", "ကျန်းမာရေးသက်ရောက်မှု (SDG 3)", "လုပ်ထုံးလုပ်နည်း", "မူဝါဒ", "မှတ်တမ်းများ"],
+        "tabs": ["GEOSPATIAL", "TEMPORAL", "ACTORS", "REGIONAL MATRIX", "SDG 3: HEALTH IMPACT", "METHODOLOGY", "POLICY", "RECORDS"],
         "geo_intensity": "ဖြစ်ရပ်ပြင်းအား (သိပ်သည်းဆပြမြေပုံ)",
         "geo_expansion": "ပဋိပက္ခနယ်မြေကျယ်ပြန့်လာမှု (အချိန်နှင့်အမျှ)",
         "temp_freq": "ပဋိပက္ခအကြိမ်ရေနှင့် သက်ရောက်မှု (အချိန်နှင့်အမျှ)",
         "actor_impact": "အဖွဲ့အစည်းအလိုက် သေဆုံးမှုသက်ရောက်မှု",
         "actor_comp": "ဖြစ်ရပ်အမျိုးအစားအလိုက် ပါဝင်မှု",
         "actor_net": "အဖွဲ့အစည်းများအကြား အပြန်အလှန်ဆက်နွယ်မှု (ပဋိပက္ခလှုပ်ရှားမှုများ)",
-        "stab_title": "ဒေသအလိုက် ပြင်းထန်မှုအကဲဖြတ်ခြင်း",
+        "stab_title": "ဒေသအလိုက် အန္တရာယ်ခွဲမ်းစိတ်မှု (Regional Risk Matrix)",
         "stab_desc": "**ပြင်းထန်မှုညွှန်းကိန်း** သည် သေဆုံးမှုနှင့် ဖြစ်ရပ်အရေအတွက် အချိုးဖြစ်သည်။ ဤညွှန်းကိန်းမြင့်မားခြင်းသည် ထိုဒေသရှိ ပဋိပက္ခများတွင် အသက်အန္တရာယ် ပိုမိုပြင်းထန်ကြောင်း ဖော်ပြသည်။",
         "health_title": "SDG 3: ပဋိပက္ခကြောင့် ကျန်းမာရေးအပေါ်သက်ရောက်မှုများ",
         "health_desc": "ဆေးရုံ၊ ဆေးခန်း၊ ကျန်းမာရေးဝန်ထမ်းများနှင့် လူမှုဘဝတည်ငြိမ်မှုအပေါ် ထိခိုက်စေသော ဖြစ်ရပ်များ။ ဤခွဲခြမ်းစိတ်ဖြာမှုသည် အဖြစ်အပျက်မှတ်တမ်းများမှ ကျန်းမာရေးဆိုင်ရာ အချက်အလက်များကို (NLP) နည်းပညာဖြင့် ထုတ်ယူဖော်ပြခြင်းဖြစ်သည်။",
@@ -265,11 +265,10 @@ LANG_DICT = {
         ၃။ **Manual Check:** GitHub သို့ မတင်မီ `python update_data.py` ကို အသုံးပြု၍ နောက်ဆုံးရဒေတာများကို ရယူပါ။
         """,
         "tab_explanations": {
-            "ကြိုတင်သတိပေးချက် (SDG 3.D)": "ပဋိပက္ခလမ်းကြောင်းများကို ခန့်မှန်းရန်နှင့် ဒေသတွင်းအကြမ်းဖက်မှုများ မြင့်တက်လာနိုင်ခြေကို သိရှိနိုင်ရန် စာရင်းအင်းဆိုင်ရာ (Z-Score) ပုံစံများဖြင့် တွက်ချက်ဖော်ပြသည်။",
             "GEOSPATIAL": "ပဋိပက္ခပြင်းထန်မှု (အနီရောင်) နှင့် ကျန်းမာရေးထိခိုက်မှု (အစိမ်းရောင်) ကို ပေါင်းစပ်ပြသထားသည်။ အချိန်နှင့်အမျှ ပဋိပက္ခကျယ်ပြန့်လာမှုကိုလည်း ကြည့်ရှုနိုင်သည်။",
             "TEMPORAL": "ပဋိပက္ခဖြစ်ပွားမှုအရှိန်ကို ခြေရာခံသည်။ မြင်းကွေးဇယားရှိ အတက်အကျများသည် အကြမ်းဖက်မှု မြင့်တက်လာမှုကို ဖော်ပြပြီး စကားလုံးဇယားသည် အဓိကအကြောင်းအရာများကို NLP ဖြင့် ဖော်ပြသည်။",
             "ACTORS": "ပါဝင်ပတ်သက်သူများကို ခွဲခြားပြသသည်။ ကွန်ရက်မြေပုံသည် အဖွဲ့အစည်းများအကြား အပြန်အလှန်ဆက်နွယ်မှုနှင့် အားပြိုင်မှုများကို ဖော်ပြသည်။",
-            "STABILITY": "ဒေသအလိုက် အသက်အန္တရာယ်ပြင်းထန်မှုကို တွက်ချက်ပြသသည်။ ၎င်းသည် ဖြစ်ရပ်အရေအတွက်ထက် သေဆုံးမှုနှုန်းမြင့်မားသည့် 'ပြင်းထန်ဇုန်' များကို ခွဲခြားသိမြင်စေသည်။",
+            "REGIONAL MATRIX": "ဒေသအလိုက် အသက်အန္တရာယ်ပြင်းထန်မှုကို တွက်ချက်ပြသသည်။ ၎င်းသည် ဖြစ်ရပ်အရေအတွက်ထက် သေဆုံးမှုနှုန်းမြင့်မားသည့် 'ပြင်းထန်ဇုန်' များကို ခွဲခြားသိမြင်စေသည်။",
             "SDG 3: HEALTH IMPACT": "SDG 3 ကို အဓိကထားသည်။ ဆေးရုံ၊ ဆေးခန်းနှင့် ကျန်းမာရေးဝန်ထမ်းများအပေါ် ထိခိုက်စေသော ဖြစ်ရပ်များကိုသာ သီးသန့်စစ်ထုတ်ပြသသည်။",
             "METHODOLOGY": "ဤလေ့လာမှုတွင် အသုံးပြုထားသော ဒေတာနည်းပညာ၊ ETL လုပ်ငန်းစဉ်နှင့် ခွဲခြမ်းစိတ်ဖြာမှုပုံစံများကို နည်းပညာပိုင်းအရ ရှင်းလင်းချက်။",
             "POLICY": "လူသားချင်းစာနာထောက်ထားမှုဆိုင်ရာ သုတေသနအတွက် ဤပဋိပက္ခဒေတာကို အသုံးပြုရာတွင် လိုက်နာရမည့် ကျင့်ဝတ်မူဘောင်နှင့် ကြားနေရပ်တည်ချက်။",
@@ -708,7 +707,7 @@ else:
             fig_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=400)
             st.plotly_chart(fig_kw, width=1000, config=high_res_config)
 
-    with tab3:
+    with tab2:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['ACTORS']}")
         c1, c2 = st.columns(2)
         with c1:
@@ -840,8 +839,8 @@ else:
         else:
             guidance_box("Insufficient interaction data for network mapping.", icon="exclamation-triangle")
 
-    with tab4:
-        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['STABILITY']}")
+    with tab3:
+        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['REGIONAL MATRIX']}")
         st.subheader(L["stab_title"])
         st.markdown(L["stab_desc"])
 
@@ -882,7 +881,7 @@ else:
         fig_stab.update_layout(plotly_layout)
         st.plotly_chart(fig_stab, width=1000, config=high_res_config)
 
-    with tab5:
+    with tab4:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['SDG 3: HEALTH IMPACT']}")
         st.subheader(L["health_title"])
         
@@ -1028,7 +1027,7 @@ else:
         else:
             guidance_box("No medical-impact incidents detected in current filtered data.")
 
-    with tab6:
+    with tab5:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['METHODOLOGY']}")
 
         # --- Methodology Interpretation Guide ---

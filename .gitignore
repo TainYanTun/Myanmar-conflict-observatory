@@ -37,3 +37,19 @@ __pycache__/
 ehthumbs.db
 Thumbs.db
 .env
+
+# LaTeX
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.bbl
+*.blg
+*.pdf
+*.toc
+*.lof
+*.lot
+*.run.xml
+*.bcf

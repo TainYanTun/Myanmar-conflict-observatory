@@ -19,7 +19,7 @@ flowchart TD
     %% 0. STRATEGIC ALIGNMENT
     subgraph SDG ["0. STRATEGIC ALIGNMENT"]
         direction TB
-        SDG3(SDG 3.d: Early Warning)
+        SDG3(SDG 3.d: Risk Assessment)
         SDG16(SDG 16.1: Peace & Justice)
     end
 
@@ -44,13 +44,12 @@ flowchart TD
         NLP --> Geo[Geospatial]
         NLP --> Temp[Temporal]
         NLP --> Net[Actor Network]
-        NLP --> Stat[Z-Score]
     end
 
     %% 4. MISSION CONTROL
     subgraph UI ["4. MISSION CONTROL"]
         direction TB
-        Geo & Temp & Net & Stat --> Dashboard[Streamlit Dashboard]
+        Geo & Temp & Net --> Dashboard[Streamlit Dashboard]
     end
 
     %% SPACERS
@@ -60,7 +59,7 @@ flowchart TD
     Analytics ~~~ UI
 
     %% STRATEGIC MAPPINGS
-    SDG3 -.-> Stat
+    SDG3 -.-> Geo
     SDG16 -.-> Geo
 
     %% CLEAN STYLING
@@ -77,8 +76,8 @@ flowchart TD
 This project is purpose-built to support the **United Nations 2030 Agenda for Sustainable Development**, specifically focusing on the intersection of conflict and health.
 
 ### **Primary Goal: SDG 3 (Good Health & Well-being)**
-*   **Target 3.d:** *Strengthen the capacity of all countries... for early warning, risk reduction and management of national and global health risks.*
-    *   **Our Contribution:** The **Early Warning (SDG 3.D)** tab uses Z-Score anomaly detection to identify surges in violence that threaten medical infrastructure, acting as a real-time risk assessment tool for humanitarian responders.
+*   **Target 3.d:** *Strengthen the capacity of all countries... for risk reduction and management of national and global health risks.*
+    *   **Our Contribution:** The **Humanitarian Risk Assessment (SDG 3.D)** tab provides high-fidelity, evidence-based insights into conflict events that threaten medical infrastructure, acting as a structural assessment tool for humanitarian responders.
 *   **Target 3.8:** *Achieve universal health coverage... access to quality essential health-care services.*
     *   **Our Contribution:** By mapping conflict "Hotspots" against medical infrastructure narratives, we identify regions where health coverage is being systemically disrupted by kinetic engagements.
 
@@ -138,7 +137,7 @@ Below are the core analytical components currently implemented:
 4. SDG 3: Health & Well-being (Hackathon Special)
      - Health Infrastructure Impact: Tracking kinetic incidents specifically affecting hospitals, clinics, and medical staff.
      - Social Impact Analysis: NLP extraction of gender-specific targeting (women and girls) and systemic well-being indicators.
-     - Early Warning System: Z-Score anomaly detection for proactive risk management (SDG Target 3.d).
+     - Risk Assessment: Analytical framework for evidence-based humanitarian prioritization (SDG Target 3.d).
 
 ### Project Organization
 

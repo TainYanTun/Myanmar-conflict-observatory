@@ -34,9 +34,11 @@ def ingest_data():
     df = clean_conflict_data(df)
     
     # 2. Performance Check: Skip if latest data already in DB
-    engine = create_engine(DB_URL)
+    engine = create_engine(DB_URL, connect_args={'options': '-c statement_timeout=30000 -c lock_timeout=10000'})
     try:
         with engine.connect() as conn:
+            # Set a shorter lock timeout for the session
+            conn.execute(text("SET lock_timeout = '10s'"))
             result = conn.execute(text("SELECT MAX(event_date) FROM conflict_events"))
             db_max_date = result.scalar()
             if db_max_date and pd.to_datetime(db_max_date) >= df['event_date'].max():

@@ -16,59 +16,55 @@ The Myanmar Conflict Observatory is built on a modular, four-tier data pipeline 
 
 ```mermaid
 flowchart TD
-    %% 0. STRATEGIC ALIGNMENT
-    subgraph SDG ["0. STRATEGIC ALIGNMENT"]
-        direction TB
-        SDG3(SDG 3.d: Risk Assessment)
-        SDG16(SDG 16.1: Peace & Justice)
-    end
 
-    %% 1. DATA INGESTION & RESILIENCE
-    subgraph Ingestion ["1. DATA INGESTION & RESILIENCE"]
-        direction TB
-        GHA{{GitHub Actions}} -->|Sync| Sync[Data Sync Engine]
-        DB[(Supabase Cloud)] --- Sync
-        Kaggle[(Kaggle Cloud)] --- Sync
-    end
+%% Strategic Alignment (external)
+SDG3[SDG 3.d Risk Assessment]
+SDG16[SDG 16.1 Peace & Justice]
 
-    %% 2. INTELLIGENCE ENGINE
-    subgraph Intelligence ["2. INTELLIGENCE ENGINE"]
-        direction TB
-        Sync --> Actor[Actor Normalization]
-        Actor --> NLP[NLP Extraction]
-    end
+%% 1. Data Ingestion
+subgraph "1. Data Ingestion"
+    GHA[GitHub Actions]
+    Sync[Data Sync Engine]
+    Supabase[(Supabase)]
+    Kaggle[(Kaggle)]
 
-    %% 3. ANALYTICAL MODELS
-    subgraph Analytics ["3. ANALYTICAL MODELS"]
-        direction TB
-        NLP --> Geo[Geospatial]
-        NLP --> Temp[Temporal]
-        NLP --> Net[Actor Network]
-    end
+    GHA --> Sync
+    Supabase --> Sync
+    Kaggle --> Sync
+end
 
-    %% 4. MISSION CONTROL
-    subgraph UI ["4. MISSION CONTROL"]
-        direction TB
-        Geo & Temp & Net --> Dashboard[Streamlit Dashboard]
-    end
+%% 2. Intelligence Engine
+subgraph "2. Intelligence Engine"
+    Actor[Actor Normalization]
+    NLP[NLP Extraction]
 
-    %% SPACERS
-    SDG ~~~ Ingestion
-    Ingestion ~~~ Intelligence
-    Intelligence ~~~ Analytics
-    Analytics ~~~ UI
+    Sync --> Actor
+    Actor --> NLP
+end
 
-    %% STRATEGIC MAPPINGS
-    SDG3 -.-> Geo
-    SDG16 -.-> Geo
+%% 3. Analytical Models
+subgraph "3. Analytical Models"
+    Geo[Geospatial Analysis]
+    Temp[Temporal Analysis]
+    Net[Actor Network]
 
-    %% CLEAN STYLING
-    style Dashboard fill:#10b981,color:#fff,stroke:#059669
-    style SDG fill:none,stroke:#cbd5e1,stroke-dasharray: 5 5
-    style Ingestion fill:none,stroke:#64748b
-    style Intelligence fill:none,stroke:#f97316
-    style Analytics fill:none,stroke:#22c55e
-    style UI fill:none,stroke:#10b981
+    NLP --> Geo
+    NLP --> Temp
+    NLP --> Net
+end
+
+%% 4. Mission Control
+subgraph "4. Mission Control"
+    Dashboard[Streamlit Dashboard]
+
+    Geo --> Dashboard
+    Temp --> Dashboard
+    Net --> Dashboard
+end
+
+%% Strategic influence
+SDG3 -.-> Geo
+SDG16 -.-> Geo
 ```
 
 ## UN SDG 2030 Strategic Alignment

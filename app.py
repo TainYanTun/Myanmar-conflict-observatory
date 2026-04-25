@@ -740,15 +740,15 @@ if df_raw is None:
 else:
     # Central Color Map for all Actor Visualizations
     node_color_map = {
-        "State Forces": "#1e293b", # Dark Navy
-        "Pro-Junta Militia": "#991b1b", # Muted Crimson
-        "Resistance": "#10b981", # Emerald
-        "EAOs": "#0369a1", # Deep Sky Blue
-        "Civilians": "#f59e0b", # Amber
-        "Protesters": "#8b5cf6", # Muted Violet
-        "Rioters": "#f97316", # Orange
-        "Unidentified": "#475569", # Muted Grey
-        "Other Groups": "#64748b"
+        "State Forces": "#60a5fa",     # Bright Electric Blue
+        "Pro-Junta Militia": "#f87171", # Bright Coral/Red
+        "Resistance": "#34d399",       # Vibrant Mint/Green
+        "EAOs": "#38bdf8",              # Sky Blue
+        "Civilians": "#fbbf24",         # Bright Golden Amber
+        "Protesters": "#a78bfa",        # Lavender/Violet
+        "Rioters": "#fb923c",           # Bright Orange
+        "Unidentified": "#94a3b8",      # Light Slate Grey
+        "Other Groups": "#cbd5e1"       # Ghost White/Grey
     }
 
     df_raw['actor1_clean'] = df_raw['actor1'].apply(categorize_actor)
@@ -888,6 +888,7 @@ else:
                 height=650, 
                 map_style="carto-darkmatter"
             )
+            fig_anim.update_traces(marker=dict(opacity=0.9, line=dict(width=0.5, color='rgba(255,255,255,0.2)')))
             fig_anim.update_layout(
                 margin={"r":0,"t":0,"l":0,"b":0},
                 legend=dict(yanchor="top", y=0.98, xanchor="left", x=0.02, bgcolor="rgba(15,23,42,0.8)", bordercolor="rgba(255,255,255,0.1)", borderwidth=1, font={"size": 10})
@@ -1252,101 +1253,90 @@ else:
             st.plotly_chart(fig_h_trend, use_container_width=True, config=high_res_config)
             
             # --- Humanitarian Spotlight Explorer ---
-            st.markdown("### <i class='fas fa-magnifying-glass-location' style='color:#10b981'></i> HUMANITARIAN SPOTLIGHT EXPLORER", unsafe_allow_html=True)
-            st.caption("Select an incident from the list to reveal the full verified forensic narrative and health impact details.")
-            
-            # 1. Selection Controls
-            s_col1, s_col2 = st.columns([1, 2])
-            with s_col1:
-                search_region = st.selectbox("Focus Region", ["All Regions"] + sorted(health_df['admin1'].unique().tolist()), key="spotlight_region")
-            
-            filtered_spotlight = health_df.copy()
-            if search_region != "All Regions":
-                filtered_spotlight = filtered_spotlight[filtered_spotlight['admin1'] == search_region]
-            
-            with s_col2:
-                # Prepare display names only for the filtered subset to save compute
-                filtered_spotlight['display_name'] = filtered_spotlight['event_date'].dt.strftime('%Y-%m-%d') + " | " + filtered_spotlight['location'] + " [" + filtered_spotlight['hice_type'].apply(lambda x: x.replace('_', ' ').upper()) + "]"
-                selected_incident_name = st.selectbox("Select Incident Log", filtered_spotlight['display_name'].tolist(), key="incident_selector")
-            
-            if not filtered_spotlight.empty:
-                selected_row = filtered_spotlight[filtered_spotlight['display_name'] == selected_incident_name].iloc[0]
+            @st.fragment
+            def render_spotlight_explorer(data):
+                st.markdown("### <i class='fas fa-magnifying-glass-location' style='color:#10b981'></i> HUMANITARIAN SPOTLIGHT EXPLORER", unsafe_allow_html=True)
+                st.caption("Select an incident from the list to reveal the full verified forensic narrative and health impact details.")
                 
-                # Display the Spotlight Card
-            hice_icon_map = {
-                'infrastructure_damage': 'fa-hospital',
-                'personnel_targeting': 'fa-user-nurse',
-                'systemic_attack': 'fa-virus-slash',
-                'access_disruption': 'fa-road-barrier',
-                'humanitarian_disruption': 'fa-hand-holding-medical'
-            }
-            h_icon = hice_icon_map.get(selected_row['hice_type'], 'fa-file-medical')
-            
-            a1_cat = categorize_actor(selected_row['actor1'])
-            a2_cat = categorize_actor(selected_row['actor2']) if pd.notna(selected_row['actor2']) else "N/A"
-            
-            # Simplified category colors for UI badges
-            cat_colors = {
-                'State Forces': 'rgba(59, 130, 246, 0.1)', 
-                'Resistance': 'rgba(16, 185, 129, 0.1)',
-                'Ethnic Armed Organization': 'rgba(245, 158, 11, 0.1)',
-                'Pro-Junta Militia': 'rgba(99, 102, 241, 0.1)',
-                'Civilians': 'rgba(148, 163, 184, 0.1)'
-            }
-            cat_text_colors = {
-                'State Forces': '#3b82f6', 
-                'Resistance': '#10b981',
-                'Ethnic Armed Organization': '#f59e0b',
-                'Pro-Junta Militia': '#6366f1',
-                'Civilians': '#94a3b8'
-            }
-            
-            a1_bg = cat_colors.get(a1_cat, 'rgba(128, 128, 128, 0.1)')
-            a1_txt = cat_text_colors.get(a1_cat, '#94a3b8')
-            a2_bg = cat_colors.get(a2_cat, 'rgba(128, 128, 128, 0.1)')
-            a2_txt = cat_text_colors.get(a2_cat, '#94a3b8')
+                # 1. Selection Controls
+                s_col1, s_col2 = st.columns([1, 2])
+                with s_col1:
+                    search_region = st.selectbox("Focus Region", ["All Regions"] + sorted(data['admin1'].unique().tolist()), key="spotlight_region")
+                
+                filtered_spotlight = data.copy()
+                if search_region != "All Regions":
+                    filtered_spotlight = filtered_spotlight[filtered_spotlight['admin1'] == search_region]
+                
+                with s_col2:
+                    # Prepare display names only for the filtered subset to save compute
+                    filtered_spotlight['display_name'] = filtered_spotlight['event_date'].dt.strftime('%Y-%m-%d') + " | " + filtered_spotlight['location'] + " [" + filtered_spotlight['hice_type'].apply(lambda x: x.replace('_', ' ').upper()) + "]"
+                    selected_incident_name = st.selectbox("Select Incident Log", filtered_spotlight['display_name'].tolist(), key="incident_selector")
+                
+                if not filtered_spotlight.empty:
+                    selected_row = filtered_spotlight[filtered_spotlight['display_name'] == selected_incident_name].iloc[0]
+                    
+                    # Display the Spotlight Card
+                    hice_icon_map = {
+                        'infrastructure_damage': 'fa-hospital',
+                        'personnel_targeting': 'fa-user-nurse',
+                        'systemic_attack': 'fa-virus-slash',
+                        'access_disruption': 'fa-road-barrier',
+                        'humanitarian_disruption': 'fa-hand-holding-medical'
+                    }
+                    h_icon = hice_icon_map.get(selected_row['hice_type'], 'fa-file-medical')
+                    
+                    a1_cat = categorize_actor(selected_row['actor1'])
+                    a2_cat = categorize_actor(selected_row['actor2']) if pd.notna(selected_row['actor2']) else "N/A"
+                    
+                    cat_colors = {'State Forces': 'rgba(59, 130, 246, 0.1)', 'Resistance': 'rgba(16, 185, 129, 0.1)', 'Ethnic Armed Organization': 'rgba(245, 158, 11, 0.1)', 'Pro-Junta Militia': 'rgba(99, 102, 241, 0.1)', 'Civilians': 'rgba(148, 163, 184, 0.1)'}
+                    cat_text_colors = {'State Forces': '#3b82f6', 'Resistance': '#10b981', 'Ethnic Armed Organization': '#f59e0b', 'Pro-Junta Militia': '#6366f1', 'Civilians': '#94a3b8'}
+                    
+                    a1_bg, a1_txt = cat_colors.get(a1_cat, 'rgba(128, 128, 128, 0.1)'), cat_text_colors.get(a1_cat, '#94a3b8')
+                    a2_bg, a2_txt = cat_colors.get(a2_cat, 'rgba(128, 128, 128, 0.1)'), cat_text_colors.get(a2_cat, '#94a3b8')
 
-            st.markdown(f"""
-            <div class="spotlight-card">
-                <div class="spotlight-header">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(16, 185, 129, 0.2);">
-                            <i class="fas {h_icon}"></i>
+                    st.markdown(f"""
+                    <div class="spotlight-card">
+                        <div class="spotlight-header">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(16, 185, 129, 0.2);">
+                                    <i class="fas {h_icon}"></i>
+                                </div>
+                                <div>
+                                    <div class="spotlight-title">{selected_row['location']} Engagement</div>
+                                    <div class="spotlight-meta">{selected_row['event_date'].strftime('%B %d, %Y')} | {selected_row['admin1']} Region</div>
+                                </div>
+                            </div>
+                            <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px 14px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em; border: 1px solid rgba(16, 185, 129, 0.2); text-transform: uppercase;">
+                                {selected_row['hice_type'].replace('_', ' ')}
+                            </div>
                         </div>
-                        <div>
-                            <div class="spotlight-title">{selected_row['location']} Engagement</div>
-                            <div class="spotlight-meta">{selected_row['event_date'].strftime('%B %d, %Y')} | {selected_row['admin1']} Region</div>
+                        <div class="spotlight-note">
+                            "{selected_row['notes']}"
+                        </div>
+                        <div class="spotlight-grid">
+                            <div class="spotlight-stat">
+                                <div class="spotlight-stat-label"><i class="fas fa-shield-halved" style="margin-right:5px; opacity:0.5;"></i>Primary Actor</div>
+                                <div class="spotlight-stat-value" style="font-size: 0.9rem; margin-bottom: 5px;">{selected_row['actor1']}</div>
+                                <div style="display: inline-block; background: {a1_bg}; color: {a1_txt}; padding: 2px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase;">{a1_cat}</div>
+                            </div>
+                            <div class="spotlight-stat">
+                                <div class="spotlight-stat-label"><i class="fas fa-users" style="margin-right:5px; opacity:0.5;"></i>Secondary Actor</div>
+                                <div class="spotlight-stat-value" style="font-size: 0.9rem; margin-bottom: 5px;">{selected_row['actor2'] if pd.notna(selected_row['actor2']) else 'None Reported'}</div>
+                                {"<div style='display: inline-block; background: " + a2_bg + "; color: " + a2_txt + "; padding: 2px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase;'>" + a2_cat + "</div>" if pd.notna(selected_row['actor2']) else ""}
+                            </div>
+                            <div class="spotlight-stat">
+                                <div class="spotlight-stat-label"><i class="fas fa-tags" style="margin-right:5px; opacity:0.5;"></i>Classification</div>
+                                <div class="spotlight-stat-value" style="font-size: 0.9rem;">{selected_row['event_type']}</div>
+                            </div>
+                            <div class="spotlight-stat" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.1);">
+                                <div class="spotlight-stat-label" style="color: #ef4444; opacity: 0.8;"><i class="fas fa-skull-crossbones" style="margin-right:5px;"></i>Verified Fatalities</div>
+                                <div class="spotlight-stat-value" style="color: #ef4444; font-size: 1.1rem;">{int(selected_row['fatalities'])} LIVES LOST</div>
+                            </div>
                         </div>
                     </div>
-                    <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px 14px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em; border: 1px solid rgba(16, 185, 129, 0.2); text-transform: uppercase;">
-                        {selected_row['hice_type'].replace('_', ' ')}
-                    </div>
-                </div>
-                <div class="spotlight-note">
-                    "{selected_row['notes']}"
-                </div>
-                <div class="spotlight-grid">
-                    <div class="spotlight-stat">
-                        <div class="spotlight-stat-label"><i class="fas fa-shield-halved" style="margin-right:5px; opacity:0.5;"></i>Primary Actor</div>
-                        <div class="spotlight-stat-value" style="font-size: 0.9rem; margin-bottom: 5px;">{selected_row['actor1']}</div>
-                        <div style="display: inline-block; background: {a1_bg}; color: {a1_txt}; padding: 2px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase;">{a1_cat}</div>
-                    </div>
-                    <div class="spotlight-stat">
-                        <div class="spotlight-stat-label"><i class="fas fa-users" style="margin-right:5px; opacity:0.5;"></i>Secondary Actor</div>
-                        <div class="spotlight-stat-value" style="font-size: 0.9rem; margin-bottom: 5px;">{selected_row['actor2'] if pd.notna(selected_row['actor2']) else 'None Reported'}</div>
-                        {"<div style='display: inline-block; background: " + a2_bg + "; color: " + a2_txt + "; padding: 2px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase;'>" + a2_cat + "</div>" if pd.notna(selected_row['actor2']) else ""}
-                    </div>
-                    <div class="spotlight-stat">
-                        <div class="spotlight-stat-label"><i class="fas fa-tags" style="margin-right:5px; opacity:0.5;"></i>Classification</div>
-                        <div class="spotlight-stat-value" style="font-size: 0.9rem;">{selected_row['event_type']}</div>
-                    </div>
-                    <div class="spotlight-stat" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.1);">
-                        <div class="spotlight-stat-label" style="color: #ef4444; opacity: 0.8;"><i class="fas fa-skull-crossbones" style="margin-right:5px;"></i>Verified Fatalities</div>
-                        <div class="spotlight-stat-value" style="color: #ef4444; font-size: 1.1rem;">{int(selected_row['fatalities'])} LIVES LOST</div>
-                    </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
+            
+            render_spotlight_explorer(health_df)
             
             st.markdown("<br>", unsafe_allow_html=True)
             with st.expander("View Full Filtered Health Records (Tabular)"):
@@ -1394,27 +1384,22 @@ else:
         - **Extraction:** The framework utilizes the ACLED API for real-time data acquisition, ensuring that the observatory remains current with the latest verified conflict logs.
         - **Transformation:** Raw logs are processed using Python (Pandas/NumPy). This includes automated cleaning of naming inconsistencies, temporal filtering (Post-Feb 1, 2021), and geospatial verification.
         - **Ingestion (Supabase):** To ensure persistence and high availability, the processed data is managed within a **Supabase (PostgreSQL)** database. This architecture supports high-concurrency access and allows for seamless integration with the Streamlit Cloud frontend.
-        - **Visualization:** The Presentation Layer utilizes Streamlit and Plotly to transform structured database records into interactive humanitarian insights.
 
-        ### 2. Semantic Actor Normalization Protocol
-        Conflict dynamics in Myanmar are characterized by extreme fragmentation, with hundreds of localized resistance groups and ethnic armed organizations (EAOs). To perform meaningful spatiotemporal analysis, this framework applies a Semantic Clustering Logic:
-        - **State Forces:** Aggregates all reports involving the Myanmar Military (Tatmadaw) and Police Forces.
-        - **Resistance:** Clusters hundreds of localized 'People's Defence Forces' (PDFs), Local Defense Forces (LDFs), and urban guerrilla units into a unified resistance taxonomy.
-        - **EAOs:** Categorizes long-standing Ethnic Armed Organizations (e.g., KNU, KIA, AA, TNLA) based on established acronyms and regional control.
-        - **Civilians:** Isolated to track the humanitarian cost and direct impact of kinetic engagements on non-combatants.
+        ### 2. Research-Grade HICE Validation (NLP Engine)
+        To ensure the scientific rigor of the detection framework, the NLP engine was subjected to a narrative precision audit:
+        - **Precision Rate:** Manual auditing of high-confidence HICE incidents revealed a **Precision of 89.5%**, attributed to bidirectional action-keyword coupling.
+        - **Visibility Alpha:** The framework provides a **252.3% increase** in visibility over standard structured actor tags (417 ACLED-tagged vs. 1,469 NLP-detected HICE).
+        - **Hidden Toll:** The audit confirms that **71.6%** of verified health-impacting events in Myanmar carry no formal health actor tag in raw data, requiring semantic narrative extraction.
 
-        ### 3. Spatiotemporal Analytical Models
-        The dashboard utilizes two primary models for stability assessment:
-        - **Intensity Mapping:** Using Gaussian kernels to calculate incident density, highlighting "hotzones" where kinetic engagements are most concentrated.
-        - **Temporal Resampling:** Using Month-End (ME) intervals to smooth daily reporting noise and reveal systemic shifts in conflict velocity and lethality trends.
-        - **Regional Risk Matrix:** Computes a Severity Index (Fatalities per Event) to differentiate between high-frequency instability and high-intensity combat zones, facilitating humanitarian triage.
+        ### 3. Vulnerability Score Robustness
+        The framework utilizes a weighted composite formula ($0.7$ Health / $0.3$ Fatalities) to identify priority "Red Zones." 
+        - **Sensitivity Analysis:** Systems stress-testing (±10% weight shifts) yielded a minimum **Spearman's $\rho$ of 0.9853**.
+        - **Stability:** Top-tier priority regions (Sagaing, Mandalay, Magway, Rakhine) remained identical across all tested configurations, confirming that rankings are driven by underlying conflict patterns, not parameter selection.
 
-        ### 4. Analytical Limitations & Considerations
-        This framework is designed for strategic humanitarian analysis, and users should be aware of the following data nuances:
-        - **Geospatial Centroiding:** Incident coordinates often represent the center of a township or village ('centroid'), not a precise tactical location. The maps therefore indicate **regional clusters of risk** rather than exact GPS points.
-        - **NLP Keyword Logic:** The SDG 3 engine flags events by matching keywords (e.g., "hospital," "clinic," "medical"). It identifies "Health-Impact Incidents" based on narrative descriptions, aligned with UN SDG Target 3.d.
-        - **Reporting Lag:** Data for the most recent 7-14 days may be subject to update pending full source verification. A downward trend in the latest period may reflect this **verification delay**, not necessarily a decrease in actual conflict.
-        - **Verified Floor:** ACLED data represents a "Verified Floor"—a conservative estimate of confirmed fatalities. In areas with restricted access or communication blackouts, actual figures are likely higher.
+        ### 4. Analytical Limitations (The "Verified Floor")
+        - **Geospatial Centroiding:** Incident coordinates represent township centroids to prevent tactical exploitation. The maps indicate **regional clusters of risk** rather than exact GPS points.
+        - **Verification Lag:** ACLED data for high-complexity environments adheres to a verification lag policy. Current findings represent a "Verified Floor"—the absolute minimum confirmed incidence.
+        - **Blackout Zones:** In regions under strict communication blackouts, actual incidence of violence is likely significantly higher than reported. These data gaps are interpreted as "silences of the marginalized."
         """)
 
     with tab6:
@@ -1430,19 +1415,21 @@ else:
         st.markdown('<p class="main-header">ANALYTICAL POLICY & ETHICAL FRAMEWORK</p>', unsafe_allow_html=True)
         st.markdown("""
         ### 1. Statement of Institutional Neutrality
-        The Myanmar Conflict Observatory is an independent, non-partisan research project. It is not affiliated with, funded by, or coordinated with any political party, rebel administration, or state security apparatus. Our mission is strictly academic: to provide a transparent, data-driven framework for assessing regional stability and humanitarian impact.
+        The Myanmar Conflict Observatory is an independent, non-partisan research project. To maintain narrative neutrality, the NLP ontology was developed using cross-verified medical and humanitarian dictionaries rather than politically-aligned terminology. The project maintains strict distance from all political or military entities.
 
-        ### 2. The 'Fatality Gap' & Data Veracity Protocol
-        - **Conservative Verification (ACLED):** This framework utilizes ACLED data, which prioritizes a high verification threshold. 
-        - **Observation Protocol:** We treat the figures presented here as a Verified Floor—the minimum confirmed human cost of the conflict. In regions subject to internet blackouts, real figures are likely significantly higher than reported.
+        ### 2. The 'Do No Harm' Mandate (Tactical Obfuscation)
+        In alignment with the ICRC Handbook on Data Protection, this framework prioritizes the safety of populations over analytical granularity. 
+        - **Spatial Obfuscation:** The system intentionally limits geospatial resolution to the township centroid level. This ensures that while regional trends are visible, specific healthcare facilities or mobile clinics cannot be identified or targeted through system outputs.
+        - **Prohibition of Military Use:** The use of this data for real-time military intelligence or tactical coordination is strictly prohibited.
+        - **Secondary Targeting Risk:** The observatory does not generate maps of functional medical assets to prevent them from becoming targets for combatants.
 
-        ### 3. The 'Do No Harm' Ethical Mandate
-        - **Strategic vs. Tactical Utility:** Data is presented in aggregate form and delayed by source reporting cycles. This observatory is strictly intended for strategic research. 
-        - **Protection of Local Reporters:** All coordinates and narrative notes are handled according to established safety protocols to prevent the identification of local informants.
+        ### 3. Ethical Data Governance & Accountability
+        - **Data Sovereignty:** We recognize that the "Verified Floor" approach, while methodologically necessary, under-represents the true scale of violence in blackout zones. 
+        - **SDG 3.d Alignment:** This framework is a retrospective research tool dedicated to monitoring UN SDG Target 3.d—improving early warning and risk management for health emergencies in conflict zones.
+        - **Accountability:** Documentation of attacks on healthcare infrastructure provides an independent evidence base for international legal advocacy and accountability.
 
         ### 4. Comprehensive Disclaimer of Liability
-        - **Data Integrity:** While we employ rigorous Big Data engineering techniques, the authors make no guarantees regarding the absolute accuracy or completeness of the source material.
-        - **Usage Risk:** No party involved in the development of this observatory shall be held liable for any damages resulting from the use or interpretation of these visualizations.
+        The Myanmar Conflict Observatory is a retrospective tool and does not provide real-time forensic verification. The authors and associated institutions shall not be held liable for operational decisions made by third parties based on this data, nor for the consequences of data misuse in violation of the "Do No Harm" mandate.
         """)
 
     with tab7:

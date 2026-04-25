@@ -183,8 +183,8 @@ LANG_DICT = {
         },
         "sdg3_guide": {
             "title": "Understanding SDG 3 monitoring",
-            "extraction": "**NLP Extraction:** This tab filters for incidents impacting direct health (hospitals, medical staff) and systemic well-being (sexual violence, arrests, abductions, and looting).",
-            "impact": "**Humanitarian Disruption:** Use this to assess how kinetic engagements are degrading both physical health infrastructure and the broader social well-being of civilians."
+            "extraction": "**NLP Extraction:** This tab utilizes a specialized ontology focused strictly on **UN SDG Target 3.d**. It filters for incidents involving direct kinetic impacts on medical infrastructure (hospitals, clinics) and the targeting of healthcare personnel.",
+            "impact": "**Humanitarian Disruption:** Use this to assess how armed conflict degrades the structural foundation of the national health system, providing a 'Verified Floor' for strategic risk reduction planning."
         },
         "sdg3_logic": {
             "title": "Data Logic: Why 1,469 HICE Incidents?",
@@ -306,8 +306,8 @@ LANG_DICT = {
         },
         "sdg3_guide": {
             "title": "SDG 3 စောင့်ကြည့်လေ့လာမှုကို နားလည်ခြင်း",
-            "extraction": "**NLP စနစ်ဖြင့် ထုတ်ယူခြင်း-** ဤနေရာတွင် တိုက်ရိုက်ကျန်းမာရေး (ဆေးရုံ၊ ကျန်းမာရေးဝန်ထမ်း) နှင့် အခြေခံလူမှုဘဝတည်ငြိမ်မှု (လိင်ပိုင်းဆိုင်ရာအကြမ်းဖက်မှု၊ ဖမ်းဆီးမှု၊ ပြန်ပေးဆွဲမှု နှင့် လုယက်မှု) ကို ထိခိုက်စေသောဖြစ်ရပ်များကို စစ်ထုတ်ပြသထားသည်။",
-            "impact": "**လူသားချင်းစာနာမှုဆိုင်ရာ ထိခိုက်မှု-** တိုက်ရိုက်ပဋိပက္ခများကြောင့် ပြည်သူ့ကျန်းမာရေးအဆောက်အအုံများသာမက အရပ်သားများ၏ ဘေးကင်းလုံခြုံရေးနှင့် လူမှုဘဝတည်ငြိမ်မှု မည်သို့ပျက်စီးနေသည်ကို ဆန်းစစ်နိုင်သည်။"
+            "extraction": "**NLP စနစ်ဖြင့် ထုတ်ယူခြင်း-** ဤနေရာတွင် **ကုလသမဂ္ဂ SDG ရည်မှန်းချက် ၃.ဃ** ကို အဓိကထား၍ ကျန်းမာရေးစနစ်၏ အခြေခံအဆောက်အအုံများ (ဆေးရုံ၊ ဆေးခန်း) နှင့် ကျန်းမာရေးဝန်ထမ်းများကို တိုက်ရိုက်ထိခိုက်စေသော ဖြစ်ရပ်များကိုသာ စစ်ထုတ်ပြသထားသည်။",
+            "impact": "**လူသားချင်းစာနာမှုဆိုင်ရာ ထိခိုက်မှု-** ပဋိပက္ခများကြောင့် နိုင်ငံ၏ ကျန်းမာရေးစနစ် အခြေခံအဆောက်အအုံများ မည်သို့ပျက်စီးနေသည်ကို အတည်ပြုပြီးသောအချက်အလက်များဖြင့် ဆန်းစစ်နိုင်ပါသည်။"
         },
         "sdg3_logic": {
 "title": "ဒေတာဆိုင်ရာ ရှင်းလင်းချက်- SDG 3 ဖြစ်စဉ် ၁,၄၆၉ ခု ဖြစ်ပွားရခြင်း အကြောင်းရင်း",
@@ -622,7 +622,7 @@ else:
                 coloraxis_showscale=False,
                 legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(0,0,0,0.5)")
             )
-            st.plotly_chart(fig_heat, width=1000, config=high_res_config)
+            st.plotly_chart(fig_heat, use_container_width=True, config=high_res_config)
         with col2:
             st.caption(L["geo_expansion"])
             df_anim = df.sort_values('event_date')
@@ -649,7 +649,7 @@ else:
                 mapbox_style="carto-darkmatter"
             )
             fig_anim.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
-            st.plotly_chart(fig_anim, width=1000, config=high_res_config)
+            st.plotly_chart(fig_anim, use_container_width=True, config=high_res_config)
 
     with tab1:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['TEMPORAL']}")
@@ -738,7 +738,7 @@ else:
             st.caption(L["actor_comp"])
             fig_pie = px.sunburst(df, path=['event_type', 'sub_event_type'], values='fatalities', color_discrete_sequence=["#334155", "#475569", "#64748b", "#94a3b8"])
             fig_pie.update_layout(plotly_layout, margin={"r":0,"t":0,"l":0,"b":0})
-            st.plotly_chart(fig_pie, width=1000, config=high_res_config)
+            st.plotly_chart(fig_pie, use_container_width=True, config=high_res_config)
 
         st.markdown("---")
         guidance_box(f"**{selected_lang} Guidance:** Use the dropdown to spotlight an actor. Edge thickness is weighted by total fatalities.")
@@ -835,7 +835,7 @@ else:
                                                  yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
                                                  paper_bgcolor='rgba(0,0,0,0)',
                                                  plot_bgcolor='rgba(0,0,0,0)'))
-            st.plotly_chart(fig_net, width=1000, config=high_res_config)
+            st.plotly_chart(fig_net, use_container_width=True, config=high_res_config)
         else:
             guidance_box("Insufficient interaction data for network mapping.", icon="exclamation-triangle")
 
@@ -948,18 +948,33 @@ else:
 
         health_df = df[health_hits].copy()        
         if not health_df.empty:
+            # Pre-calculate HICE type for visualization
+            health_df['hice_type'] = classify_hice_type(health_df)
+            
             h_col1, h_col2 = st.columns([2, 1])
             with h_col1:
-                st.caption("Geospatial Distribution of Health-Impacting Incidents")
+                st.caption("Geospatial Distribution of Health-Impacting Incidents (by Impact Type)")
+                
+                # Define a specific color map for HICE types to ensure consistency
+                hice_color_map = {
+                    'infrastructure_damage': '#ef4444', # Red
+                    'personnel_targeting': '#f59e0b',    # Amber
+                    'systemic_attack': '#8b5cf6',       # Violet
+                    'access_disruption': '#3b82f6',     # Blue
+                    'humanitarian_disruption': '#94a3b8' # Slate
+                }
+
                 fig_h_geo = px.scatter_mapbox(
                     health_df, 
                     lat="latitude", 
                     lon="longitude", 
-                    color="event_type", 
+                    color="hice_type", 
                     size="fatalities", 
                     hover_name="location", 
+                    color_discrete_map=hice_color_map,
                     hover_data={
                         "event_date": "|%B %d, %Y",
+                        "hice_type": True,
                         "admin1": True,
                         "actor1": True,
                         "fatalities": True,
@@ -971,7 +986,10 @@ else:
                     height=500, 
                     mapbox_style="carto-darkmatter"
                 )
-                fig_h_geo.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+                fig_h_geo.update_layout(
+                    margin={"r":0,"t":0,"l":0,"b":0},
+                    legend=dict(orientation="h", yanchor="bottom", y=0.02, xanchor="left", x=0.02, bgcolor="rgba(0,0,0,0.5)")
+                )
                 st.plotly_chart(fig_h_geo, use_container_width=True, config=high_res_config)
             
             with h_col2:
@@ -989,10 +1007,16 @@ else:
             h_kw_col1, h_kw_col2 = st.columns([1, 1])
             with h_kw_col1:
                 st.caption("HICE Impact Classification (NLP Engine)")
-                health_df['hice_type'] = classify_hice_type(health_df)
                 h_type_counts = health_df['hice_type'].value_counts().reset_index()
                 h_type_counts.columns = ['Classification', 'Count']
-                fig_h_type = px.pie(h_type_counts, values='Count', names='Classification', hole=0.4, color_discrete_sequence=px.colors.qualitative.Pastel)
+                fig_h_type = px.pie(
+                    h_type_counts, 
+                    values='Count', 
+                    names='Classification', 
+                    hole=0.4, 
+                    color='Classification',
+                    color_discrete_map=hice_color_map
+                )
                 fig_h_type.update_layout(plotly_layout, margin=dict(t=30, b=0, l=0, r=0), height=350, legend=dict(orientation="h", yanchor="bottom", y=-0.2))
                 st.plotly_chart(fig_h_type, use_container_width=True, config=high_res_config)
                 h_kw_df = extract_health_keyword_counts(health_df['notes'])
@@ -1012,8 +1036,8 @@ else:
             st.markdown("### <i class='fas fa-magnifying-glass-location' style='color:#10b981'></i> HUMANITARIAN SPOTLIGHT EXPLORER", unsafe_allow_html=True)
             st.caption("Select an incident from the list to reveal the full verified forensic narrative and health impact details.")
             
-            # Prepare options for selection
-            health_df['display_name'] = health_df['event_date'].dt.strftime('%Y-%m-%d') + " | " + health_df['location'] + " (" + health_df['event_type'] + ")"
+            # Prepare options for selection - Updated to HICE classification
+            health_df['display_name'] = health_df['event_date'].dt.strftime('%Y-%m-%d') + " | " + health_df['location'] + " [" + health_df['hice_type'].apply(lambda x: x.replace('_', ' ').upper()) + "]"
             selected_incident_name = st.selectbox("Search Incident Log", health_df['display_name'].tolist())
             
             selected_row = health_df[health_df['display_name'] == selected_incident_name].iloc[0]

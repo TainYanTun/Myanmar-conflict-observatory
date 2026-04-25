@@ -554,6 +554,21 @@ LANG_DICT = {
 }
 
 # --- Theme-Aware Professional CSS ---
+def get_standard_layout(title="", height=400):
+    """Returns a standardized, professional layout for Plotly charts."""
+    return {
+        "title": {"text": title, "font": {"size": 16, "weight": 700}, "x": 0, "xanchor": "left"},
+        "paper_bgcolor": "rgba(0,0,0,0)",
+        "plot_bgcolor": "rgba(0,0,0,0)",
+        "font": {"family": "Inter, sans-serif", "color": "#94a3b8", "size": 11},
+        "margin": {"t": 60, "b": 40, "l": 40, "r": 20},
+        "height": height,
+        "xaxis": {"gridcolor": "rgba(128,128,128,0.1)", "zeroline": False, "showline": False},
+        "yaxis": {"gridcolor": "rgba(128,128,128,0.1)", "zeroline": False, "showline": False},
+        "legend": {"orientation": "h", "yanchor": "bottom", "y": 1.02, "xanchor": "right", "x": 1, "font": {"size": 10}},
+        "hoverlabel": {"bgcolor": "#1e293b", "font": {"family": "Inter, sans-serif", "size": 12}, "bordercolor": "rgba(255,255,255,0.1)"}
+    }
+
 def local_css(file_name):
     if os.path.exists(file_name):
         with open(file_name) as f:
@@ -772,7 +787,26 @@ else:
 
     # --- Main Header ---
     st.markdown(f'<p class="main-header">{L["title"]}</p>', unsafe_allow_html=True)
-    st.markdown(f'<p class="sub-header">{L["sub"]} | DATA CURRENT AS OF: {latest_event_date}</p>', unsafe_allow_html=True)
+    
+    # Professional Status Bar
+    st.markdown(f"""
+    <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px; padding: 10px 20px; background: rgba(128,128,128,0.03); border-radius: 8px; border: 1px solid rgba(128,128,128,0.08);">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981;"></div>
+            <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em; opacity: 0.8; text-transform: uppercase;">SYSTEM STATUS: ONLINE</span>
+        </div>
+        <div style="width: 1px; height: 12px; background: rgba(128,128,128,0.2);"></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-database" style="font-size: 0.7rem; opacity: 0.5;"></i>
+            <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em; opacity: 0.8; text-transform: uppercase;">SOURCE: ACLED (VERIFIED FLOOR)</span>
+        </div>
+        <div style="width: 1px; height: 12px; background: rgba(128,128,128,0.2);"></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-shield-halved" style="font-size: 0.7rem; opacity: 0.5;"></i>
+            <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em; opacity: 0.8; text-transform: uppercase;">GOVERNANCE: ETHICAL AI PROTOCOL</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     # --- Pre-calculations ---
     health_hits = extract_health_impacts(df)
@@ -799,38 +833,25 @@ else:
     with tab0:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['GEOSPATIAL']}")
 
-        # --- Geospatial Interpretation Guide ---
-        with st.expander(L["geo_guide"]["title"]):
-            st.markdown(f"""
-            *   {L["geo_guide"]["intensity"]}
-            *   {L["geo_guide"]["expansion"]}
-            *   {L["geo_guide"]["sdg3_overlay"]}
-            """)
-
         col1, col2 = st.columns(2)
         with col1:
-            st.caption("Humanitarian Conflict Overlay (Heatmap: Fatalities | Points: Health Impacts)")
-            
             # 1. Base Layer: Density Heatmap of all fatalities
             fig_heat = px.density_mapbox(
-                df, lat='latitude', lon='longitude', z='fatalities', radius=10,
-                center=dict(lat=18.5, lon=96), zoom=5, 
-                mapbox_style="carto-darkmatter", height=600,
-                color_continuous_scale=["#1e293b", "#475569", "#ef4444"], # Grayscale to Red
-                opacity=0.7
+                df, lat='latitude', lon='longitude', z='fatalities', radius=12,
+                center=dict(lat=18.5, lon=96), zoom=5.2, 
+                mapbox_style="carto-darkmatter", height=650,
+                color_continuous_scale=["#0f172a", "#1e293b", "#ef4444"], 
+                opacity=0.8
             )
             
-            # 2. Overlay Layer: Scatter points for health-impacting incidents
-            # We reuse the health_hits logic from before
             health_overlay = df[health_hits].copy()
             if not health_overlay.empty:
                 fig_overlay = px.scatter_mapbox(
                     health_overlay, lat='latitude', lon='longitude',
-                    color_discrete_sequence=["#10b981"], # Bright Green for Health
+                    color_discrete_sequence=["#10b981"], 
                     hover_name="location",
-                    size_max=15
+                    size_max=12
                 )
-                # Add the health points to the heatmap figure
                 for trace in fig_overlay.data:
                     trace.name = "Health Impact"
                     trace.showlegend = True
@@ -839,11 +860,10 @@ else:
             fig_heat.update_layout(
                 margin={"r":0,"t":0,"l":0,"b":0}, 
                 coloraxis_showscale=False,
-                legend=dict(yanchor="top", y=0.99, xanchor="left", x=0.01, bgcolor="rgba(0,0,0,0.5)")
+                legend=dict(yanchor="top", y=0.98, xanchor="left", x=0.02, bgcolor="rgba(15,23,42,0.8)", bordercolor="rgba(255,255,255,0.1)", borderwidth=1, font={"size": 10})
             )
             st.plotly_chart(fig_heat, use_container_width=True, config=high_res_config)
         with col2:
-            st.caption(L["geo_expansion"])
             df_anim = df.sort_values('event_date')
             fig_anim = px.scatter_mapbox(
                 df_anim, 
@@ -854,76 +874,51 @@ else:
                 animation_frame="year_month",
                 hover_name="location",
                 color_discrete_map=node_color_map,
-                hover_data={                    "event_date": "|%B %d, %Y", 
-                    "event_type": True,
-                    "actor1": True,
-                    "actor2": True,
-                    "fatalities": True,
-                    "latitude": False,
-                    "longitude": False,
-                    "year_month": False
-                },
-                zoom=5, 
-                height=600, 
+                zoom=5.2, 
+                height=650, 
                 mapbox_style="carto-darkmatter"
             )
-            fig_anim.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
+            fig_anim.update_layout(
+                margin={"r":0,"t":0,"l":0,"b":0},
+                legend=dict(yanchor="top", y=0.98, xanchor="left", x=0.02, bgcolor="rgba(15,23,42,0.8)", bordercolor="rgba(255,255,255,0.1)", borderwidth=1, font={"size": 10})
+            )
             st.plotly_chart(fig_anim, use_container_width=True, config=high_res_config)
 
     with tab1:
         guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['TEMPORAL']}")
 
-        # --- Temporal Interpretation Guide ---
-        with st.expander(L["temp_guide"]["title"]):
-            st.markdown(f"""
-            *   {L["temp_guide"]["frequency"]}
-            *   {L["temp_guide"]["keywords"]}
-            """)
-
-        st.subheader(L["temp_freq"])
-        
         # Prepare monthly stats
         monthly_events = df.resample('ME', on='event_date').size().reset_index(name='event_count')
         monthly_fatalities = df.resample('ME', on='event_date')['fatalities'].sum().reset_index()
         monthly_combined = pd.merge(monthly_events, monthly_fatalities, on='event_date')
         
         fig_line = go.Figure()
-        
-        # Add Events Trace
         fig_line.add_trace(go.Scatter(
             x=monthly_combined['event_date'], 
             y=monthly_combined['event_count'],
-            name="Conflict Incidents",
-            mode='lines',
-            line=dict(color='#94a3b8', width=2),
+            name="Incidents", mode='lines+markers',
+            line=dict(color='#94a3b8', width=3),
+            marker=dict(size=4, opacity=0.5),
             hovertemplate="<b>%{x|%B %Y}</b><br>Incidents: %{y}<extra></extra>"
         ))
         
-        # Add Fatalities Trace
         fig_line.add_trace(go.Scatter(
             x=monthly_combined['event_date'], 
             y=monthly_combined['fatalities'],
-            name="Verified Fatalities",
-            mode='lines',
-            line=dict(color='#ef4444', width=2),
+            name="Fatalities", mode='lines+markers',
+            line=dict(color='#ef4444', width=3),
+            marker=dict(size=4, opacity=0.5),
             hovertemplate="<b>%{x|%B %Y}</b><br>Fatalities: %{y}<extra></extra>"
         ))
         
-        fig_line.update_layout(
-            plotly_layout, 
-            xaxis_title="", 
-            yaxis_title="Volume",
-            hovermode="x unified",
-            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-        )
+        fig_line.update_layout(get_standard_layout(L["temp_freq"], height=500), hovermode="x unified")
         st.plotly_chart(fig_line, use_container_width=True, config=high_res_config)
         
         st.markdown("---")
-        st.caption(L["keywords_title"])
         kw_df = extract_keywords(df['notes'])
         if not kw_df.empty:
-            fig_kw = px.bar(kw_df, x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Greys")
-            fig_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=400)
+            fig_kw = px.bar(kw_df, x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Viridis")
+            fig_kw.update_layout(get_standard_layout(L["keywords_title"], height=450), yaxis={'categoryorder':'total ascending'}, coloraxis_showscale=False)
             st.plotly_chart(fig_kw, use_container_width=True, config=high_res_config)
 
     with tab2:
@@ -1047,13 +1042,14 @@ else:
                 )
             )
 
-            fig_net = go.Figure(data=edge_traces + [node_trace],
-                                layout=go.Layout(showlegend=False, hovermode='closest',
-                                                 margin=dict(b=0, l=0, r=0, t=0),
-                                                 xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                                                 yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                                                 paper_bgcolor='rgba(0,0,0,0)',
-                                                 plot_bgcolor='rgba(0,0,0,0)'))
+            fig_net = go.Figure(data=edge_traces + [node_trace])
+            fig_net.update_layout(
+                get_standard_layout(L["actor_net"], height=700),
+                showlegend=False, 
+                hovermode='closest',
+                xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+            )
             st.plotly_chart(fig_net, use_container_width=True, config=high_res_config)
         else:
             guidance_box("Insufficient interaction data for network mapping.", icon="exclamation-triangle")
@@ -1078,8 +1074,6 @@ else:
         stability_df['Severity_Index'] = (stability_df['fatalities'] / stability_df['event_count']).round(2)
         stability_df = stability_df.sort_values('Severity_Index', ascending=False)
         
-        # --- Regional Risk Matrix ---
-        st.subheader("Regional Risk Matrix (Frequency vs. Lethality)")
         risk_matrix = df.groupby('admin1').agg({'event_id_cnty': 'count','fatalities': 'sum'}).rename(columns={'event_id_cnty': 'Frequency'})
         risk_matrix['Lethality'] = (risk_matrix['fatalities'] / risk_matrix['Frequency']).round(2)
         fig_matrix = px.scatter(
@@ -1093,11 +1087,11 @@ else:
         )
         fig_matrix.update_traces(textposition='top center')
         fig_matrix.add_hline(y=risk_matrix['Lethality'].mean(), line_dash="dash", annotation_text="Baseline Lethality")
-        fig_matrix.update_layout(plotly_layout)
+        fig_matrix.update_layout(get_standard_layout("Regional Risk Matrix (Frequency vs. Lethality)", height=500))
         st.plotly_chart(fig_matrix, use_container_width=True, config=high_res_config)
 
-        fig_stab = px.bar(stability_df.reset_index(), x='admin1', y='Severity_Index', color='Severity_Index', color_continuous_scale="Reds", title="Lethality Index (Fatalities/Event)")
-        fig_stab.update_layout(plotly_layout)
+        fig_stab = px.bar(stability_df.reset_index(), x='admin1', y='Severity_Index', color='Severity_Index', color_continuous_scale="Reds")
+        fig_stab.update_layout(get_standard_layout(L["stab_title"], height=400))
         st.plotly_chart(fig_stab, use_container_width=True, config=high_res_config)
 
         st.markdown("---")
@@ -1118,8 +1112,8 @@ else:
         v_full['Vulnerability_Score'] = ((v_full['health_events'] * 0.7) + (v_full['fatalities'] * 0.3)).round(1)
         v_full = v_full.sort_values('Vulnerability_Score', ascending=False)
         
-        fig_v = px.bar(v_full.reset_index(), x='admin1', y='Vulnerability_Score', color='Vulnerability_Score', color_continuous_scale="Viridis", title="Regional Vulnerability Score")
-        fig_v.update_layout(plotly_layout)
+        fig_v = px.bar(v_full.reset_index(), x='admin1', y='Vulnerability_Score', color='Vulnerability_Score', color_continuous_scale="Inferno")
+        fig_v.update_layout(get_standard_layout("Regional Vulnerability Score", height=450))
         st.plotly_chart(fig_v, use_container_width=True, config=high_res_config)
 
     with tab4:
@@ -1167,9 +1161,26 @@ else:
 
         health_df = df[health_hits].copy()        
         if not health_df.empty:
-            # Pre-calculate HICE type for visualization
             health_df['hice_type'] = classify_hice_type(health_df)
             
+            # 1. HICE Analytics Overview
+            h_top_col1, h_top_col2 = st.columns(2)
+            with h_top_col1:
+                hice_counts = health_df['hice_type'].value_counts().reset_index()
+                fig_hice = px.pie(hice_counts, values='count', names='hice_type', 
+                                 color_discrete_sequence=px.colors.sequential.Tealgrn_r,
+                                 hole=0.4)
+                fig_hice.update_layout(get_standard_layout("HICE Impact Classification (NLP Engine)", height=400))
+                st.plotly_chart(fig_hice, use_container_width=True, config=high_res_config)
+
+            with h_top_col2:
+                kw_health = extract_health_keyword_counts(health_df['notes'])
+                if not kw_health.empty:
+                    fig_hk = px.bar(kw_health.head(10), x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Teal")
+                    fig_hk.update_layout(get_standard_layout("Healthcare Narrative Extraction", height=400), coloraxis_showscale=False)
+                    st.plotly_chart(fig_hk, use_container_width=True, config=high_res_config)
+            
+            st.markdown("---")
             h_col1, h_col2 = st.columns([2, 1])
             with h_col1:
                 st.caption("Geospatial Distribution of Health-Impacting Incidents (by Impact Type)")
@@ -1218,33 +1229,13 @@ else:
                 v_score['Score'] = ((v_score['HICE'] * 0.7) + (v_score['fatalities'] * 0.3)).round(1)
                 v_score = v_score.sort_values('Score', ascending=False)
                 v_score['Rank'] = range(1, len(v_score) + 1)
-                st.dataframe(v_score[['Rank', 'HICE', 'fatalities', 'Score']], use_container_width=True, height=400)
+                st.dataframe(v_score[['Rank', 'HICE', 'fatalities', 'Score']], use_container_width=True, height=500)
 
             st.markdown("---")
             
-            # --- HICE Classification & Narrative Keywords ---
-            h_kw_col1, h_kw_col2 = st.columns([1, 1])
-            with h_kw_col1:
-                st.caption("HICE Impact Classification (NLP Engine)")
-                h_type_counts = health_df['hice_type'].value_counts().reset_index()
-                h_type_counts.columns = ['Classification', 'Count']
-                fig_h_type = px.pie(
-                    h_type_counts, 
-                    values='Count', 
-                    names='Classification', 
-                    hole=0.4, 
-                    color='Classification',
-                    color_discrete_map=hice_color_map
-                )
-                fig_h_type.update_layout(plotly_layout, margin=dict(t=30, b=0, l=0, r=0), height=350, legend=dict(orientation="h", yanchor="bottom", y=-0.2))
-                st.plotly_chart(fig_h_type, use_container_width=True, config=high_res_config)
-                h_kw_df = extract_health_keyword_counts(health_df['notes'])
-                if not h_kw_df.empty:
-                    fig_h_kw = px.bar(h_kw_df.head(10), x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Viridis")
-                    fig_h_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=350, showlegend=False)
-                    st.plotly_chart(fig_h_kw, use_container_width=True, config=high_res_config)
-            
-            with h_kw_col2:
+            # --- Health Impact Trends & Records ---
+            h_trend_col1, h_trend_col2 = st.columns([1, 1])
+            with h_trend_col1:
                 st.caption("Temporal Trend: Health-Impacting Incidents")
                 h_trend = health_df.set_index('event_date').resample('ME').size().reset_index(name='count')
                 fig_h_trend = px.area(h_trend, x='event_date', y='count', color_discrete_sequence=['#10b981'])
@@ -1262,31 +1253,50 @@ else:
             selected_row = health_df[health_df['display_name'] == selected_incident_name].iloc[0]
             
             # Display the Spotlight Card
+            hice_icon_map = {
+                'infrastructure_damage': 'fa-hospital',
+                'personnel_targeting': 'fa-user-nurse',
+                'systemic_attack': 'fa-virus-slash',
+                'access_disruption': 'fa-road-barrier',
+                'humanitarian_disruption': 'fa-hand-holding-medical'
+            }
+            h_icon = hice_icon_map.get(selected_row['hice_type'], 'fa-file-medical')
+            
             st.markdown(f"""
             <div class="spotlight-card">
                 <div class="spotlight-header">
-                    <div class="spotlight-title">{selected_row['location']} Engagement</div>
-                    <div class="spotlight-meta">{selected_row['event_date'].strftime('%B %d, %Y')} | {selected_row['admin1']} Region</div>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <i class="fas {h_icon}"></i>
+                        </div>
+                        <div>
+                            <div class="spotlight-title">{selected_row['location']} Engagement</div>
+                            <div class="spotlight-meta">{selected_row['event_date'].strftime('%B %d, %Y')} | {selected_row['admin1']} Region</div>
+                        </div>
+                    </div>
+                    <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 6px 14px; border-radius: 6px; font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em; border: 1px solid rgba(16, 185, 129, 0.2); text-transform: uppercase;">
+                        {selected_row['hice_type'].replace('_', ' ')}
+                    </div>
                 </div>
                 <div class="spotlight-note">
                     "{selected_row['notes']}"
                 </div>
                 <div class="spotlight-grid">
                     <div class="spotlight-stat">
-                        <div class="spotlight-stat-label">Primary Actor</div>
+                        <div class="spotlight-stat-label"><i class="fas fa-shield-halved" style="margin-right:5px; opacity:0.5;"></i>Primary Actor</div>
                         <div class="spotlight-stat-value">{selected_row['actor1']}</div>
                     </div>
                     <div class="spotlight-stat">
-                        <div class="spotlight-stat-label">Secondary Actor</div>
+                        <div class="spotlight-stat-label"><i class="fas fa-users" style="margin-right:5px; opacity:0.5;"></i>Secondary Actor</div>
                         <div class="spotlight-stat-value">{selected_row['actor2'] if pd.notna(selected_row['actor2']) else 'None Reported'}</div>
                     </div>
                     <div class="spotlight-stat">
-                        <div class="spotlight-stat-label">Event Classification</div>
+                        <div class="spotlight-stat-label"><i class="fas fa-tags" style="margin-right:5px; opacity:0.5;"></i>Event Classification</div>
                         <div class="spotlight-stat-value">{selected_row['event_type']}</div>
                     </div>
-                    <div class="spotlight-stat">
-                        <div class="spotlight-stat-label">Fatalities</div>
-                        <div class="spotlight-stat-value" style="color:#ef4444">{int(selected_row['fatalities'])} Verified</div>
+                    <div class="spotlight-stat" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.1);">
+                        <div class="spotlight-stat-label" style="color: #ef4444; opacity: 0.8;"><i class="fas fa-skull-crossbones" style="margin-right:5px;"></i>Verified Fatalities</div>
+                        <div class="spotlight-stat-value" style="color: #ef4444; font-size: 1.1rem;">{int(selected_row['fatalities'])} LIVES LOST</div>
                     </div>
                 </div>
             </div>

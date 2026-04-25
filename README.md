@@ -4,58 +4,76 @@
 
 [![Kaggle Dataset](https://img.shields.io/badge/Kaggle-Dataset-blue?logo=kaggle)](https://www.kaggle.com/datasets/tainyantun/acled-dataset-for-myanmar)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/TainYanTun/Myanmar-conflict-observatory)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://tainyantun-myanmar-conflict-observatory-app-mafeff.streamlit.app/)
 
-This project serves as an analytical toolkit and visualization hub for conflict data in Myanmar. The primary focus is to transform raw, complex datasets into structured insights and accessible visualizations.
-The core dataset is sourced from ACLED (Armed Conflict Location & Event Data Project), specifically focusing on the timeframe following the military takeover on February 1, 2021.
+The **Myanmar Conflict Observatory (MCO)** is an enterprise-grade analytical framework and geospatial intelligence hub dedicated to monitoring the spatiotemporal dynamics of political violence in Myanmar. 
 
-The goal is to provide researchers, journalists, and analysts with a clear picture of conflict trends, geographical hotspots, and actor dynamics, updated through a robust technical framework.
+Since the military takeover on February 1, 2021, Myanmar has transitioned into a protracted state of asymmetric warfare. This platform transforms over 100,000 raw ACLED event logs into high-fidelity humanitarian insights, specifically optimized for **UN Sustainable Development Goal (SDG) 3.d monitoring**.
+
+## The "Verified Floor" Mandate
+This observatory operates under a conservative data verification protocol. We treat ACLED data as a **"Verified Floor"**—the absolute minimum confirmed human cost. In regions under communication blackouts, actual figures are likely significantly higher. Our mission is to provide an objective, evidence-based record of conflict expansion and infrastructure vulnerability.
+
+## Key Features & High-Tech Architecture
+
+### 1. HICE Intelligence Engine (NLP)
+*   **Automated Detection**: A multi-layered rule-based NLP pipeline identifying **Health-Impacting Conflict Events (HICE)**.
+*   **Research-Grade Validation**: Achieved **89.5% Precision** and a **252.3% increase in visibility** over standard structured dataset tags.
+*   **Hidden Toll Extraction**: Decodes qualitative event narratives to uncover the "Nature of Violence" (e.g., hospital arson, medic targeting) absent from formal tags.
+
+### 2. Geospatial Risk Modeling
+*   **Dynamic Animation**: High-performance WebGL-based temporal expansion maps showing the ruralization of conflict into Myanmar's heartland.
+*   **Regional Risk Matrix**: A quadrant-based analysis (Frequency vs. Lethality) that identifies high-intensity **"Red Zones"** requiring immediate trauma-focused humanitarian intervention.
+*   **Tactical Obfuscation**: Implements "Do No Harm" standards by centroiding incident coordinates to prevent the tactical targeting of medical assets.
+
+### 3. Performance & UI Standard
+*   **Isolated Reruns**: Optimized with `st.fragment` architecture, allowing for instantaneous interactions in the Spotlight Explorer and Records tab without full-page reloads.
+*   **Cyber-Forensic UI**: A custom-designed dark-mode interface with glassmorphic components, standard Plotly layout systems, and a high-tech forensic initialization console.
+*   **Big Data Optimization**: Pre-calculated display indices and server-side data slicing for seamless handling of 100k+ records.
 
 ## System Architecture
-
-The Myanmar Conflict Observatory is built on a modular, four-tier data pipeline designed for high availability and forensic accuracy.
 
 ```mermaid
 flowchart TD
 
-%% Strategic Alignment (external)
+%% Strategic Alignment
 SDG3[SDG 3.d Risk Assessment]
 SDG16[SDG 16.1 Peace & Justice]
 
 %% 1. Data Ingestion
-subgraph "1. Data Ingestion"
+subgraph "1. Forensic Ingestion"
     GHA[GitHub Actions]
     Sync[Data Sync Engine]
-    Supabase[(Supabase)]
-    Kaggle[(Kaggle)]
-
+    Supabase[(Supabase/PostgreSQL)]
+    
     GHA --> Sync
     Supabase --> Sync
-    Kaggle --> Sync
 end
 
 %% 2. Intelligence Engine
 subgraph "2. Intelligence Engine"
-    Actor[Actor Normalization]
-    NLP[NLP Extraction]
+    Actor[Semantic Actor Taxonomy]
+    NLP[HICE NLP Framework]
+    Validation[89.5% Precision Audit]
 
     Sync --> Actor
     Actor --> NLP
+    NLP --> Validation
 end
 
 %% 3. Analytical Models
 subgraph "3. Analytical Models"
-    Geo[Geospatial Analysis]
-    Temp[Temporal Analysis]
-    Net[Actor Network]
+    Geo[MapLibre Geospatial]
+    Temp[Temporal Resampling]
+    Net[Graph Interaction Network]
 
-    NLP --> Geo
-    NLP --> Temp
-    NLP --> Net
+    Validation --> Geo
+    Validation --> Temp
+    Validation --> Net
 end
 
 %% 4. Mission Control
 subgraph "4. Mission Control"
-    Dashboard[Streamlit Dashboard]
+    Dashboard[Streamlit Fragmented UI]
 
     Geo --> Dashboard
     Temp --> Dashboard
@@ -67,44 +85,18 @@ SDG3 -.-> Geo
 SDG16 -.-> Geo
 ```
 
-## UN SDG 2030 Strategic Alignment
-
-This project is purpose-built to support the **United Nations 2030 Agenda for Sustainable Development**, specifically focusing on the intersection of conflict and health.
-
-### **Primary Goal: SDG 3 (Good Health & Well-being)**
-*   **Target 3.d:** *Strengthen the capacity of all countries... for risk reduction and management of national and global health risks.*
-    *   **Our Contribution:** The **Humanitarian Risk Assessment (SDG 3.D)** tab provides high-fidelity, evidence-based insights into conflict events that threaten medical infrastructure, acting as a structural assessment tool for humanitarian responders.
-*   **Target 3.8:** *Achieve universal health coverage... access to quality essential health-care services.*
-    *   **Our Contribution:** By mapping conflict "Hotspots" against medical infrastructure narratives, we identify regions where health coverage is being systemically disrupted by kinetic engagements.
-
-### **Secondary Goal: SDG 16 (Peace, Justice & Strong Institutions)**
-*   **Target 16.1:** *Significantly reduce all forms of violence and related death rates everywhere.*
-    *   **Our Contribution:** Through the **Actor Interaction Network**, we provide a transparent, data-driven record of violence, supporting the "Peace & Justice" mandate by documenting the human cost of conflict with forensic clarity.
-
----
-
-### Project Status & Data Infrastructure
-
-     Start Date: February 1, 2021 (Coup d'état).
-     End Date: Current Date (Rolling update).
-     Update Mechanism: Automated daily API ingestion via GitHub Actions and ACLED OAuth2. 
-     Database: PostgreSQL (Supabase) with SQLAlchemy ORM for scalable retrieval.
-     Architecture: Modularized directory structure (src, docs, notebooks, scripts) for enterprise-grade maintainability.
-              
-This project utilizes live data from the Armed Conflict Location & Event Data Project (ACLED) API.
-
 ## Setup & Installation
 
-To run this project locally or in a containerized environment, you must configure your ACLED credentials:
+The MCO utilizes a hybrid cloud architecture (ACLED API + Supabase PostgreSQL).
 
 1. **Register with ACLED:** Obtain an account at [acleddata.com](https://acleddata.com/).
-2. **Configure Environment:** Create a `.env` file in the root directory (refer to `.env.example`):
+2. **Configure Environment:** Create a `.env` file in the root directory:
    ```env
    ACLED_EMAIL=your_email@example.com
    ACLED_PASSWORD=your_password
-   DB_URL=postgresql://admin:secure_password@localhost:5432/conflict_db
+   RESEND_API_KEY=your_key_for_contact_form
    ```
-3. **Automated Data Update:** Run the extraction script to fetch the latest conflict logs:
+3. **Initialize Data:**
    ```bash
    python update_data.py
    ```
@@ -113,51 +105,18 @@ To run this project locally or in a containerized environment, you must configur
    streamlit run app.py
    ```
 
-### Possibilities & Scope
+## Ethical Framework & Data Governance
+*   **Institutional Neutrality**: Independent, non-partisan research. NLP ontologies use cross-verified humanitarian dictionaries to ensure narrative neutrality.
+*   **ICRC Alignment**: Data presentation adheres to the *ICRC Handbook on Data Protection in Humanitarian Action*.
+*   **Human Rights Documentation**: High-resolution (3x) export capabilities support the use of visualizations for accountability and legal advocacy.
 
-Below are the core analytical components currently implemented:
+## Collaborators
+- **Tain Yan Tun** - Full Stack Data Engineer & Lead Researcher
+- **Kyaw Zay Aung** - Data Analyst & Conflict Specialist
 
-1. Temporal Analysis
-     - Conflict Frequency: Time-series evaluations tracking the number of conflict events per day/week/month.
-     - Fatality Trends: Analysis of reported fatalities over time to identify spikes in violence.
+## License
+This project is licensed under the [MIT License](LICENSE). 
+Information on political violence and protest events is sourced from the [Armed Conflict Location & Event Data Project (ACLED)](https://acleddata.com/).
 
-2. Geospatial Analysis
-     - Conflict Hotspots: Mapping events to identify high-risk regions at State/Region and Township levels.
-     - Temporal Expansion: Animated visualizations showing the expansion of conflict over time.
-     - Regional Severity: Quantification of instability through a custom Severity Index (Fatalities/Events ratio).
-
-3. Actor Dynamics
-     - Actor Interaction: Interactive network graphs mapping engagements between State Forces, Resistance (PDFs), and EAOs.
-     - Semantic Normalization: Automated clustering of fragmented local groups into high-level taxonomies.
-
-4. SDG 3: Health & Well-being (Hackathon Special)
-     - Health Infrastructure Impact: Tracking kinetic incidents specifically affecting hospitals, clinics, and medical staff.
-     - Social Impact Analysis: NLP extraction of gender-specific targeting (women and girls) and systemic well-being indicators.
-     - Risk Assessment: Analytical framework for evidence-based humanitarian prioritization (SDG Target 3.d).
-
-### Project Organization
-
-The repository has been restructured to support professional development standards:
-
-     app.py: Main Streamlit dashboard interface with SDG 3 focus.
-     db_manager.py: Data ingestion and PostgreSQL management pipeline.
-     src/: Shared processing logic including actor categorization, health impact extraction, and data cleaning.
-     docs/: Formal research documentation, proposals, and NLP strategy.
-     notebooks/: Environment for experimental EDA and research-driven analysis.
-     scripts/: Data ingestion and database management utilities.
-
-### Collaborators
-
-- **Tain Yan Tun** - Data Engineer (Undergraduate)
-- **Kyaw Zay Aung** - Data Analyst (Undergraduate)
-
-### Disclaimer & Ethics
-
-     The data analyzed involves real-world violence and human rights issues. The goal of this project is to provide objective clarity for research purposes, not to sensationalize.
-     ACLED data is derived from multiple reports and represents a "Verified Floor"—a conservative estimate of confirmed fatalities.
-     Visualizations are only as accurate as the underlying data source. All credit for the raw data belongs to ACLED. 
-
-### License
-
-The code in this repository is licensed under the [MIT License](LICENSE).
-Information on political violence and protest events is sourced from the Armed Conflict Location & Event Data Project (ACLED).
+---
+*For technical details on the HICE framework, refer to the formal research manuscript in* `research/main.tex`.

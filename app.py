@@ -886,9 +886,9 @@ else:
                 color_discrete_map=node_color_map,
                 zoom=5.2, 
                 height=650, 
-                map_style="carto-darkmatter"
+                map_style="carto-darkmatter",
+                opacity=0.9
             )
-            fig_anim.update_traces(marker=dict(opacity=0.9, line=dict(width=0.5, color='rgba(255,255,255,0.2)')))
             fig_anim.update_layout(
                 margin={"r":0,"t":0,"l":0,"b":0},
                 legend=dict(yanchor="top", y=0.98, xanchor="left", x=0.02, bgcolor="rgba(15,23,42,0.8)", bordercolor="rgba(255,255,255,0.1)", borderwidth=1, font={"size": 10})

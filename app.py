@@ -758,9 +758,18 @@ else:
     df_raw['is_hice'] = extract_health_impacts(df_raw)
     # Only classify HICE types for those that hit the mask to save compute
     df_raw['hice_type'] = "none"
+    df_raw['spotlight_name'] = "N/A"
+    
     if df_raw['is_hice'].any():
         hice_indices = df_raw[df_raw['is_hice']].index
-        df_raw.loc[hice_indices, 'hice_type'] = classify_hice_type(df_raw.loc[hice_indices])
+        h_subset = df_raw.loc[hice_indices]
+        df_raw.loc[hice_indices, 'hice_type'] = classify_hice_type(h_subset)
+        # Pre-format the spotlight display names to avoid compute during interaction
+        df_raw.loc[hice_indices, 'spotlight_name'] = (
+            h_subset['event_date'].dt.strftime('%Y-%m-%d') + " | " + 
+            h_subset['location'] + " [" + 
+            df_raw.loc[hice_indices, 'hice_type'].str.replace('_', ' ').str.upper() + "]"
+        )
     
     latest_event_date = df_raw['event_date'].max().strftime('%B %d, %Y')
 
@@ -1268,12 +1277,11 @@ else:
                     filtered_spotlight = filtered_spotlight[filtered_spotlight['admin1'] == search_region]
                 
                 with s_col2:
-                    # Prepare display names only for the filtered subset to save compute
-                    filtered_spotlight['display_name'] = filtered_spotlight['event_date'].dt.strftime('%Y-%m-%d') + " | " + filtered_spotlight['location'] + " [" + filtered_spotlight['hice_type'].apply(lambda x: x.replace('_', ' ').upper()) + "]"
-                    selected_incident_name = st.selectbox("Select Incident Log", filtered_spotlight['display_name'].tolist(), key="incident_selector")
+                    # Use pre-calculated display names (spotlight_name)
+                    selected_incident_name = st.selectbox("Select Incident Log", filtered_spotlight['spotlight_name'].tolist(), key="incident_selector")
                 
                 if not filtered_spotlight.empty:
-                    selected_row = filtered_spotlight[filtered_spotlight['display_name'] == selected_incident_name].iloc[0]
+                    selected_row = filtered_spotlight[filtered_spotlight['spotlight_name'] == selected_incident_name].iloc[0]
                     
                     # Display the Spotlight Card
                     hice_icon_map = {

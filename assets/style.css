@@ -204,3 +204,57 @@ header { background-color: transparent !important; }
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 20px;
 }
+
+/* Cyber Loading Animations */
+.cyber-loader-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+}
+
+.cyber-loader {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent;
+    border-top-color: #10b981;
+    border-radius: 50%;
+    animation: cyber-spin 1.5s linear infinite;
+}
+
+.cyber-loader-inner {
+    position: absolute;
+    width: 60%;
+    height: 60%;
+    top: 20%;
+    left: 20%;
+    border: 2px solid transparent;
+    border-bottom-color: #10b981;
+    border-radius: 50%;
+    opacity: 0.5;
+    animation: cyber-spin-reverse 1s linear infinite;
+}
+
+@keyframes cyber-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes cyber-spin-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+.pulse-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #10b981;
+    border-radius: 50%;
+    animation: cyber-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes cyber-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.5); opacity: 1; }
+}

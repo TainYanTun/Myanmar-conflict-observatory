@@ -608,7 +608,32 @@ if not st.session_state.gate_passed:
         _, b_col, _ = st.columns([1, 2, 1])
         with b_col:
             if remaining > 0:
-                st.button(f"INITIALIZING SECURE PROTOCOLS ({remaining}S)", disabled=True, key="timer_btn", use_container_width=True)
+                # High-end Cyber Loading Indicator
+                status_msgs = [
+                    "AUTHENTICATING SECURE ACCESS",
+                    "SYNCING ACLED REPOSITORY",
+                    "CALIBRATING HICE NLP ENGINE",
+                    "MAPPING GEOSPATIAL CLUSTERS",
+                    "VALIDATING ACTOR TAXONOMY"
+                ]
+                msg = status_msgs[remaining % len(status_msgs)]
+                
+                st.markdown(f"""
+                <div style="background: rgba(16, 185, 129, 0.03); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 16px; padding: 40px; text-align: center; margin-top: 20px;">
+                    <div class="cyber-loader-container">
+                        <div class="cyber-loader"></div>
+                        <div class="cyber-loader-inner"></div>
+                    </div>
+                    <div style="color: #10b981; font-size: 0.75rem; letter-spacing: 0.25em; font-weight: 800; margin-top: 30px; text-transform: uppercase;">
+                        {msg}
+                    </div>
+                    <div style="display: flex; justify-content: center; gap: 4px; margin-top: 15px;">
+                        <div class="pulse-dot" style="animation-delay: 0s;"></div>
+                        <div class="pulse-dot" style="animation-delay: 0.2s;"></div>
+                        <div class="pulse-dot" style="animation-delay: 0.4s;"></div>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
                 time.sleep(1)
                 st.rerun()
             else:
@@ -1441,10 +1466,30 @@ else:
         """)
 
     with tab7:
-        guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['RECORDS']}")
-        st.subheader(L["records_title"])
-        st.markdown(L["records_desc"])
-        st.dataframe(df.sort_values('event_date', ascending=False), width=1000)
+        @st.fragment
+        def render_records_explorer(data):
+            guidance_box(f"**{selected_lang} Guidance:** {L['tab_explanations']['RECORDS']}")
+            
+            r_col1, r_col2 = st.columns([2, 1])
+            with r_col1:
+                st.subheader(L["records_title"])
+                st.caption(L["records_desc"])
+            with r_col2:
+                # Add a record limit to prevent browser lag with massive datasets
+                record_limit = st.select_slider("Results Depth", options=[500, 1000, 5000, 10000, "Full Dataset"], value=1000, help="Limiting rows improves interface responsiveness.")
+            
+            # Efficiently sort and slice
+            display_df = data.sort_values('event_date', ascending=False)
+            if record_limit != "Full Dataset":
+                display_df = display_df.head(record_limit)
+                st.info(f"Displaying the {record_limit} most recent events based on your filters.")
+            
+            # Remove high-overhead internal columns from view
+            view_cols = [c for c in display_df.columns if c not in ['spotlight_name', 'is_hice', 'hice_type', 'actor1_clean', 'actor2_clean']]
+            
+            st.dataframe(display_df[view_cols], use_container_width=True, height=600)
+
+        render_records_explorer(df)
 
 
 

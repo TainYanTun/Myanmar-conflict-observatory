@@ -194,35 +194,35 @@ def extract_health_impacts(df):
     
     # 1. High-Signal Health Ontology (Restored Orgs)
     health_terms = [
-        r'\bhospital(s)?\b', r'\bclinic(s)?\b', r'\bhealth center(s)?\b',
-        r'\brural health center(s)?\b', r'\brhc\b', r'\bmedical facility\b',
-        r'\bhealth facility\b', r'\btreatment center\b', r'\bdoctor(s)?\b', 
-        r'\bnurse(s)?\b', r'\bhealth worker(s)?\b', r'\bmedic(s)?\b',
-        r'\bmedical staff\b', r'\bambulance(s)?\b', r'\bmedical supplies\b',
+        r'\bhospital(?:s)?\b', r'\bclinic(?:s)?\b', r'\bhealth center(?:s)?\b',
+        r'\brural health center(?:s)?\b', r'\brhc\b', r'\bmedical facility\b',
+        r'\bhealth facility\b', r'\btreatment center\b', r'\bdoctor(?:s)?\b', 
+        r'\bnurse(?:s)?\b', r'\bhealth worker(?:s)?\b', r'\bmedic(?:s)?\b',
+        r'\bmedical staff\b', r'\bambulance(?:s)?\b', r'\bmedical supplies\b',
         r'\bworld health organization\b', r'\bunicef\b', r'\bmsf\b', r'\bicrc\b',
-        r'\bmedicine\b.{0,20}\b(shortage|destroyed|looted|burned|seized)\b',
-        r'\bpatient(s)?\b.{0,15}\b(injured|treated|killed|arrested|wounded)\b'
+        r'\bmedicine\b.{0,20}\b(?:shortage|destroyed|looted|burned|seized)\b',
+        r'\bpatient(?:s)?\b.{0,15}\b(?:injured|treated|killed|arrested|wounded)\b'
     ]
-    health_mask = notes.str.contains('|'.join(health_terms), regex=True)
+    health_mask = notes.str.contains('|'.join(health_terms), regex=True, case=False)
     
     # 2. Action & Targeting Masks (Expanded Passive Voice)
-    targeting_mask = notes.str.contains(r'\b(target(ed|ing)?|fired upon|opened fire on|hit by|raided|occupied)\b', regex=True)
+    targeting_mask = notes.str.contains(r'\b(?:target(?:ed|ing)?|fired upon|opened fire on|hit by|raided|occupied)\b', regex=True, case=False)
     action_phrases = [
-        r'\b(set fire to)\b',
-        r'\b(was|were|had been) (destroyed|burned|attacked|looted)\b',
-        r'\b(reportedly|allegedly) (attacked|targeted)\b',
+        r'\b(?:set fire to)\b',
+        r'\b(?:was|were|had been) (?:destroyed|burned|attacked|looted)\b',
+        r'\b(?:reportedly|allegedly) (?:attacked|targeted)\b',
         r'\bwas shot\b', r'\bwas arrested\b'
     ]
-    phrase_mask = notes.str.contains('|'.join(action_phrases), regex=True)
+    phrase_mask = notes.str.contains('|'.join(action_phrases), regex=True, case=False)
 
     # 3. Bidirectional Proximity Linking (Refined health_infra)
     attack_terms = r'attack|burn|destroy|shell|raid|arrest|target|strike|fire|hit'
-    health_infra = r'hospital|clinic|health center|doctor|nurse|medic|medical (facility|team|staff)'
-    proximity_pattern = rf'({health_infra}.{{0,45}}({attack_terms}))|(({attack_terms}).{{0,45}}{health_infra})'
-    proximity_mask = notes.str.contains(proximity_pattern, regex=True)
+    health_infra = r'hospital|clinic|health center|doctor|nurse|medic|medical (?:facility|team|staff)'
+    proximity_pattern = rf'(?:{health_infra}.{{0,45}}(?:{attack_terms}))|(?:(?:{attack_terms}).{{0,45}}{health_infra})'
+    proximity_mask = notes.str.contains(proximity_pattern, regex=True, case=False)
     
     # 4. Constrained Soft Health (Personnel/Patient context)
-    soft_health_mask = notes.str.contains(r'\b(injured|wounded|killed|dead)\b.{0,20}\b(patient|doctor|nurse|medic|staff)\b', regex=True)
+    soft_health_mask = notes.str.contains(r'\b(?:injured|wounded|killed|dead)\b.{0,20}\b(?:patient|doctor|nurse|medic|staff)\b', regex=True, case=False)
 
     # 5. ACLED Structured Filter
     attack_sub = ['Attack', 'Shelling/artillery/missile attack', 'Air/drone strike', 'Abduction/forced disappearance', 'Arrests', 'Looting/property destruction']
@@ -257,10 +257,10 @@ def classify_hice_type(df):
     staff_markers = r'doctor|nurse|midwife|surgeon|medic|superintendent|worker'
     access_markers = r'\b(closed|abandoned|no access|denied access|blocked)\b'
 
-    is_infra = notes.str.contains(infra_markers, regex=True)
-    is_staff = notes.str.contains(staff_markers, regex=True)
-    is_access = notes.str.contains(access_markers, regex=True)
-    pers_harm = notes.str.contains(r'\b(killed|arrested|shot|abducted|beaten)\b.{0,15}\b(doctor|nurse|medic|midwife|staff)\b', regex=True)
+    is_infra = notes.str.contains(infra_markers, regex=True, case=False)
+    is_staff = notes.str.contains(staff_markers, regex=True, case=False)
+    is_access = notes.str.contains(access_markers, regex=True, case=False)
+    pers_harm = notes.str.contains(r'\b(?:killed|arrested|shot|abducted|beaten)\b.{0,15}\b(?:doctor|nurse|medic|midwife|staff)\b', regex=True, case=False)
     
     # Ensure numpy is available (imported as np)
     conditions = [
@@ -630,8 +630,9 @@ def guidance_box(text, icon="info-circle"):
     """, unsafe_allow_html=True)
 
 # --- Data Engine (SQL & CSV Fallback) ---
-@st.cache_data
+@st.cache_data(show_spinner=False)
 def load_data():
+    """Consolidated data loader with dual-source fallback."""
     try:
         # 1. Attempt to load from PostgreSQL
         if DB_URL:
@@ -752,6 +753,15 @@ else:
 
     df_raw['actor1_clean'] = df_raw['actor1'].apply(categorize_actor)
     df_raw['actor2_clean'] = df_raw['actor2'].apply(categorize_actor)
+    
+    # Pre-calculate NLP masks once to boost filter performance
+    df_raw['is_hice'] = extract_health_impacts(df_raw)
+    # Only classify HICE types for those that hit the mask to save compute
+    df_raw['hice_type'] = "none"
+    if df_raw['is_hice'].any():
+        hice_indices = df_raw[df_raw['is_hice']].index
+        df_raw.loc[hice_indices, 'hice_type'] = classify_hice_type(df_raw.loc[hice_indices])
+    
     latest_event_date = df_raw['event_date'].max().strftime('%B %d, %Y')
 
     # --- Sidebar ---
@@ -809,7 +819,7 @@ else:
     """, unsafe_allow_html=True)
 
     # --- Pre-calculations ---
-    health_hits = extract_health_impacts(df)
+    health_hits = df['is_hice']
 
     # --- Metrics ---
     m_col1, m_col2, m_col3, m_col4 = st.columns(4)
@@ -835,18 +845,18 @@ else:
 
         col1, col2 = st.columns(2)
         with col1:
-            # 1. Base Layer: Density Heatmap of all fatalities
-            fig_heat = px.density_mapbox(
+            # 1. Base Layer: Density Map of all fatalities
+            fig_heat = px.density_map(
                 df, lat='latitude', lon='longitude', z='fatalities', radius=12,
                 center=dict(lat=18.5, lon=96), zoom=5.2, 
-                mapbox_style="carto-darkmatter", height=650,
+                map_style="carto-darkmatter", height=650,
                 color_continuous_scale=["#0f172a", "#1e293b", "#ef4444"], 
                 opacity=0.8
             )
             
             health_overlay = df[health_hits].copy()
             if not health_overlay.empty:
-                fig_overlay = px.scatter_mapbox(
+                fig_overlay = px.scatter_map(
                     health_overlay, lat='latitude', lon='longitude',
                     color_discrete_sequence=["#10b981"], 
                     hover_name="location",
@@ -865,7 +875,7 @@ else:
             st.plotly_chart(fig_heat, use_container_width=True, config=high_res_config)
         with col2:
             df_anim = df.sort_values('event_date')
-            fig_anim = px.scatter_mapbox(
+            fig_anim = px.scatter_map(
                 df_anim, 
                 lat="latitude", 
                 lon="longitude", 
@@ -876,7 +886,7 @@ else:
                 color_discrete_map=node_color_map,
                 zoom=5.2, 
                 height=650, 
-                mapbox_style="carto-darkmatter"
+                map_style="carto-darkmatter"
             )
             fig_anim.update_layout(
                 margin={"r":0,"t":0,"l":0,"b":0},
@@ -1195,7 +1205,7 @@ else:
             with h_col1:
                 st.caption("Geospatial Distribution of Health-Impacting Incidents (by Impact Type)")
 
-                fig_h_geo = px.scatter_mapbox(
+                fig_h_geo = px.scatter_map(
                     health_df, 
                     lat="latitude", 
                     lon="longitude", 
@@ -1215,7 +1225,7 @@ else:
                     }, 
                     zoom=5, 
                     height=500, 
-                    mapbox_style="carto-darkmatter"
+                    map_style="carto-darkmatter"
                 )
                 fig_h_geo.update_layout(
                     margin={"r":0,"t":0,"l":0,"b":0},
@@ -1245,13 +1255,24 @@ else:
             st.markdown("### <i class='fas fa-magnifying-glass-location' style='color:#10b981'></i> HUMANITARIAN SPOTLIGHT EXPLORER", unsafe_allow_html=True)
             st.caption("Select an incident from the list to reveal the full verified forensic narrative and health impact details.")
             
-            # Prepare options for selection - Updated to HICE classification
-            health_df['display_name'] = health_df['event_date'].dt.strftime('%Y-%m-%d') + " | " + health_df['location'] + " [" + health_df['hice_type'].apply(lambda x: x.replace('_', ' ').upper()) + "]"
-            selected_incident_name = st.selectbox("Search Incident Log", health_df['display_name'].tolist())
+            # 1. Selection Controls
+            s_col1, s_col2 = st.columns([1, 2])
+            with s_col1:
+                search_region = st.selectbox("Focus Region", ["All Regions"] + sorted(health_df['admin1'].unique().tolist()), key="spotlight_region")
             
-            selected_row = health_df[health_df['display_name'] == selected_incident_name].iloc[0]
+            filtered_spotlight = health_df.copy()
+            if search_region != "All Regions":
+                filtered_spotlight = filtered_spotlight[filtered_spotlight['admin1'] == search_region]
             
-            # Display the Spotlight Card
+            with s_col2:
+                # Prepare display names only for the filtered subset to save compute
+                filtered_spotlight['display_name'] = filtered_spotlight['event_date'].dt.strftime('%Y-%m-%d') + " | " + filtered_spotlight['location'] + " [" + filtered_spotlight['hice_type'].apply(lambda x: x.replace('_', ' ').upper()) + "]"
+                selected_incident_name = st.selectbox("Select Incident Log", filtered_spotlight['display_name'].tolist(), key="incident_selector")
+            
+            if not filtered_spotlight.empty:
+                selected_row = filtered_spotlight[filtered_spotlight['display_name'] == selected_incident_name].iloc[0]
+                
+                # Display the Spotlight Card
             hice_icon_map = {
                 'infrastructure_damage': 'fa-hospital',
                 'personnel_targeting': 'fa-user-nurse',
@@ -1329,7 +1350,7 @@ else:
             
             st.markdown("<br>", unsafe_allow_html=True)
             with st.expander("View Full Filtered Health Records (Tabular)"):
-                st.dataframe(health_df[['event_date', 'location', 'notes']].sort_values('event_date', ascending=False), use_container_width=True)
+                st.dataframe(health_df[['event_date', 'location', 'notes']].sort_values('event_date', ascending=False), width="stretch")
         else:
             guidance_box("No medical-impact incidents detected in current filtered data.")
 

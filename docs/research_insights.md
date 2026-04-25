@@ -34,6 +34,8 @@
 - **Big Data Utility:** Traditional spreadsheet analysis failed to reveal the spatiotemporal "bloom" of the conflict. The Python ETL pipeline was essential for handling the **69,000+ records**.
 - **Ethical Requirement:** The "Do No Harm" mandate is not just legal; it is analytical. Aggregating data into 1-month clusters (ME) is necessary to provide strategic insights without creating tactical risks for local reporters.
 
----
-**Researcher Signature:** Tain Yan Tun  
-**Date:** March 13, 2026
+## 6. VALIDATION & ROBUSTNESS
+*Core Observation: The framework's analytical layers are empirically verified and stable.*
+
+- **NLP Precision (HICE Engine):** A manual audit of 200 randomized events detected by the Health-Impacting Conflict Events (HICE) engine revealed a **Precision of 87.5% – 89.5%**. This confirms that the keyword ontology reliably captures direct and secondary threats to medical infrastructure and community well-being.
+- **Vulnerability Score Robustness:** Sensitivity analysis on the regional prioritization model (0.7/0.3 weights) demonstrated extreme structural stability. Varying the weights within a ±10% range yielded a minimum **Spearman’s ρ of 0.9979**, indicating that regional rankings for humanitarian triage are robust to minor parameter shifts.

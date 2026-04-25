@@ -1080,7 +1080,7 @@ else:
         The dashboard utilizes two primary models for stability assessment:
         - **Intensity Mapping:** Using Gaussian kernels to calculate incident density, highlighting "hotzones" where kinetic engagements are most concentrated.
         - **Temporal Resampling:** Using Month-End (ME) intervals to smooth daily reporting noise and reveal systemic shifts in conflict velocity and lethality trends.
-        - **Anomaly Detection:** Employs Z-Score statistical analysis to identify regional surges in violence that deviate from historical averages, providing insights for humanitarian responders.
+        - **Regional Risk Matrix:** Computes a Severity Index (Fatalities per Event) to differentiate between high-frequency instability and high-intensity combat zones, facilitating humanitarian triage.
 
         ### 4. Analytical Limitations & Considerations
         This framework is designed for strategic humanitarian analysis, and users should be aware of the following data nuances:

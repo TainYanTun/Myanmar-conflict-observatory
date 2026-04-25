@@ -154,17 +154,16 @@ def extract_health_impacts(df):
     violent_ev = ['Violence against civilians', 'Battles', 'Explosions/Remote violence']
     structure_mask = (df['sub_event_type'].isin(attack_sub)) | (df['event_type'].isin(violent_ev))
     
-    # 6. Actor Context
-    actors = [r'tatmadaw', r'military', r'soldiers', r'pdf', r'eao', r'armed group', r'unknown', r'unidentified']
-    actor_mask = (df['actor1'].str.lower().str.contains('|'.join(actors), na=False) | df['actor2'].str.lower().str.contains('|'.join(actors), na=False))
-    
+    # 6. Actor Presence (binary — avoids alias gaps in hardcoded actor lists)
+    actor_presence = df['actor1'].notna().astype(int)
+
     # ROBUST CONFIDENCE SCORING (Capped overlaps)
     interaction_boost = (proximity_mask.astype(int) + targeting_mask.astype(int) + phrase_mask.astype(int)).clip(upper=2)
     confidence = (
         (interaction_boost * 2) +
         (health_mask.astype(int) * 2) +
         (soft_health_mask.astype(int) * 2) +
-        (actor_mask.astype(int))
+        actor_presence
     )
     
     # ACTION COUPLING & GATING
@@ -181,12 +180,12 @@ def classify_hice_type(df):
     notes = df['notes'].fillna('').str.lower()
     infra_markers = r'hospital|clinic|pharmacy|center|dispensary|facility|ward'
     staff_markers = r'doctor|nurse|midwife|surgeon|medic|superintendent|worker'
-    access_markers = r'\\b(closed|abandoned|no access|denied access|blocked)\\b'
-    
+    access_markers = r'\b(closed|abandoned|no access|denied access|blocked)\b'
+
     is_infra = notes.str.contains(infra_markers, regex=True)
     is_staff = notes.str.contains(staff_markers, regex=True)
     is_access = notes.str.contains(access_markers, regex=True)
-    pers_harm = notes.str.contains(r'\\b(killed|arrested|shot|abducted|beaten)\\b.{0,15}\\b(doctor|nurse|medic|midwife|staff)\\b', regex=True)
+    pers_harm = notes.str.contains(r'\b(killed|arrested|shot|abducted|beaten)\b.{0,15}\b(doctor|nurse|medic|midwife|staff)\b', regex=True)
     
     conditions = [
         pers_harm,

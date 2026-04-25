@@ -1163,12 +1163,22 @@ else:
         if not health_df.empty:
             health_df['hice_type'] = classify_hice_type(health_df)
             
+            # Define a specific color map for HICE types to ensure consistency across all charts
+            hice_color_map = {
+                'infrastructure_damage': '#ef4444', # Red
+                'personnel_targeting': '#f59e0b',    # Amber
+                'systemic_attack': '#8b5cf6',       # Violet
+                'access_disruption': '#3b82f6',     # Blue
+                'humanitarian_disruption': '#94a3b8' # Slate
+            }
+            
             # 1. HICE Analytics Overview
             h_top_col1, h_top_col2 = st.columns(2)
             with h_top_col1:
                 hice_counts = health_df['hice_type'].value_counts().reset_index()
                 fig_hice = px.pie(hice_counts, values='count', names='hice_type', 
-                                 color_discrete_sequence=px.colors.sequential.Tealgrn_r,
+                                 color='hice_type',
+                                 color_discrete_map=hice_color_map,
                                  hole=0.4)
                 fig_hice.update_layout(get_standard_layout("HICE Impact Classification (NLP Engine)", height=400))
                 st.plotly_chart(fig_hice, use_container_width=True, config=high_res_config)
@@ -1176,23 +1186,14 @@ else:
             with h_top_col2:
                 kw_health = extract_health_keyword_counts(health_df['notes'])
                 if not kw_health.empty:
-                    fig_hk = px.bar(kw_health.head(10), x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Teal")
-                    fig_hk.update_layout(get_standard_layout("Healthcare Narrative Extraction", height=400), coloraxis_showscale=False)
+                    fig_hk = px.bar(kw_health.head(10), x='Frequency', y='Keyword', orientation='h', color_discrete_sequence=['#10b981'])
+                    fig_hk.update_layout(get_standard_layout("Healthcare Narrative Extraction", height=400))
                     st.plotly_chart(fig_hk, use_container_width=True, config=high_res_config)
             
             st.markdown("---")
             h_col1, h_col2 = st.columns([2, 1])
             with h_col1:
                 st.caption("Geospatial Distribution of Health-Impacting Incidents (by Impact Type)")
-                
-                # Define a specific color map for HICE types to ensure consistency
-                hice_color_map = {
-                    'infrastructure_damage': '#ef4444', # Red
-                    'personnel_targeting': '#f59e0b',    # Amber
-                    'systemic_attack': '#8b5cf6',       # Violet
-                    'access_disruption': '#3b82f6',     # Blue
-                    'humanitarian_disruption': '#94a3b8' # Slate
-                }
 
                 fig_h_geo = px.scatter_mapbox(
                     health_df, 
@@ -1233,14 +1234,12 @@ else:
 
             st.markdown("---")
             
-            # --- Health Impact Trends & Records ---
-            h_trend_col1, h_trend_col2 = st.columns([1, 1])
-            with h_trend_col1:
-                st.caption("Temporal Trend: Health-Impacting Incidents")
-                h_trend = health_df.set_index('event_date').resample('ME').size().reset_index(name='count')
-                fig_h_trend = px.area(h_trend, x='event_date', y='count', color_discrete_sequence=['#10b981'])
-                fig_h_trend.update_layout(plotly_layout, xaxis_title="", yaxis_title="Events / Month", height=350)
-                st.plotly_chart(fig_h_trend, use_container_width=True, config=high_res_config)
+            # --- Health Impact Trends ---
+            st.caption("Temporal Trend: Health-Impacting Incidents")
+            h_trend = health_df.set_index('event_date').resample('ME').size().reset_index(name='count')
+            fig_h_trend = px.area(h_trend, x='event_date', y='count', color_discrete_sequence=['#10b981'])
+            fig_h_trend.update_layout(get_standard_layout("Health-Impacting Incidents (Monthly Trend)", height=350), xaxis_title="", yaxis_title="Volume")
+            st.plotly_chart(fig_h_trend, use_container_width=True, config=high_res_config)
             
             # --- Humanitarian Spotlight Explorer ---
             st.markdown("### <i class='fas fa-magnifying-glass-location' style='color:#10b981'></i> HUMANITARIAN SPOTLIGHT EXPLORER", unsafe_allow_html=True)
@@ -1262,6 +1261,30 @@ else:
             }
             h_icon = hice_icon_map.get(selected_row['hice_type'], 'fa-file-medical')
             
+            a1_cat = categorize_actor(selected_row['actor1'])
+            a2_cat = categorize_actor(selected_row['actor2']) if pd.notna(selected_row['actor2']) else "N/A"
+            
+            # Simplified category colors for UI badges
+            cat_colors = {
+                'State Forces': 'rgba(59, 130, 246, 0.1)', 
+                'Resistance': 'rgba(16, 185, 129, 0.1)',
+                'Ethnic Armed Organization': 'rgba(245, 158, 11, 0.1)',
+                'Pro-Junta Militia': 'rgba(99, 102, 241, 0.1)',
+                'Civilians': 'rgba(148, 163, 184, 0.1)'
+            }
+            cat_text_colors = {
+                'State Forces': '#3b82f6', 
+                'Resistance': '#10b981',
+                'Ethnic Armed Organization': '#f59e0b',
+                'Pro-Junta Militia': '#6366f1',
+                'Civilians': '#94a3b8'
+            }
+            
+            a1_bg = cat_colors.get(a1_cat, 'rgba(128, 128, 128, 0.1)')
+            a1_txt = cat_text_colors.get(a1_cat, '#94a3b8')
+            a2_bg = cat_colors.get(a2_cat, 'rgba(128, 128, 128, 0.1)')
+            a2_txt = cat_text_colors.get(a2_cat, '#94a3b8')
+
             st.markdown(f"""
             <div class="spotlight-card">
                 <div class="spotlight-header">
@@ -1284,15 +1307,17 @@ else:
                 <div class="spotlight-grid">
                     <div class="spotlight-stat">
                         <div class="spotlight-stat-label"><i class="fas fa-shield-halved" style="margin-right:5px; opacity:0.5;"></i>Primary Actor</div>
-                        <div class="spotlight-stat-value">{selected_row['actor1']}</div>
+                        <div class="spotlight-stat-value" style="font-size: 0.9rem; margin-bottom: 5px;">{selected_row['actor1']}</div>
+                        <div style="display: inline-block; background: {a1_bg}; color: {a1_txt}; padding: 2px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase;">{a1_cat}</div>
                     </div>
                     <div class="spotlight-stat">
                         <div class="spotlight-stat-label"><i class="fas fa-users" style="margin-right:5px; opacity:0.5;"></i>Secondary Actor</div>
-                        <div class="spotlight-stat-value">{selected_row['actor2'] if pd.notna(selected_row['actor2']) else 'None Reported'}</div>
+                        <div class="spotlight-stat-value" style="font-size: 0.9rem; margin-bottom: 5px;">{selected_row['actor2'] if pd.notna(selected_row['actor2']) else 'None Reported'}</div>
+                        {"<div style='display: inline-block; background: " + a2_bg + "; color: " + a2_txt + "; padding: 2px 8px; border-radius: 4px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase;'>" + a2_cat + "</div>" if pd.notna(selected_row['actor2']) else ""}
                     </div>
                     <div class="spotlight-stat">
-                        <div class="spotlight-stat-label"><i class="fas fa-tags" style="margin-right:5px; opacity:0.5;"></i>Event Classification</div>
-                        <div class="spotlight-stat-value">{selected_row['event_type']}</div>
+                        <div class="spotlight-stat-label"><i class="fas fa-tags" style="margin-right:5px; opacity:0.5;"></i>Classification</div>
+                        <div class="spotlight-stat-value" style="font-size: 0.9rem;">{selected_row['event_type']}</div>
                     </div>
                     <div class="spotlight-stat" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.1);">
                         <div class="spotlight-stat-label" style="color: #ef4444; opacity: 0.8;"><i class="fas fa-skull-crossbones" style="margin-right:5px;"></i>Verified Fatalities</div>

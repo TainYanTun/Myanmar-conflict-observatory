@@ -1,4 +1,7 @@
 import pandas as pd
+import numpy as np
+import re
+from collections import Counter
 
 def categorize_actor(actor_name):
     if pd.isna(actor_name): return "Unidentified"
@@ -53,9 +56,6 @@ def categorize_actor(actor_name):
     else:
         return 'Other Groups'
 
-# ==========================================
-# NEW DYNAMIC CLEANING FUNCTIONS
-# ==========================================
 def dynamic_actor2_cleaner(row):
     """Cleans actor2 field by inferring opponent based on event type if missing."""
     EVENT_ACTOR_MAP = {
@@ -87,71 +87,135 @@ def extract_social_features(df):
     return df
 
 def clean_conflict_data(df):
-    """
-    Standard cleaning logic for Myanmar conflict data.
-    """
-    import re
+    """Standard cleaning logic for Myanmar conflict data."""
     df = df[df['country'] == 'Myanmar'].copy()
     df['event_date'] = pd.to_datetime(df['event_date'])
     df = df[df['event_date'] >= '2021-02-01']
-    
-    # Fill basic geographic nulls
     df['admin3'] = df['admin3'].fillna("Unknown Township")
     df['civilian_targeting'] = df['civilian_targeting'].fillna("Not Targeted")
-    
-    # Actor/Visualization Logic
     df['actor2_viz'] = df.apply(dynamic_actor2_cleaner, axis=1)
     df['assoc_actor_1_viz'] = df['assoc_actor_1'].fillna("Sole Actor")
     df['assoc_actor_2_viz'] = df['assoc_actor_2'].fillna("Sole Actor")
     df['inter2_viz'] = df['inter2'].fillna("No Interaction/Single Actor")
-    
-    # Actor Categorization
     df['actor1_clean'] = df['actor1'].apply(categorize_actor)
     df['actor2_clean'] = df['actor2'].apply(categorize_actor)
-    
-    # Social Features
     df = extract_social_features(df)
-    
     return df
 
 def extract_keywords(text_series, top_n=20):
-    """
-    Simple keyword extraction for conflict narratives.
-    """
-    # Common English stopwords + conflict-specific noise
+    """Simple keyword extraction for conflict narratives."""
     stopwords = set(['the', 'and', 'a', 'to', 'in', 'of', 'on', 'with', 'for', 'at', 'by', 'from', 'an', 'is', 'was', 'were', 'it', 'as', 'that', 'this', 'reported', 'took', 'place', 'around', 'near', 'village', 'township', 'district', 'region', 'state', 'myanmar', 'burma', 'forces', 'military', 'junta', 'people', 'defence', 'force', 'pdf', 'tatmadaw', 'knu', 'kia', 'pdf', 'ldf', 'eao', 'ia', 'army'])
-
     all_words = ' '.join(text_series.fillna('').str.lower().replace(r'[^a-zA-Z\s]', '', regex=True)).split()
     filtered_words = [word for word in all_words if word not in stopwords and len(word) > 3]
-
-    from collections import Counter
     counts = Counter(filtered_words).most_common(top_n)
     return pd.DataFrame(counts, columns=['Keyword', 'Frequency'])
 
 def extract_health_impacts(df):
     """
-    Identifies incidents impacting healthcare infrastructure AND broader human well-being.
-    Aligned with SDG 3: Health and Well-being.
+    RESEARCH-GRADE HICE DETECTION FRAMEWORK (Final Robustness Update).
+    Implements capped confidence, bidirectional proximity, and mandatory action coupling.
     """
-    text_series = df['notes'].fillna('').str.lower()
-    event_series = df['sub_event_type'].fillna('').str.lower()
+    notes = df['notes'].fillna('').str.lower()
     
-    # 1. Direct Healthcare Infrastructure/Staff Keywords
-    health_keywords = [
-        r'\bhospital\b', r'\bclinic\b', r'\bmedical\b', r'\bdoctor\b', r'\bnurse\b', 
-        r'\bhealth\b', r'\bambulance\b', r'\bmedicine\b', r'\bpatient\b', r'\bpharmacy\b', 
-        r'\bred cross\b', r'\bworld health organization\b', r'\bwho-led\b', r'\bunicef\b', 
-        r'\bdisplacement\b', r'\bmalnutrition\b', r'\binjury\b', r'\bwounded\b',
-        r'\bhealthcare\b', r'\bsanitation\b', r'\bvaccination\b', r'\bepidemic\b',
-        r'\bairstrike near hospital\b', r'\bshelling near hospital\b'
+    # 1. High-Signal Health Ontology (Restored Orgs)
+    health_terms = [
+        r'\bhospital(s)?\b', r'\bclinic(s)?\b', r'\bhealth center(s)?\b',
+        r'\brural health center(s)?\b', r'\brhc\b', r'\bmedical facility\b',
+        r'\bhealth facility\b', r'\btreatment center\b', r'\bdoctor(s)?\b', 
+        r'\bnurse(s)?\b', r'\bhealth worker(s)?\b', r'\bmedic(s)?\b',
+        r'\bmedical staff\b', r'\bambulance(s)?\b', r'\bmedical supplies\b',
+        r'\bworld health organization\b', r'\bunicef\b', r'\bmsf\b', r'\bicrc\b',
+        r'\bmedicine\b.{0,20}\b(shortage|destroyed|looted|burned|seized)\b',
+        r'\bpatient(s)?\b.{0,15}\b(injured|treated|killed|arrested|wounded)\b'
     ]
-    pattern = '|'.join(health_keywords)
-    health_hits = text_series.str.contains(pattern, case=False, regex=True)
+    health_mask = notes.str.contains('|'.join(health_terms), regex=True)
     
-    # 2. Broader Well-being & Human Rights (SDG 3.3, 3.4, 3.8)
-    # We include sub-event types that represent systemic threats to well-being
-    wellbeing_events = ['sexual violence', 'arrests', 'abduction', 'looting', 'property destruction']
-    event_hits = event_series.apply(lambda x: any(e in x for e in wellbeing_events))
+    # 2. Action & Targeting Masks (Expanded Passive Voice)
+    targeting_mask = notes.str.contains(r'\b(target(ed|ing)?|fired upon|opened fire on|hit by|raided|occupied)\b', regex=True)
+    action_phrases = [
+        r'\b(set fire to)\b',
+        r'\b(was|were|had been) (destroyed|burned|attacked|looted)\b',
+        r'\b(reportedly|allegedly) (attacked|targeted)\b',
+        r'\bwas shot\b', r'\bwas arrested\b'
+    ]
+    phrase_mask = notes.str.contains('|'.join(action_phrases), regex=True)
+
+    # 3. Bidirectional Proximity Linking (Refined health_infra)
+    attack_terms = r'attack|burn|destroy|shell|raid|arrest|target|strike|fire|hit'
+    health_infra = r'hospital|clinic|health center|doctor|nurse|medic|medical (facility|team|staff)'
+    proximity_pattern = rf'({health_infra}.{{0,45}}({attack_terms}))|(({attack_terms}).{{0,45}}{health_infra})'
+    proximity_mask = notes.str.contains(proximity_pattern, regex=True)
     
-    # Return True if either healthcare is mentioned or high-impact well-being event occurs
-    return health_hits | event_hits
+    # 4. Constrained Soft Health (Personnel/Patient context)
+    soft_health_mask = notes.str.contains(r'\b(injured|wounded|killed|dead)\b.{0,20}\b(patient|doctor|nurse|medic|staff)\b', regex=True)
+
+    # 5. ACLED Structured Filter
+    attack_sub = ['Attack', 'Shelling/artillery/missile attack', 'Air/drone strike', 'Abduction/forced disappearance', 'Arrests', 'Looting/property destruction']
+    violent_ev = ['Violence against civilians', 'Battles', 'Explosions/Remote violence']
+    structure_mask = (df['sub_event_type'].isin(attack_sub)) | (df['event_type'].isin(violent_ev))
+    
+    # 6. Actor Context
+    actors = [r'tatmadaw', r'military', r'soldiers', r'pdf', r'eao', r'armed group', r'unknown', r'unidentified']
+    actor_mask = (df['actor1'].str.lower().str.contains('|'.join(actors), na=False) | df['actor2'].str.lower().str.contains('|'.join(actors), na=False))
+    
+    # ROBUST CONFIDENCE SCORING (Capped overlaps)
+    interaction_boost = (proximity_mask.astype(int) + targeting_mask.astype(int) + phrase_mask.astype(int)).clip(upper=2)
+    confidence = (
+        (interaction_boost * 2) +
+        (health_mask.astype(int) * 2) +
+        (soft_health_mask.astype(int) * 2) +
+        (actor_mask.astype(int))
+    )
+    
+    # ACTION COUPLING & GATING
+    event_coupling = proximity_mask | phrase_mask | soft_health_mask | targeting_mask
+    strong_signal = proximity_mask | targeting_mask
+    
+    # FINAL DETECTION logic: Coupling + High confidence OR strong contextual signal
+    final_mask = (health_mask | proximity_mask) & event_coupling & structure_mask & ((confidence >= 4) | strong_signal)
+    
+    return final_mask
+
+def classify_hice_type(df):
+    """Classifies impacts into 5 research categories with adjusted priority."""
+    notes = df['notes'].fillna('').str.lower()
+    infra_markers = r'hospital|clinic|pharmacy|center|dispensary|facility|ward'
+    staff_markers = r'doctor|nurse|midwife|surgeon|medic|superintendent|worker'
+    access_markers = r'\\b(closed|abandoned|no access|denied access|blocked)\\b'
+    
+    is_infra = notes.str.contains(infra_markers, regex=True)
+    is_staff = notes.str.contains(staff_markers, regex=True)
+    is_access = notes.str.contains(access_markers, regex=True)
+    pers_harm = notes.str.contains(r'\\b(killed|arrested|shot|abducted|beaten)\\b.{0,15}\\b(doctor|nurse|medic|midwife|staff)\\b', regex=True)
+    
+    conditions = [
+        pers_harm,
+        is_access,
+        is_infra & ~is_staff,
+        is_staff & ~is_infra,
+        is_infra & is_staff
+    ]
+    choices = ['personnel_targeting', 'access_disruption', 'infrastructure_damage', 'personnel_targeting', 'systemic_attack']
+    
+    return np.select(conditions, choices, default='humanitarian_disruption')
+
+def calculate_hice_intensity(df):
+    """Ranks event intensity based on ACLED sub-event type."""
+    high_int = ['Air/drone strike', 'Shelling/artillery/missile attack', 'Remote explosive/landmine/IED']
+    med_int = ['Attack', 'Abduction/forced disappearance', 'Arrests', 'Looting/property destruction']
+    conditions = [df['sub_event_type'].isin(high_int), df['sub_event_type'].isin(med_int)]
+    return np.select(conditions, ['high', 'medium'], default='low')
+
+def extract_health_keyword_counts(text_series):
+    """Counts high-precision health terms within detected HICE."""
+    keywords = [
+        'hospital', 'clinic', 'health center', 'medical facility', 'doctor', 'nurse', 'medic', 
+        'ambulance', 'medical supplies', 'medicine', 'patient', 'world health organization', 'unicef', 'msf', 'icrc'
+    ]
+    combined_text = ' '.join(text_series.fillna('').str.lower())
+    counts = []
+    for kw in keywords:
+        count = len(re.findall(r'\b' + re.escape(kw) + r'(s)?\b', combined_text))
+        if count > 0:
+            counts.append({'Keyword': kw.upper(), 'Frequency': count})
+    return pd.DataFrame(counts).sort_values('Frequency', ascending=False)

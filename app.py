@@ -12,7 +12,7 @@ import kagglehub
 from kagglehub import KaggleDatasetAdapter
 from datetime import datetime
 from dotenv import load_dotenv
-from src.processing import categorize_actor, extract_keywords, extract_health_impacts
+from src.processing import categorize_actor, extract_keywords, extract_health_impacts, extract_health_keyword_counts
 
 # Load Environment Variables
 load_dotenv()
@@ -890,8 +890,7 @@ else:
         <div style="display: flex; gap: 10px; margin-bottom: 20px;">
             <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.2);">TARGET 3.D</div>
             <div style="background: rgba(16, 185, 129, 0.1); color: #10b981; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(16, 185, 129, 0.2);">TARGET 3.8: HEALTH ACCESS</div>
-            <div style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(59, 130, 246, 0.2);">SDG 16: PEACE & JUSTICE</div>
-        </div>
+            </div>
         """, unsafe_allow_html=True)
 
         st.markdown(L["health_desc"])
@@ -967,9 +966,9 @@ else:
             h_kw_col1, h_kw_col2 = st.columns([1, 1])
             with h_kw_col1:
                 st.caption("Health-Specific Narrative Keywords")
-                h_kw_df = extract_keywords(health_df['notes'], top_n=10)
+                h_kw_df = extract_health_keyword_counts(health_df['notes'])
                 if not h_kw_df.empty:
-                    fig_h_kw = px.bar(h_kw_df, x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Viridis")
+                    fig_h_kw = px.bar(h_kw_df.head(10), x='Frequency', y='Keyword', orientation='h', color='Frequency', color_continuous_scale="Viridis")
                     fig_h_kw.update_layout(plotly_layout, yaxis={'categoryorder':'total ascending'}, height=350, showlegend=False)
                     st.plotly_chart(fig_h_kw, use_container_width=True, config=high_res_config)
             
@@ -1123,5 +1122,6 @@ else:
         st.subheader(L["records_title"])
         st.markdown(L["records_desc"])
         st.dataframe(df.sort_values('event_date', ascending=False), width=1000)
+
 
 

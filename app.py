@@ -217,9 +217,9 @@ def extract_health_impacts(df):
     phrase_mask = notes.str.contains('|'.join(action_phrases), regex=True)
 
     # 3. Bidirectional Proximity Linking (Refined health_infra)
-    attack_terms = r'attack|burn|destroy|shell|raid|arrest|target|strike|fire|hit'
-    health_infra = r'hospital|clinic|health center|doctor|nurse|medic|medical (facility|team|staff)'
-    proximity_pattern = rf'({health_infra}.{{0,45}}({attack_terms}))|(({attack_terms}).{{0,45}}{health_infra})'
+    attack_terms = r'(?:attack|burn|destroy|shell|raid|arrest|target|strike|fire|hit)'
+    health_infra = r'(?:hospital|clinic|health center|doctor|nurse|medic|medical(?: facility| team| staff))'
+    proximity_pattern = rf'({health_infra}.{{0,45}}{attack_terms})|({attack_terms}.{{0,45}}{health_infra})'
     proximity_mask = notes.str.contains(proximity_pattern, regex=True)
     
     # 4. Constrained Soft Health (Personnel/Patient context)
@@ -245,30 +245,34 @@ def extract_health_impacts(df):
     # BYSTANDER DISAMBIGUATION FILTER (Negative Gate)
     enumeration_fp = notes.str.contains(r'(civilians?|villagers?|residents?).{0,50}(doctor|nurse|medic|patient)', regex=True) & \
                      ~notes.str.contains(r'(doctor|nurse|medic|health worker).{0,40}(killed|shot|arrested|abducted)', regex=True)
+    hospital_bystander = notes.str.contains(r'\b(taken|sent|rushed|brought|admitted|transfer|transport|arrive|flee|arrive)\b.{0,20}\b(to|at|in|near).{0,15}\b(hospital|clinic|facility|dispensary)\b', regex=True) & \
+                         ~notes.str.contains(r'(hospital|clinic|facility).{0,40}(attack|bomb|shell|destroy|burn|raid|strike)', regex=True)
+
+    fp_mask = enumeration_fp | hospital_bystander
 
     # ACTION COUPLING & GATING
-    event_coupling = (proximity_mask | phrase_mask | soft_health_mask | targeting_mask) & ~enumeration_fp
-    strong_signal = (proximity_mask | targeting_mask) & ~enumeration_fp
+    event_coupling = (proximity_mask | phrase_mask | soft_health_mask | targeting_mask) & ~fp_mask
+    strong_signal = (proximity_mask | targeting_mask) & ~fp_mask
     
     # TWO-TIER CONFIDENCE ARCHITECTURE
     tier1_mask = (health_mask | proximity_mask) & event_coupling & ((confidence >= 4) | strong_signal)
-    tier2_mask = health_mask & structure_mask & ~tier1_mask & ~enumeration_fp
+    tier2_mask = health_mask & structure_mask & event_coupling & ~tier1_mask & ~fp_mask
     
     return tier1_mask | tier2_mask
 
 def classify_hice_type(df):
     """Classifies impacts into 5 research categories with adjusted priority."""
     notes = df['notes'].fillna('').str.lower()
-    infra_markers = r'hospital|clinic|pharmacy|center|dispensary|facility|ward'
-    staff_markers = r'doctor|nurse|midwife|surgeon|medic|superintendent|worker'
+    infra_markers = r'\b(hospital|clinic|pharmacy|dispensary|health center|medical center|medical facility|health facility|treatment center)\b'
+    staff_markers = r'\b(doctor|nurse|midwife|surgeon|medic|medical staff|health worker)\b'
     access_markers = r'\b(closed|abandoned|no access|denied access|blocked)\b'
 
     # Proximity Violence (PV-HICE) routing
-    attack_terms = r'attack|burn|destroy|shell|raid|arrest|target|strike|fire|hit'
-    health_infra = r'hospital|clinic|health center|doctor|nurse|medic|medical (facility|team|staff)'
-    proximity_pattern = rf'({health_infra}.{{0,45}}({attack_terms}))|(({attack_terms}).{{0,45}}{health_infra})'
+    attack_terms = r'(?:attack|burn|destroy|shell|raid|arrest|target|strike|fire|hit)'
+    health_infra = r'(?:hospital|clinic|health center|doctor|nurse|medic|medical(?: facility| team| staff))'
+    proximity_pattern = rf'({health_infra}.{{0,45}}{attack_terms})|({attack_terms}.{{0,45}}{health_infra})'
     proximity_mask = notes.str.contains(proximity_pattern, regex=True)
-    direct_action = notes.str.contains(r'\b(target(ed|ing)?|fired upon|opened fire on|hit by|raided|occupied|destroyed|burned|attacked|looted)\b', regex=True)
+    direct_action = notes.str.contains(r'\b(target(ed|ing)?|fired upon|opened fire on|hit( by)?|struck( by)?|raided|occupied|destroyed|burned|attacked|looted|damaged|bomb(ed|s)?|shell(ed|s)?|airstrike|assaulted)\b', regex=True)
     pv_hice = proximity_mask & ~direct_action
 
     is_infra = notes.str.contains(infra_markers, regex=True)

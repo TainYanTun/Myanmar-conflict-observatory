@@ -1,0 +1,27 @@
+{
+    "access_disruption": {
+        "total": 189,
+        "TP": 146,
+        "precision": 77.24867724867724
+    },
+    "infrastructure_damage": {
+        "total": 237,
+        "TP": 187,
+        "precision": 78.90295358649789
+    },
+    "personnel_targeting": {
+        "total": 56,
+        "TP": 53,
+        "precision": 94.64285714285714
+    },
+    "humanitarian_disruption": {
+        "total": 39,
+        "TP": 39,
+        "precision": 100.0
+    },
+    "systemic_attack": {
+        "total": 12,
+        "TP": 12,
+        "precision": 100.0
+    }
+}

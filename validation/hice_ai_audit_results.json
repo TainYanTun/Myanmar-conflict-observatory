@@ -1,0 +1,66 @@
+{
+  "ai_audit": {
+    "n_per_pass": 200,
+    "n_passes": 3,
+    "seeds": [
+      42,
+      137,
+      2025
+    ],
+    "pass_results": [
+      {
+        "seed": 42,
+        "n": 200,
+        "tp": 157,
+        "fp": 43,
+        "precision_pct": 78.5,
+        "fp_breakdown": {
+          "Missing entity or kinetic signal": 34,
+          "F1: health term is incidental bystander in civilian casualty list": 3,
+          "F3: spatial-only proximity, no direct attack on facility": 6
+        }
+      },
+      {
+        "seed": 137,
+        "n": 200,
+        "tp": 156,
+        "fp": 44,
+        "precision_pct": 78.0,
+        "fp_breakdown": {
+          "Missing entity or kinetic signal": 31,
+          "F3: spatial-only proximity, no direct attack on facility": 6,
+          "F1: health term is incidental bystander in civilian casualty list": 7
+        }
+      },
+      {
+        "seed": 2025,
+        "n": 200,
+        "tp": 166,
+        "fp": 34,
+        "precision_pct": 83.0,
+        "fp_breakdown": {
+          "F3: spatial-only proximity, no direct attack on facility": 8,
+          "Missing entity or kinetic signal": 26
+        }
+      }
+    ],
+    "combined": {
+      "mean_precision_pct": 79.83,
+      "std_precision_pct": 2.75,
+      "min_precision_pct": 78.0,
+      "max_precision_pct": 83.0,
+      "total_tp": 479,
+      "total_fp": 121,
+      "fp_reasons_aggregate": {
+        "Missing entity or kinetic signal": 91,
+        "F1: health term is incidental bystander in civilian casualty list": 10,
+        "F3: spatial-only proximity, no direct attack on facility": 20
+      }
+    }
+  },
+  "manual_audit": {
+    "n": 30,
+    "note": "Manual sample exported to hice_manual_sample_n30.csv for researcher review.",
+    "reported_precision_pct": 89.5
+  }
+}

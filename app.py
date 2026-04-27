@@ -194,35 +194,36 @@ def extract_health_impacts(df):
     
     # 1. High-Signal Health Ontology (Restored Orgs)
     health_terms = [
-        r'\bhospital(?:s)?\b', r'\bclinic(?:s)?\b', r'\bhealth center(?:s)?\b',
-        r'\brural health center(?:s)?\b', r'\brhc\b', r'\bmedical facility\b',
-        r'\bhealth facility\b', r'\btreatment center\b', r'\bdoctor(?:s)?\b', 
-        r'\bnurse(?:s)?\b', r'\bhealth worker(?:s)?\b', r'\bmedic(?:s)?\b',
-        r'\bmedical staff\b', r'\bambulance(?:s)?\b', r'\bmedical supplies\b',
+        r'\bhospital(s)?\b', r'\bclinic(s)?\b', r'\bhealth center(s)?\b',
+        r'\brural health center(s)?\b', r'\brhc\b', r'\bmedical facility\b',
+        r'\bhealth facility\b', r'\btreatment center\b', r'\bdoctor(s)?\b', 
+        r'\bnurse(s)?\b', r'\bhealth worker(s)?\b', r'\bmedic(s)?\b',
+        r'\bmedical staff\b', r'\bambulance(s)?\b', r'\bmedical supplies\b',
         r'\bworld health organization\b', r'\bunicef\b', r'\bmsf\b', r'\bicrc\b',
-        r'\bmedicine\b.{0,20}\b(?:shortage|destroyed|looted|burned|seized)\b',
-        r'\bpatient(?:s)?\b.{0,15}\b(?:injured|treated|killed|arrested|wounded)\b'
+        r'\bmedicine\b.{0,20}\b(shortage|destroyed|looted|burned|seized)\b',
+        r'\bpatient(s)?\b.{0,15}\b(injured|treated|killed|arrested|wounded)\b'
     ]
-    health_mask = notes.str.contains('|'.join(health_terms), regex=True, case=False)
+    health_mask = notes.str.contains('|'.join(health_terms), regex=True)
     
     # 2. Action & Targeting Masks (Expanded Passive Voice)
-    targeting_mask = notes.str.contains(r'\b(?:target(?:ed|ing)?|fired upon|opened fire on|hit by|raided|occupied)\b', regex=True, case=False)
+    targeting_mask = notes.str.contains(r'\b(target(ed|ing)?|fired upon|opened fire on|hit by|raided|occupied)\b', regex=True)
     action_phrases = [
-        r'\b(?:set fire to)\b',
-        r'\b(?:was|were|had been) (?:destroyed|burned|attacked|looted)\b',
-        r'\b(?:reportedly|allegedly) (?:attacked|targeted)\b',
-        r'\bwas shot\b', r'\bwas arrested\b'
+        r'\b(set fire to)\b',
+        r'\b(was|were|had been) (destroyed|burned|attacked|looted)\b',
+        r'\b(reportedly|allegedly) (attacked|targeted)\b',
+        r'\bwas shot\b', r'\bwas arrested\b',
+        r'\b(was forced to close|suspended operations|came under fire|sustained damage|was struck by|had to evacuate|was displaced|forced to flee)\b'
     ]
-    phrase_mask = notes.str.contains('|'.join(action_phrases), regex=True, case=False)
+    phrase_mask = notes.str.contains('|'.join(action_phrases), regex=True)
 
     # 3. Bidirectional Proximity Linking (Refined health_infra)
     attack_terms = r'attack|burn|destroy|shell|raid|arrest|target|strike|fire|hit'
-    health_infra = r'hospital|clinic|health center|doctor|nurse|medic|medical (?:facility|team|staff)'
-    proximity_pattern = rf'(?:{health_infra}.{{0,45}}(?:{attack_terms}))|(?:(?:{attack_terms}).{{0,45}}{health_infra})'
-    proximity_mask = notes.str.contains(proximity_pattern, regex=True, case=False)
+    health_infra = r'hospital|clinic|health center|doctor|nurse|medic|medical (facility|team|staff)'
+    proximity_pattern = rf'({health_infra}.{{0,45}}({attack_terms}))|(({attack_terms}).{{0,45}}{health_infra})'
+    proximity_mask = notes.str.contains(proximity_pattern, regex=True)
     
     # 4. Constrained Soft Health (Personnel/Patient context)
-    soft_health_mask = notes.str.contains(r'\b(?:injured|wounded|killed|dead)\b.{0,20}\b(?:patient|doctor|nurse|medic|staff)\b', regex=True, case=False)
+    soft_health_mask = notes.str.contains(r'\b(injured|wounded|killed|dead)\b.{0,20}\b(patient|doctor|nurse|medic|staff)\b', regex=True)
 
     # 5. ACLED Structured Filter
     attack_sub = ['Attack', 'Shelling/artillery/missile attack', 'Air/drone strike', 'Abduction/forced disappearance', 'Arrests', 'Looting/property destruction']
@@ -241,14 +242,19 @@ def extract_health_impacts(df):
         actor_presence
     )
     
+    # BYSTANDER DISAMBIGUATION FILTER (Negative Gate)
+    enumeration_fp = notes.str.contains(r'(civilians?|villagers?|residents?).{0,50}(doctor|nurse|medic|patient)', regex=True) & \
+                     ~notes.str.contains(r'(doctor|nurse|medic|health worker).{0,40}(killed|shot|arrested|abducted)', regex=True)
+
     # ACTION COUPLING & GATING
-    event_coupling = proximity_mask | phrase_mask | soft_health_mask | targeting_mask
-    strong_signal = proximity_mask | targeting_mask
+    event_coupling = (proximity_mask | phrase_mask | soft_health_mask | targeting_mask) & ~enumeration_fp
+    strong_signal = (proximity_mask | targeting_mask) & ~enumeration_fp
     
-    # FINAL DETECTION logic: Coupling + High confidence OR strong contextual signal
-    final_mask = (health_mask | proximity_mask) & event_coupling & structure_mask & ((confidence >= 4) | strong_signal)
+    # TWO-TIER CONFIDENCE ARCHITECTURE
+    tier1_mask = (health_mask | proximity_mask) & event_coupling & ((confidence >= 4) | strong_signal)
+    tier2_mask = health_mask & structure_mask & ~tier1_mask & ~enumeration_fp
     
-    return final_mask
+    return tier1_mask | tier2_mask
 
 def classify_hice_type(df):
     """Classifies impacts into 5 research categories with adjusted priority."""
@@ -257,10 +263,18 @@ def classify_hice_type(df):
     staff_markers = r'doctor|nurse|midwife|surgeon|medic|superintendent|worker'
     access_markers = r'\b(closed|abandoned|no access|denied access|blocked)\b'
 
-    is_infra = notes.str.contains(infra_markers, regex=True, case=False)
-    is_staff = notes.str.contains(staff_markers, regex=True, case=False)
-    is_access = notes.str.contains(access_markers, regex=True, case=False)
-    pers_harm = notes.str.contains(r'\b(?:killed|arrested|shot|abducted|beaten)\b.{0,15}\b(?:doctor|nurse|medic|midwife|staff)\b', regex=True, case=False)
+    # Proximity Violence (PV-HICE) routing
+    attack_terms = r'attack|burn|destroy|shell|raid|arrest|target|strike|fire|hit'
+    health_infra = r'hospital|clinic|health center|doctor|nurse|medic|medical (facility|team|staff)'
+    proximity_pattern = rf'({health_infra}.{{0,45}}({attack_terms}))|(({attack_terms}).{{0,45}}{health_infra})'
+    proximity_mask = notes.str.contains(proximity_pattern, regex=True)
+    direct_action = notes.str.contains(r'\b(target(ed|ing)?|fired upon|opened fire on|hit by|raided|occupied|destroyed|burned|attacked|looted)\b', regex=True)
+    pv_hice = proximity_mask & ~direct_action
+
+    is_infra = notes.str.contains(infra_markers, regex=True)
+    is_staff = notes.str.contains(staff_markers, regex=True)
+    is_access = notes.str.contains(access_markers, regex=True) | pv_hice
+    pers_harm = notes.str.contains(r'\b(killed|arrested|shot|abducted|beaten)\b.{0,15}\b(doctor|nurse|medic|midwife|staff)\b', regex=True)
     
     # Ensure numpy is available (imported as np)
     conditions = [
@@ -1141,18 +1155,14 @@ else:
 
         st.markdown("---")
         st.subheader("HICE-Informed Vulnerability Ranking")
-        st.caption("Weighted Score = (0.7 × HICE Events) + (0.3 × Fatalities). This identifies 'Red Zones' where kinetic violence directly erodes health security.")
+        st.caption("Weighted Score = (0.7 × HICE Events) + (0.3 × HICE Fatalities). This identifies 'Red Zones' where kinetic violence directly target or erodes health security.")
         
-        # Calculate full Vulnerability Score for Tab 3
-        v_full = df.groupby('admin1').agg({
-            'fatalities': 'sum'
-        }).copy()
-        
-        # We need to filter the main df for HICE to get the counts per region
+        # Calculate full Vulnerability Score for Tab 3 using Health-Impact Fatalities (HICE)
         h_mask_full = extract_health_impacts(df)
-        h_counts = df[h_mask_full].groupby('admin1').size()
-        v_full['health_events'] = h_counts
-        v_full['health_events'] = v_full['health_events'].fillna(0)
+        v_full = df[h_mask_full].groupby('admin1').agg({
+            'fatalities': 'sum',
+            'event_id_cnty': 'count'
+        }).rename(columns={'event_id_cnty': 'health_events'}).copy()
         
         v_full['Vulnerability_Score'] = ((v_full['health_events'] * 0.7) + (v_full['fatalities'] * 0.3)).round(1)
         v_full = v_full.sort_values('Vulnerability_Score', ascending=False)
@@ -1412,7 +1422,7 @@ else:
         st.markdown("---")
 
         st.markdown("""
-        ### 1. Big Data Architecture & ETL Pipeline
+        ### 1. System Architecture & ETL Pipeline
         This observatory utilizes a modern data engineering pipeline designed to handle the Volume, Velocity, and Variety of conflict logs. The system employs a cloud-native ingestion protocol:
         - **Extraction:** The framework utilizes the ACLED API for real-time data acquisition, ensuring that the observatory remains current with the latest verified conflict logs.
         - **Transformation:** Raw logs are processed using Python (Pandas/NumPy). This includes automated cleaning of naming inconsistencies, temporal filtering (Post-Feb 1, 2021), and geospatial verification.

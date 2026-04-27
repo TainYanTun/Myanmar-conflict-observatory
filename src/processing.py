@@ -136,7 +136,8 @@ def extract_health_impacts(df):
         r'\b(set fire to)\b',
         r'\b(was|were|had been) (destroyed|burned|attacked|looted)\b',
         r'\b(reportedly|allegedly) (attacked|targeted)\b',
-        r'\bwas shot\b', r'\bwas arrested\b'
+        r'\bwas shot\b', r'\bwas arrested\b',
+        r'\b(was forced to close|suspended operations|came under fire|sustained damage|was struck by|had to evacuate|was displaced|forced to flee)\b'
     ]
     phrase_mask = notes.str.contains('|'.join(action_phrases), regex=True)
 
@@ -166,14 +167,19 @@ def extract_health_impacts(df):
         actor_presence
     )
     
+    # BYSTANDER DISAMBIGUATION FILTER (Negative Gate)
+    enumeration_fp = notes.str.contains(r'(civilians?|villagers?|residents?).{0,50}(doctor|nurse|medic|patient)', regex=True) & \
+                     ~notes.str.contains(r'(doctor|nurse|medic|health worker).{0,40}(killed|shot|arrested|abducted)', regex=True)
+
     # ACTION COUPLING & GATING
-    event_coupling = proximity_mask | phrase_mask | soft_health_mask | targeting_mask
-    strong_signal = proximity_mask | targeting_mask
+    event_coupling = (proximity_mask | phrase_mask | soft_health_mask | targeting_mask) & ~enumeration_fp
+    strong_signal = (proximity_mask | targeting_mask) & ~enumeration_fp
     
-    # FINAL DETECTION logic: Coupling + High confidence OR strong contextual signal
-    final_mask = (health_mask | proximity_mask) & event_coupling & structure_mask & ((confidence >= 4) | strong_signal)
+    # TWO-TIER CONFIDENCE ARCHITECTURE
+    tier1_mask = (health_mask | proximity_mask) & event_coupling & ((confidence >= 4) | strong_signal)
+    tier2_mask = health_mask & structure_mask & ~tier1_mask & ~enumeration_fp
     
-    return final_mask
+    return tier1_mask | tier2_mask
 
 def classify_hice_type(df):
     """Classifies impacts into 5 research categories with adjusted priority."""
@@ -182,9 +188,17 @@ def classify_hice_type(df):
     staff_markers = r'doctor|nurse|midwife|surgeon|medic|superintendent|worker'
     access_markers = r'\b(closed|abandoned|no access|denied access|blocked)\b'
 
+    # Proximity Violence (PV-HICE) routing
+    attack_terms = r'attack|burn|destroy|shell|raid|arrest|target|strike|fire|hit'
+    health_infra = r'hospital|clinic|health center|doctor|nurse|medic|medical (facility|team|staff)'
+    proximity_pattern = rf'({health_infra}.{{0,45}}({attack_terms}))|(({attack_terms}).{{0,45}}{health_infra})'
+    proximity_mask = notes.str.contains(proximity_pattern, regex=True)
+    direct_action = notes.str.contains(r'\b(target(ed|ing)?|fired upon|opened fire on|hit by|raided|occupied|destroyed|burned|attacked|looted)\b', regex=True)
+    pv_hice = proximity_mask & ~direct_action
+
     is_infra = notes.str.contains(infra_markers, regex=True)
     is_staff = notes.str.contains(staff_markers, regex=True)
-    is_access = notes.str.contains(access_markers, regex=True)
+    is_access = notes.str.contains(access_markers, regex=True) | pv_hice
     pers_harm = notes.str.contains(r'\b(killed|arrested|shot|abducted|beaten)\b.{0,15}\b(doctor|nurse|medic|midwife|staff)\b', regex=True)
     
     conditions = [

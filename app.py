@@ -850,9 +850,11 @@ else:
     # --- Main Header ---
     st.markdown(f'<p class="main-header">{L["title"]}</p>', unsafe_allow_html=True)
     
+    displayed_latest_date = df['event_date'].max().strftime('%B %d, %Y') if not df.empty else "N/A"
+    
     # Professional Status Bar
     st.markdown(f"""
-    <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 30px; padding: 10px 20px; background: rgba(128,128,128,0.03); border-radius: 8px; border: 1px solid rgba(128,128,128,0.08);">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px; margin-bottom: 30px; padding: 10px 20px; background: rgba(128,128,128,0.03); border-radius: 8px; border: 1px solid rgba(128,128,128,0.08);">
         <div style="display: flex; align-items: center; gap: 8px;">
             <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981;"></div>
             <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em; opacity: 0.8; text-transform: uppercase;">SYSTEM STATUS: ONLINE</span>
@@ -866,6 +868,16 @@ else:
         <div style="display: flex; align-items: center; gap: 8px;">
             <i class="fas fa-shield-halved" style="font-size: 0.7rem; opacity: 0.5;"></i>
             <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em; opacity: 0.8; text-transform: uppercase;">GOVERNANCE: ETHICAL AI PROTOCOL</span>
+        </div>
+        <div style="width: 1px; height: 12px; background: rgba(128,128,128,0.2);"></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-calendar-check" style="font-size: 0.7rem; opacity: 0.5;"></i>
+            <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em; opacity: 0.8; text-transform: uppercase;">LATEST INGESTION: {update_time}</span>
+        </div>
+        <div style="width: 1px; height: 12px; background: rgba(128,128,128,0.2);"></div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-clock-rotate-left" style="font-size: 0.7rem; opacity: 0.5;"></i>
+            <span style="font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em; opacity: 0.8; text-transform: uppercase;">DISPLAYED DATA UP TO: {displayed_latest_date}</span>
         </div>
     </div>
     """, unsafe_allow_html=True)

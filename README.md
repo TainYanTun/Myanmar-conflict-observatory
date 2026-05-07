@@ -16,7 +16,7 @@ This observatory operates under a conservative data verification protocol. We tr
 ## Key Features & High-Tech Architecture
 
 ### 1. HICE Intelligence Engine (NLP)
-*   **Automated Detection**: A multi-layered rule-based NLP pipeline identifying **Health-Impacting Conflict Events (HICE)**.
+*   **Automated Detection**: A multi-layered rule-based NLP pipeline identifying **Health-Impacting Conflict Events (HICE)**. [See System Logic & Diagrams](docs/HICE_System_Logic.md).
 *   **Research-Grade Validation**: Achieved **89.5% Precision** and a **252.3% increase in visibility** over standard structured dataset tags.
 *   **Hidden Toll Extraction**: Decodes qualitative event narratives to uncover the "Nature of Violence" (e.g., hospital arson, medic targeting) absent from formal tags.
 

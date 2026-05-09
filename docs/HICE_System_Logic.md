@@ -35,11 +35,25 @@ graph TD
 ### Key Technical Mechanisms:
 *   **Bidirectional Proximity:** The `proximity_pattern` in `src/processing.py` scans for a health term and an attack term within a 45-character window.
 *   **The Negative Gate (`fp_mask`):** Specifically filters out narratives where patients are simply "transported" or "admitted" to a hospital following a non-HICE event.
-*   **Confidence Scoring:** Boosts the score if multiple indicators (proximity + action phrases + structured actor tags) overlap.
+*   **Confidence Scoring:** A weighted points system that validates the strength of the signal before classification.
+    *   **Tier 1 (High Certainty):** Score $\ge$ 4. Confirmed HICE used for primary analysis.
+    *   **Tier 2 (Probable):** Score 2–3. Likely HICE requiring further contextual verification.
 
 ---
 
-## 2. HICE Classification Taxonomy
+## 2. Confidence Scoring Point System
+To ensure scientific rigor and achieve **90% Precision**, every detected event is passed through a weighted scoring engine.
+
+| Weight | Logic Trigger | Examples |
+| :--- | :--- | :--- |
+| **+2 Points** | **"Red Flag" Targeting** | `targeted`, `airstrike`, `directly hit`, `raided` |
+| **+1 Point** | **High-Signal Context** | `maternity ward`, `ambulance`, `operating theater` |
+| **+1 Point** | **Strict Proximity** | Health term and Attack term within 15 characters |
+| **+1 Point** | **Actor Alignment** | Mention of known armed groups involved in medical targeting |
+
+---
+
+## 3. HICE Classification Taxonomy
 Once an event is flagged as `is_hice`, it is routed into one of five research categories based on prioritized keyword triggers.
 
 | Category | Priority | Key NLP Trigger | Impact Description |

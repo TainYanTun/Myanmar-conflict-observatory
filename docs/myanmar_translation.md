@@ -33,14 +33,14 @@
 flowchart TD
 
 %% Strategic Alignment
-SDG3[SDG 3.d Risk Assessment]
-SDG16[SDG 16.1 Peace & Justice]
+SDG3["SDG 3.d Risk Assessment"]
+SDG16["SDG 16.1 Peace & Justice"]
 
 %% 1. Data Ingestion
 subgraph "1. ဒေတာ စုဆောင်းခြင်း"
     GHA[GitHub Actions]
     Sync[Data Sync Engine]
-    Supabase[(Supabase/PostgreSQL)]
+    Supabase[("Supabase/PostgreSQL")]
     
     GHA --> Sync
     Supabase --> Sync
@@ -50,7 +50,7 @@ end
 subgraph "2. ဉာဏ်ရည်တု အင်ဂျင်"
     Actor[အဖွဲ့အစည်းများ ခွဲခြားခြင်း]
     NLP[HICE NLP Framework]
-    Validation[၉၀.၈% တိကျမှု စစ်ဆေးခြင်း]
+    Validation["၉၀.၈% တိကျမှု စစ်ဆေးခြင်း"]
 
     Sync --> Actor
     Actor --> NLP

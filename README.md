@@ -38,13 +38,13 @@ The MCO is built as a robust, full-stack data product, moving beyond simple visu
 flowchart TD
 
 %% Strategic Alignment
-SDG3[SDG 3.d Risk Assessment]
+SDG3["SDG 3.d Risk Assessment"]
 
 %% 1. Data Ingestion
 subgraph "1. Forensic Ingestion"
     GHA[GitHub Actions]
     Sync[Data Sync Engine]
-    Supabase[(Supabase/PostgreSQL)]
+    Supabase[("Supabase/PostgreSQL")]
     
     GHA --> Sync
     Supabase --> Sync
@@ -54,7 +54,7 @@ end
 subgraph "2. Intelligence Engine"
     Actor[Semantic Actor Taxonomy]
     NLP[HICE NLP Framework]
-    Validation[90.83 Percent Precision Audit]
+    Validation["90.83% Precision Audit"]
 
     Sync --> Actor
     Actor --> NLP
@@ -74,7 +74,7 @@ end
 
 %% 4. Mission Control
 subgraph "4. Mission Control"
-    Dashboard[Streamlit Fragmented UI]
+    Dashboard["Streamlit Fragmented UI"]
 
     Geo --> Dashboard
     Temp --> Dashboard

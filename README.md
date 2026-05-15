@@ -21,7 +21,7 @@ The MCO is built as a robust, full-stack data product, moving beyond simple visu
 
 ### 1. HICE Intelligence Engine (NLP)
 *   **Automated Detection**: A multi-layered rule-based NLP pipeline identifying **Health-Impacting Conflict Events (HICE)**. [See System Logic & Diagrams](docs/HICE_System_Logic.md).
-*   **Research-Grade Validation**: Achieved **89.5% Precision** and a significant increase in visibility over standard structured dataset tags.
+*   **Research-Grade Validation**: Achieved **90.8% Precision** and a **27.8% increase** in visibility over standard structured dataset tags (identifying 116 incidents missed by traditional coding).
 *   **Hidden Toll Extraction**: Decodes qualitative event narratives to uncover the "Nature of Violence" (e.g., hospital arson, medic targeting) absent from formal tags.
 
 ### 2. Advanced Geospatial Modeling

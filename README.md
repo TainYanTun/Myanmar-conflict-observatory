@@ -15,7 +15,7 @@ Since the military takeover on February 1, 2021, Myanmar has transitioned into a
 > ### The "Verified Floor" Mandate
 > This observatory operates under a conservative data verification protocol. We treat ACLED data as a **"Verified Floor"**—the absolute minimum confirmed human cost. In regions under communication blackouts, actual figures are likely significantly higher. Our mission is to provide an objective, evidence-based record of conflict expansion and infrastructure vulnerability.
 
-## 🏗️ Full-Stack Intelligence Architecture
+## Full-Stack Intelligence Architecture
 
 The MCO is built as a robust, full-stack data product, moving beyond simple visualization into a comprehensive forensic intelligence system.
 
@@ -93,7 +93,7 @@ SDG3 -.-> Geo
 SDG16 -.-> Geo
 ```
 
-## 🛠️ Setup & Installation
+## Setup & Installation
 
 The MCO utilizes a hybrid cloud architecture (ACLED API + Supabase PostgreSQL).
 
@@ -114,16 +114,16 @@ The MCO utilizes a hybrid cloud architecture (ACLED API + Supabase PostgreSQL).
     streamlit run app.py
     ```
 
-## ⚖️ Ethical Framework & Data Governance
+## Ethical Framework & Data Governance
 *   **Institutional Neutrality**: Independent research. NLP ontologies use cross-verified humanitarian dictionaries.
 *   **Tactical Obfuscation**: Centroiding coordinates to township level to protect medical facilities from kinetic targeting (Do No Harm mandate).
 *   **ICRC Alignment**: Data presentation adheres to the *ICRC Handbook on Data Protection in Humanitarian Action*.
 
-## 👥 Collaborators
+## Collaborators
 - **Tain Yan Tun** - Lead Full Stack Engineer & Computational Data Scientist
 - **Kyaw Zay Aung** - Data Analyst & Conflict Specialist
 
-## 📜 License
+## License
 This project is licensed under the [MIT License](LICENSE). 
 Conflict data is sourced from the [Armed Conflict Location & Event Data Project (ACLED)](https://acleddata.com/).
 

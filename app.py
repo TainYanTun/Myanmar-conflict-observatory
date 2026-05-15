@@ -424,11 +424,11 @@ LANG_DICT = {
             "impact": "**Humanitarian Disruption:** Use this to assess how armed conflict degrades the structural foundation of the national health system, providing a 'Verified Floor' for strategic risk reduction planning."
         },
         "sdg3_logic": {
-            "title": "Data Logic: Why 1,469 HICE Incidents?",
+            "title": "Data Logic: Why 533 HICE Incidents?",
             "p1": "Users may notice that the number of **SDG 3 Incidents (HICE)** is significantly lower than the total **Fatalities**. This is statistically expected:",
             "item1": "**Metric Difference:** Fatalities represent a count of **individuals** lost, while HICE represent specific **kinetic events** impacting healthcare (e.g., one hospital airstrike, one medic arrest).",
             "item2": "**Strategic Focus:** While thousands die in remote tactical engagements, this observatory only flags an event as 'HICE' if it directly degrades health infrastructure or personnel access.",
-            "item3": "**The Hidden Toll:** The ratio of 1,469 HICE incidents to tens of thousands of deaths illustrates that while the war is high-lethality, the deliberate targeting of the medical foundation is a specialized, documented component of the broader humanitarian collapse."
+            "item3": "**The Hidden Toll:** The ratio of 533 HICE incidents to tens of thousands of deaths illustrates that while the war is high-lethality, the deliberate targeting of the medical foundation is a specialized, documented component of the broader humanitarian collapse."
         },
         "method_guide": {
             "title": "Technical Methodology",
@@ -547,11 +547,11 @@ LANG_DICT = {
             "impact": "**လူသားချင်းစာနာမှုဆိုင်ရာ ထိခိုက်မှု-** ပဋိပက္ခများကြောင့် နိုင်ငံ၏ ကျန်းမာရေးစနစ် အခြေခံအဆောက်အအုံများ မည်သို့ပျက်စီးနေသည်ကို အတည်ပြုပြီးသောအချက်အလက်များဖြင့် ဆန်းစစ်နိုင်ပါသည်။"
         },
         "sdg3_logic": {
-"title": "ဒေတာဆိုင်ရာ ရှင်းလင်းချက်- SDG 3 ဖြစ်စဉ် ၁,၄၆၉ ခု ဖြစ်ပွားရခြင်း အကြောင်းရင်း",
+"title": "ဒေတာဆိုင်ရာ ရှင်းလင်းချက်- SDG 3 ဖြစ်စဉ် ၅၃၃ ခု ဖြစ်ပွားရခြင်း အကြောင်းရင်း",
 "p1": "စုစုပေါင်းသေဆုံးမှုအရေအတွက်ထက် **SDG 3 ဖြစ်စဉ်များ (HICE)** က သိသိသာသာ နည်းနေသည်ကို အသုံးပြုသူများ သတိပြုမိနိုင်ပါသည်။ ၎င်းမှာ အောက်ပါအချက်များကြောင့် ဖြစ်သည်-",
 "item1": "**တိုင်းတာပုံကွာခြားချက်-** သေဆုံးမှုမှာ **လူဦးရေ** ကို ရေတွက်ခြင်းဖြစ်ပြီး HICE ဖြစ်စဉ်မှာ ကျန်းမာရေးစနစ်ကို ထိခိုက်စေသည့် **သီးခြားဖြစ်ရပ်** (ဥပမာ - ဆေးရုံဗုံးကြဲခံရမှု ၁ ကြိမ်) ကို ရေတွက်ခြင်းဖြစ်သည်။",
 "item2": "**မဟာဗျူဟာမြောက် အဓိကထားမှု-** တိုက်ပွဲများတွင် လူထောင်ပေါင်းများစွာ သေဆုံးနိုင်သော်လည်း ဤစောင့်ကြည့်ရေးစနစ်သည် ကျန်းမာရေးအဆောက်အအုံ သို့မဟုတ် ဝန်ထမ်းများကို တိုက်ရိုက်ထိခိုက်မှသာ HICE ဖြစ်စဉ်အဖြစ် သတ်မှတ်သည်။",
-"item3": "**လူသားချင်းစာနာမှုဆိုင်ရာ ပျက်သုဉ်းမှု-** သေဆုံးသူအရေအတွက်နှင့် HICE ဖြစ်စဉ် ၁,၄၆၉ ခု၏ အချိုးအစားမှာ ပြင်းထန်သောစစ်ပွဲနှင့်အတူ ကျန်းမာရေးကဏ္ဍကို စနစ်တကျဖျက်ဆီးနေသည့် အခြေအနေကို ဖော်ပြနေခြင်းဖြစ်သည်။"
+"item3": "**လူသားချင်းစာနာမှုဆိုင်ရာ ပျက်သုဉ်းမှု-** သေဆုံးသူအရေအတွက်နှင့် HICE ဖြစ်စဉ် ၅၃၃ ခု၏ အချိုးအစားမှာ ပြင်းထန်သောစစ်ပွဲနှင့်အတူ ကျန်းမာရေးကဏ္ဍကို စနစ်တကျဖျက်ဆီးနေသည့် အခြေအနေကို ဖော်ပြနေခြင်းဖြစ်သည်။"
 },
         "method_guide": {
             "title": "နည်းပညာပိုင်းဆိုင်ရာ လုပ်ထုံးလုပ်နည်းများ",
@@ -1447,8 +1447,8 @@ else:
         ### 2. Research-Grade HICE Validation (NLP Engine)
         To ensure the scientific rigor of the detection framework, the NLP engine was subjected to a narrative precision audit:
         - **Precision Rate:** Manual auditing of high-confidence HICE incidents revealed a **Precision of 89.5%**, attributed to bidirectional action-keyword coupling.
-        - **Visibility Alpha:** The framework provides a **252.3% increase** in visibility over standard structured actor tags (417 ACLED-tagged vs. 1,469 NLP-detected HICE).
-        - **Hidden Toll:** The audit confirms that **71.6%** of verified health-impacting events in Myanmar carry no formal health actor tag in raw data, requiring semantic narrative extraction.
+        - **Visibility Alpha:** The framework provides a **27.8% increase** in visibility over standard structured actor tags (417 ACLED-tagged vs. 533 NLP-verified HICE).
+        - **Hidden Toll:** The audit confirms that **21.8%** of verified health-impacting events in Myanmar carry no formal health actor tag in raw data, requiring semantic narrative extraction.
 
         ### 3. Vulnerability Score Robustness
         The framework utilizes a weighted composite formula ($0.7$ Health / $0.3$ Fatalities) to identify priority "Red Zones." 

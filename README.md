@@ -5,7 +5,6 @@
 [![Kaggle Dataset](https://img.shields.io/badge/Kaggle-Dataset-blue?logo=kaggle)](https://www.kaggle.com/datasets/tainyantun/acled-dataset-for-myanmar)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/TainYanTun/Myanmar-conflict-observatory)
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://tainyantun-myanmar-conflict-observatory-app-mafeff.streamlit.app/)
-[![Next.js Portfolio](https://img.shields.io/badge/Portfolio-Integration-663399?logo=nextdotjs)](https://github.com/TainYanTun/My-Porfolio)
 
 The **Myanmar Conflict Observatory (MCO)** is an enterprise-grade analytical framework and geospatial intelligence hub dedicated to monitoring the spatiotemporal dynamics of political violence in Myanmar. 
 

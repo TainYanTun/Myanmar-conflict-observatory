@@ -31,7 +31,7 @@
 - **Key Event Example:** Major kinetic engagements in 2024-2025. These outliers suggest that a tiny fraction of events account for a disproportionate percentage of total human cost, skewing traditional "mean-based" stability assessments.
 
 ## 5. METHODOLOGICAL REFLECTIONS
-- **Full Stack Integration:** The Python ETL pipeline is essential for handling **80,000+ records**. The integration with Supabase ensures high-availability data access for both the Streamlit dashboard and external portfolio portals.
+- **Full Stack Data Engineering:** The Python ETL pipeline is essential for handling **80,000+ records**. The integration with **Supabase (PostgreSQL)** ensures high-availability data access and persistent record management.
 - **Ethical Requirement:** The "Do No Harm" mandate is strictly followed by aggregating data to the township centroid level.
 
 ## 6. VALIDATION & ROBUSTNESS

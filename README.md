@@ -29,19 +29,17 @@ The MCO is built as a robust, full-stack data product, moving beyond simple visu
 *   **Regional Risk Matrix**: A quadrant-based analysis (Frequency vs. Lethality) that identifies high-intensity **"Red Zones"** requiring immediate trauma-focused humanitarian intervention.
 *   **Vulnerability Scoring**: Implements a weighted composite metric: `(0.7 * HICE Count) + (0.3 * Fatalities)` for evidence-based resource allocation.
 
-### 3. Modern Tech Stack & Integration
-*   **Frontend Ecosystem**: A high-performance dashboard built with **Streamlit**, featuring glassmorphic UI components and `st.fragment` architecture for near-instant interactions.
+### 3. Core Tech Stack
+*   **Frontend**: A high-performance analytical dashboard built with **Streamlit**, featuring glassmorphic UI components and `st.fragment` architecture for optimized rendering.
 *   **Backend & Data**: Powered by a **Python** ETL pipeline, **Supabase (PostgreSQL)** for persistent storage, and **GitHub Actions** for automated daily synchronization.
-*   **Portfolio Integration**: Integrated into a **Next.js** full-stack portfolio, utilizing **Next.js Server Actions** and **Resend** for professional outreach and automated contact management.
 
-## 📊 System Architecture
+## System Architecture
 
 ```mermaid
 flowchart TD
 
 %% Strategic Alignment
 SDG3[SDG 3.d Risk Assessment]
-SDG16[SDG 16.1 Peace & Justice]
 
 %% 1. Data Ingestion
 subgraph "1. Forensic Ingestion"
@@ -57,7 +55,7 @@ end
 subgraph "2. Intelligence Engine"
     Actor[Semantic Actor Taxonomy]
     NLP[HICE NLP Framework]
-    Validation[90.8% Precision Audit]
+    Validation[90.83 Percent Precision Audit]
 
     Sync --> Actor
     Actor --> NLP
@@ -78,19 +76,14 @@ end
 %% 4. Mission Control
 subgraph "4. Mission Control"
     Dashboard[Streamlit Fragmented UI]
-    NextJS[Next.js Portfolio Portal]
-    Resend[Resend Contact Service]
 
     Geo --> Dashboard
     Temp --> Dashboard
     Net --> Dashboard
-    Dashboard <--> NextJS
-    NextJS --> Resend
 end
 
 %% Strategic influence
 SDG3 -.-> Geo
-SDG16 -.-> Geo
 ```
 
 ## Setup & Installation

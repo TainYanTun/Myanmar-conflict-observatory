@@ -23,9 +23,9 @@
 *   **Regional Risk Matrix**: ဖြစ်စဉ် အကြိမ်အရေအတွက်နှင့် သေဆုံးမှုနှုန်းကို တွဲဖက်၍ လူသားချင်းစာနာမှု အကူအညီများ အရေးတကြီး လိုအပ်နေသည့် **"Red Zones"** ကို ခွဲခြားသတ်မှတ်ပေးသည်။
 *   **Vulnerability Score**: ကျန်းမာရေး အခြေခံအဆောက်အအုံ ထိခိုက်မှုနှင့် သေဆုံးမှုနှုန်းကို ပေါင်းစပ်ထားသော `(0.7 * HICE Count) + (0.3 * Fatalities)` ပုံသေနည်းဖြင့် အန္တရာယ်ရှိသော ဒေသများကို ဦးစားပေး သတ်မှတ်သည်။
 
-### ၃။ နည်းပညာနှင့် ပေါင်းစပ်မှု (Full-Stack Integration)
-*   **Frontend & Data**: **Streamlit** ဖြင့် တည်ဆောက်ထားသော Dashboard၊ **Supabase (PostgreSQL)** ဖြင့် ဒေတာ သိမ်းဆည်းခြင်းနှင့် **GitHub Actions** ဖြင့် နေ့စဉ် အလိုအလျောက် ဒေတာ ရယူခြင်းတို့ကို အသုံးပြုထားသည်။
-*   **Portfolio Integration**: ဤစနစ်ကို **Next.js** portfolio နှင့် ချိတ်ဆက်ထားပြီး၊ ဆက်သွယ်ရန် Form အတွက် **Next.js Server Actions** နှင့် **Resend** နည်းပညာတို့ကို အသုံးပြုထားသည်။
+### ၃။ စနစ်၏ နည်းပညာများ (Core Tech Stack)
+*   **Frontend & UI**: **Streamlit** ဖြင့် တည်ဆောက်ထားသော Dashboard နှင့် `st.fragment` စနစ်ကို အသုံးပြုထားသည်။
+*   **Backend & Data**: **Supabase (PostgreSQL)** ဖြင့် ဒေတာ သိမ်းဆည်းခြင်းနှင့် **GitHub Actions** ဖြင့် နေ့စဉ် အလိုအလျောက် ဒေတာ ရယူခြင်းတို့ကို အသုံးပြုထားသည်။
 
 ## စနစ် တည်ဆောက်ပုံ (System Architecture)
 
@@ -71,14 +71,10 @@ end
 %% 4. Mission Control
 subgraph "4. အသုံးပြုသူ မျက်နှာပြင်"
     Dashboard[Streamlit Dashboard]
-    NextJS[Next.js Portfolio Portal]
-    Resend[Resend Contact Service]
 
     Geo --> Dashboard
     Temp --> Dashboard
     Net --> Dashboard
-    Dashboard <--> NextJS
-    NextJS --> Resend
 end
 
 %% Strategic influence

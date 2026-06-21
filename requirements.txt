@@ -4,6 +4,4 @@ jinja2
 pandas
 numpy
 plotly
-sqlalchemy
-psycopg2-binary
 python-dotenv

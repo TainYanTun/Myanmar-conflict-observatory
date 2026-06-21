@@ -8,7 +8,7 @@ import json
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from src.processing import clean_conflict_data, extract_health_impacts, classify_hice_type
+from hice_framework import ACLEDAdapter, detect_hice_from_source, classify_hice_type
 
 DATA_DIR = os.path.join(ROOT, "data")
 OUT_DIR = os.path.join(ROOT, "validation")
@@ -65,21 +65,15 @@ def validate_category(note: str, assigned_cat: str) -> dict:
     return {"verdict": "FP", "reason": "Unknown category"}
 
 def main():
-    csv_files = sorted(
-        [f for f in os.listdir(DATA_DIR) if f.endswith(".csv")],
-        key=lambda f: os.path.getmtime(os.path.join(DATA_DIR, f)),
-        reverse=True
-    )
-    if not csv_files:
-        sys.exit("[ERROR] No CSV found in data/")
-    path = os.path.join(DATA_DIR, csv_files[0])
+    path = os.path.join(DATA_DIR, 'myanmar_conflict_clean.csv')
     print(f"[INFO] Loading data: {path}")
     df_raw = pd.read_csv(path, low_memory=False)
 
-    df = clean_conflict_data(df_raw)
-    hice_mask = extract_health_impacts(df)
-    hice_df = df[hice_mask].copy()
-    hice_df['hice_type'] = classify_hice_type(hice_df)
+    mask = detect_hice_from_source(df_raw, ACLEDAdapter())
+    notes = df_raw['notes'].fillna('').str.lower()
+    types = classify_hice_type(notes)
+    hice_df = df_raw[mask].copy()
+    hice_df['hice_type'] = types[mask]
     
     print(f"\n[INFO] Classifying {len(hice_df)} HICE events...")
     

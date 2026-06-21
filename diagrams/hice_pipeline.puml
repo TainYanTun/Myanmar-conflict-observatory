@@ -1,0 +1,69 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam activityBorderColor #333333
+skinparam activityHeaderBackgroundColor #EEEEEE
+skinparam partitionBackgroundColor #FFFFFF
+
+title HICE Detection Pipeline
+
+partition "Layer 1: Structural Filtering" {
+  start
+  if (Event type is kinetic violence?\n(event_type / sub_event_type)) then (yes)
+  else (no)
+    :Reject (non-kinetic);
+    stop
+  endif
+}
+
+partition "Layer 2: Bidirectional Coupling (45-char window)" {
+  if (Health term found?\nhospital | clinic | doctor | nurse | medic) then (no)
+    :Reject (no health signal);
+    stop
+  else (yes)
+    if (Attack verb within 45 chars?\ndestroy | burn | attack | loot | shell | raid) then (yes)
+    else (no)
+      if (Soft health pattern?\ninjured/wounded near patient/doctor) then (yes)
+      else (no)
+        :Reject;
+        stop
+      endif
+    endif
+  endif
+}
+
+partition "Layer 3: Bystander Disambiguation (Negative Gate)" {
+  if (F1: Civilian casualty list without targeting?) then (yes)
+    :Reject (enumeration FP);
+    stop
+  else (no)
+    if (F2: Humanitarian aid without hostile act?) then (yes)
+      :Reject;
+      stop
+    else (no)
+      if (F3: Spatial proximity only?) then (yes)
+        :Reject;
+        stop
+      else (no)
+        if (F4: Personnel as background subjects?) then (yes)
+          :Reject;
+          stop
+        else (no)
+        endif
+      endif
+    endif
+  endif
+}
+
+partition "Output and Classification" {
+  :HICE detected;
+  :Classify interference type;
+  :Infrastructure Damage (hospital/clinic bombed);
+  :Access Disruption (arrests, closures, blockades);
+  :Personnel Targeting (medics killed/arrested);
+  :Humanitarian Disruption (supplies, logistics);
+  :Systemic Attack (infrastructure + staff combined);
+  stop
+}
+
+@enduml

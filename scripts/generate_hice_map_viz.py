@@ -1,79 +1,79 @@
+import sys, os; sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+import json
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
-import os
+from matplotlib.patches import Polygon
+from hice_framework import ACLEDAdapter, detect_hice_from_source, classify_hice_type
 
-# --- Configuration ---
 DATA_PATH = 'data/myanmar_conflict_clean.csv'
-OUTPUT_PATH = 'research/assets/hice_geospatial_types.png'
+BOUNDARY_PATH = os.path.join(os.path.dirname(__file__), '..', 'research', 'assets', 'myanmar_boundary.json')
+OUTPUT_PATH = os.path.join(os.path.dirname(__file__), '..', 'research', 'assets', 'hice_geospatial_types.png')
 
-# Standard HICE colors from app.py
-hice_color_map = {
-    'infrastructure_damage': '#ef4444', # Red
-    'access_disruption': '#3b82f6',     # Blue
-    'personnel_targeting': '#f59e0b',    # Amber
-    'humanitarian_disruption': '#10b981', # Green (from app's secondary markers)
-    'systemic_attack': '#8b5cf6'        # Violet
+COLORS = {
+    'infrastructure_damage': '#ef4444',
+    'access_disruption': '#3b82f6',
+    'personnel_targeting': '#f59e0b',
+    'humanitarian_disruption': '#10b981',
+    'systemic_attack': '#8b5cf6',
+}
+LABELS = {
+    'infrastructure_damage': 'Infrastructure Damage',
+    'access_disruption': 'Access Disruption',
+    'personnel_targeting': 'Personnel Targeting',
+    'humanitarian_disruption': 'Humanitarian Disruption',
+    'systemic_attack': 'Systemic Attack',
 }
 
-# 1. Load Data
-df = pd.read_csv(DATA_PATH)
-df['event_date'] = pd.to_datetime(df['event_date'])
+df = pd.read_csv(DATA_PATH, low_memory=False)
+mask = detect_hice_from_source(df, ACLEDAdapter())
+notes = df['notes'].fillna('').str.lower()
+types = classify_hice_type(notes)
+hice_df = df[mask].copy()
+hice_df['hice_type'] = types[mask]
 
-# 2. Extract HICE (Using the logic from app.py/processing.py)
-# Note: Since I'm running this standalone, I'll use a simplified version of the logic 
-# that hits the primary keywords used in the paper.
-def extract_hice_simple(notes):
-    notes = str(notes).lower()
-    infra = ['hospital', 'clinic', 'health center', 'medical facility']
-    staff = ['doctor', 'nurse', 'medic', 'health worker']
-    if any(k in notes for k in infra + staff):
-        if any(a in notes for k in infra + staff for a in ['attack', 'burn', 'destroy', 'shell', 'raid', 'arrest', 'target', 'strike', 'fire', 'hit']):
-            return True
-    return False
+fig, ax = plt.subplots(1, 1, figsize=(10, 12))
 
-df['is_hice'] = df['notes'].apply(extract_hice_simple)
-hice_df = df[df['is_hice']].copy()
+# Myanmar country outline
+with open(BOUNDARY_PATH) as f:
+    boundary = json.load(f)
+for ring in boundary['coordinates']:
+    xs = [p[0] for p in ring]
+    ys = [p[1] for p in ring]
+    poly = Polygon(list(zip(xs, ys)), facecolor='#f0f0f0',
+                   edgecolor='#c0c0c0', linewidth=1.2, zorder=1)
+    ax.add_patch(poly)
 
-# 3. Categorize (Simplified categorical logic for mapping)
-def categorize_simple(notes):
-    n = str(notes).lower()
-    if any(k in n for k in ['doctor', 'nurse', 'medic']) and any(a in n for a in ['kill', 'arrest', 'shot', 'abduct']):
-        return 'personnel_targeting'
-    if any(k in n for k in ['hospital', 'clinic']) and any(a in n for a in ['destroy', 'burn', 'bomb', 'shell']):
-        return 'infrastructure_damage'
-    if 'close' in n or 'block' in n or 'access' in n:
-        return 'access_disruption'
-    return 'humanitarian_disruption'
+# HICE scatter points
+for htype in ['infrastructure_damage', 'access_disruption', 'personnel_targeting',
+              'humanitarian_disruption', 'systemic_attack']:
+    subset = hice_df[hice_df['hice_type'] == htype]
+    ax.scatter(subset['longitude'], subset['latitude'],
+               label=LABELS[htype], color=COLORS[htype],
+               alpha=0.6, s=28, edgecolors='white', linewidth=0.4, zorder=3)
 
-hice_df['hice_type'] = hice_df['notes'].apply(categorize_simple)
+# Top-5 region labels
+top5 = hice_df['admin1'].value_counts().head(5).index
+for region in top5:
+    coords = hice_df[hice_df['admin1'] == region][['latitude', 'longitude']].mean()
+    ax.text(coords['longitude'], coords['latitude'], region,
+            fontsize=10, fontweight='bold', color='#1d1d1f', alpha=0.85,
+            ha='center', va='bottom', zorder=4)
 
-# 4. Visualization
-plt.figure(figsize=(10, 12))
-sns.set_theme(style="white")
-
-# Plot background density or context if needed, but for a "Type Map" 
-# we focus on the categorized points.
-for h_type, color in hice_color_map.items():
-    subset = hice_df[hice_df['hice_type'] == h_type]
-    plt.scatter(
-        subset['longitude'], subset['latitude'], 
-        label=h_type.replace('_', ' ').title(),
-        color=color, alpha=0.6, s=30, edgecolors='white', linewidth=0.5
-    )
-
-plt.title('SDG 3.d: Geospatial Distribution of HICE by Impact Type (2021-2025)', fontsize=16, pad=20, fontweight='bold')
-plt.xlabel('Longitude')
-plt.ylabel('Latitude')
-plt.legend(title='Impact Category', bbox_to_anchor=(1.05, 1), loc='upper left')
-
-# Add region labels for orientation (Top 5 HICE regions)
-top_regions = hice_df['admin1'].value_counts().head(5).index
-for region in top_regions:
-    reg_coords = hice_df[hice_df['admin1'] == region][['latitude', 'longitude']].mean()
-    plt.text(reg_coords['longitude'], reg_coords['latitude'], region, 
-             fontsize=10, fontweight='bold', alpha=0.7, ha='center')
+ax.set_xlabel('Longitude', fontsize=12)
+ax.set_ylabel('Latitude', fontsize=12)
+ax.set_title('Geospatial Distribution of HICE by Impact Type (2021\u20132025)', fontsize=14, fontweight='bold')
+ax.legend(title='Impact Category', fontsize=9, title_fontsize=10,
+          loc='upper left', bbox_to_anchor=(1.02, 1))
+ax.tick_params(labelsize=9)
+ax.set_xlim(92, 102)
+ax.set_ylim(9, 29)
+ax.set_facecolor('white')
+ax.grid(True, alpha=0.15, color='#999')
 
 plt.tight_layout()
-plt.savefig(OUTPUT_PATH, dpi=300, bbox_inches='tight')
-print(f"Success! Map exactly like app.py generated at: {OUTPUT_PATH}")
+plt.savefig(OUTPUT_PATH, dpi=350, bbox_inches='tight', facecolor='white')
+print(f'Saved: {OUTPUT_PATH}')
+
+from PIL import Image
+img = Image.open(OUTPUT_PATH)
+print(f'Image: {img.size[0]}x{img.size[1]} px at 350 DPI')

@@ -1,0 +1,77 @@
+digraph HICE_Pipeline {
+    rankdir=TB;
+    nodesep=0.3;
+    ranksep=0.22;
+    fontname="Helvetica";
+    fontsize=9;
+    bgcolor="white";
+    margin=0.1;
+    pad=0.12;
+    dpi=300;
+
+    node [shape=box, style=filled, fillcolor="white", fontname="Helvetica", fontsize=7, penwidth=1, color="#c0c0c0"];
+    edge [fontname="Helvetica", fontsize=7, penwidth=1.2];
+
+    EDGE_NO [style=invis, width=0, height=0];
+
+    // ── Input ────────────────────────────────────────────────
+    subgraph cluster_input {
+        label="Input";
+        fontsize=8; fontname="Helvetica-Bold"; style=filled; fillcolor="#f5f5f7"; color="#e0e0e0"; margin=6;
+        IN [label="Conflict Event Data\n(ACLED / Supabase / CSV)", fillcolor="white"];
+        AD [label="SourceAdapter", fillcolor="white"];
+        IN -> AD;
+    }
+
+    // ── Layer 1 ───────────────────────────────────────────────
+    subgraph cluster_l1 {
+        label="Layer 1: Structural Gate";
+        fontsize=8; fontname="Helvetica-Bold"; style=filled; fillcolor="#f5f5f7"; color="#e0e0e0"; margin=6;
+        L1 [label="Kinetic event?", shape=diamond, fillcolor="#eef2ff", color="#a0a0a0"];
+        L1_N [label="Rejected", fillcolor="#fee2e2", color="#fca5a5", fontcolor="#dc2626"];
+        L1 -> L1_N [label="No", fontcolor="#dc2626", color="#dc2626"];
+    }
+
+    // ── Layer 2a ──────────────────────────────────────────────
+    subgraph cluster_l2a {
+        label="Layer 2a: Health Gate";
+        fontsize=8; fontname="Helvetica-Bold"; style=filled; fillcolor="#f5f5f7"; color="#e0e0e0"; margin=6;
+        L2A [label="Health term present?", shape=diamond, fillcolor="#eef2ff", color="#a0a0a0"];
+        L2A_N [label="Rejected", fillcolor="#fee2e2", color="#fca5a5", fontcolor="#dc2626"];
+        L2A -> L2A_N [label="No", fontcolor="#dc2626", color="#dc2626"];
+    }
+
+    // ── Layer 2b ──────────────────────────────────────────────
+    subgraph cluster_l2b {
+        label="Layer 2b: Keyword Coupling (4 parallel signals)";
+        fontsize=8; fontname="Helvetica-Bold"; style=filled; fillcolor="#f5f5f7"; color="#e0e0e0"; margin=6;
+        SIG [label="Proximity (<= 45 chars)\nTargeting pattern\nAction phrase\nSoft coupling (<= 20 chars)", fontsize=6, fillcolor="white"];
+        L2B [label="Any signal?", shape=diamond, fillcolor="#eef2ff", color="#a0a0a0"];
+        L2B_N [label="Rejected", fillcolor="#fee2e2", color="#fca5a5", fontcolor="#dc2626"];
+        SIG -> L2B;
+        L2B -> L2B_N [label="No", fontcolor="#dc2626", color="#dc2626"];
+    }
+
+    // ── Layer 3 ─────────────────────────────────────────────
+    subgraph cluster_l3 {
+        label="Layer 3: Bystander";
+        fontsize=8; fontname="Helvetica-Bold"; style=filled; fillcolor="#f5f5f7"; color="#e0e0e0"; margin=6;
+        L3 [label="Bystander flagged?\nF1/F4: enumeration\nF3: spatial proximity", shape=diamond, fillcolor="#eef2ff", color="#a0a0a0"];
+        L3_N [label="Rejected", fillcolor="#fee2e2", color="#fca5a5", fontcolor="#dc2626"];
+        L3 -> L3_N [label="Yes", fontcolor="#dc2626", color="#dc2626"];
+    }
+
+    // ── Output ──────────────────────────────────────────────
+    subgraph cluster_out {
+        label="Classification (priority order)";
+        fontsize=8; fontname="Helvetica-Bold"; style=filled; fillcolor="#f5f5f7"; color="#e0e0e0"; margin=6;
+        OUT [label="1. Personnel Targeting\n2. Systemic Attack\n3. Infrastructure Damage\n4. Access Disruption\n5. Humanitarian Disruption", fontsize=6, fillcolor="#f0fdf4", color="#86efac"];
+    }
+
+    // ── Flow ──────────────────────────────────────────────────
+    AD -> L1;
+    L1 -> L2A [label="Yes", fontcolor="#0066cc", color="#0066cc"];
+    L2A -> SIG [label="Yes", fontcolor="#0066cc", color="#0066cc"];
+    L2B -> L3 [label="Yes", fontcolor="#0066cc", color="#0066cc"];
+    L3 -> OUT [label="No", fontcolor="#0066cc", color="#0066cc"];
+}

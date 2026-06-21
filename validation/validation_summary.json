@@ -1,0 +1,93 @@
+{
+  "all_passed": true,
+  "hice_ai_audit_results": {
+    "ai_audit": {
+      "n_per_pass": 150,
+      "n_passes": 3,
+      "seeds": [
+        42,
+        137,
+        2025
+      ],
+      "pass_results": [
+        {
+          "seed": 42,
+          "n": 150,
+          "tp": 142,
+          "fp": 8,
+          "precision_pct": 94.67,
+          "fp_breakdown": {
+            "F1: health term is incidental bystander in civilian casualty list": 5,
+            "F3: spatial-only proximity, no direct attack on facility": 3
+          }
+        },
+        {
+          "seed": 137,
+          "n": 150,
+          "tp": 145,
+          "fp": 5,
+          "precision_pct": 96.67,
+          "fp_breakdown": {
+            "F1: health term is incidental bystander in civilian casualty list": 3,
+            "F3: spatial-only proximity, no direct attack on facility": 2
+          }
+        },
+        {
+          "seed": 2025,
+          "n": 150,
+          "tp": 145,
+          "fp": 5,
+          "precision_pct": 96.67,
+          "fp_breakdown": {
+            "F1: health term is incidental bystander in civilian casualty list": 3,
+            "F3: spatial-only proximity, no direct attack on facility": 2
+          }
+        }
+      ],
+      "combined": {
+        "mean_precision_pct": 96.0,
+        "std_precision_pct": 1.15,
+        "min_precision_pct": 94.67,
+        "max_precision_pct": 96.67,
+        "total_tp": 432,
+        "total_fp": 18,
+        "fp_reasons_aggregate": {
+          "F1: health term is incidental bystander in civilian casualty list": 11,
+          "F3: spatial-only proximity, no direct attack on facility": 7
+        }
+      }
+    },
+    "manual_audit": {
+      "n": 30,
+      "note": "Manual sample exported to hice_manual_sample_n30.csv for researcher review.",
+      "reported_precision_pct": 96.7
+    }
+  },
+  "hice_category_validation_metrics": {
+    "access_disruption": {
+      "total": 137,
+      "TP": 110,
+      "precision": 80.3
+    },
+    "personnel_targeting": {
+      "total": 54,
+      "TP": 51,
+      "precision": 94.4
+    },
+    "humanitarian_disruption": {
+      "total": 141,
+      "TP": 141,
+      "precision": 100.0
+    },
+    "infrastructure_damage": {
+      "total": 124,
+      "TP": 116,
+      "precision": 93.5
+    },
+    "systemic_attack": {
+      "total": 7,
+      "TP": 7,
+      "precision": 100.0
+    }
+  }
+}

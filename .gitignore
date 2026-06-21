@@ -47,9 +47,13 @@ Thumbs.db
 *.synctex.gz
 *.bbl
 *.blg
-*.pdf
 *.toc
 *.lof
 *.lot
 *.run.xml
 *.bcf
+
+# Compressed files
+*.gz
+
+main-backup.tex

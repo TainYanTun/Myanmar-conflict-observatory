@@ -1,0 +1,44 @@
+graph TB
+    subgraph Inp["Input"]
+        A["Conflict Event Data<br/>(ACLED / UCDP / ICEWS / ...)"] --> B["SourceAdapter<br/>(plugin per data source)"]
+    end
+    B --> C
+
+    subgraph L1["Layer 1: Structural Gate"]
+        C{"Kinetic event?<br/>(event / sub_event type)"} -->|Yes| D["Pass to L2"]
+        C -->|No| R["Reject"]
+    end
+
+    D --> G
+
+    subgraph L2["Layer 2: Bidirectional Keyword Coupling<br/>(4 parallel signals)"]
+        G["Entry"] --> H1{"Proximity ≤ 45 chars?<br/>health + attack verb<br/>(bidirectional)"}
+        G --> H2{"Targeting pattern?<br/>targeted, fired upon,<br/>raided, occupied"}
+        G --> H3{"Action phrase?<br/>was destroyed, burned,<br/>arrested, forced to close"}
+        G --> H4{"Soft coupling ≤ 20?<br/>casualty language near<br/>health personnel"}
+        H1 -->|Yes| J
+        H2 -->|Yes| J
+        H3 -->|Yes| J
+        H4 -->|Yes| J
+    end
+
+    subgraph L3["Layer 3: Bystander Disambiguation<br/>(reject only if bystander match AND no attack verb)"]
+        J["Coupling result"] --> K{"F1/F4: Incidental<br/>enumeration in<br/>civilian casualty list?"}
+        K -->|Yes| N["Reject"]
+        K -->|No| L{"F2: Humanitarian aid<br/>delivery without<br/>hostile act?"}
+        L -->|Yes| N
+        L -->|No| M{"F3: Spatial proximity<br/>only (hospital as<br/>location marker)?"}
+        M -->|Yes| N
+        M -->|No| P0["PASS"]
+    end
+
+    P0 --> S
+
+    subgraph Out["Output &amp; Classification"]
+        S["HICE Detected"] --> P["Classify Type<br/>(priority order)"]
+        P --> Q1["1. Personnel Targeting"]
+        P --> Q2["2. Systemic Attack"]
+        P --> Q3["3. Infrastructure Damage"]
+        P --> Q4["4. Access Disruption"]
+        P --> Q5["5. Humanitarian Disruption"]
+    end

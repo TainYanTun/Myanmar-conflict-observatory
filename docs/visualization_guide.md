@@ -30,7 +30,7 @@ The **Myanmar Conflict Observatory (MCO)** utilizes high-fidelity visualizations
 *   **Strategic Use:** Visualizes the **Hybridization Trend**—how EAOs and Resistance forces are increasingly coordinating their efforts against State Forces.
 
 ## 5. HICE Impact Distribution (Sunburst Chart)
-**Visualization:** A hierarchical sunburst chart showing the breakdown of Health-Impacting Conflict Events.
+**Visualization:** A hierarchical sunburst chart showing the breakdown of Healthcare Interference Conflict Events.
 *   **Structure:**
     *   **Inner Ring:** Primary Health Impact (e.g., Infrastructure Damage).
     *   **Outer Ring:** Specific Event Types (e.g., Arson, Airstrike).

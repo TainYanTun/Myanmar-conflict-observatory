@@ -3,7 +3,7 @@
 This document outlines the strategic decision to narrow the NLP keyword ontology to strictly reflect "attacks on medical infrastructure" as defined in the research methodology, ensuring absolute consistency between the research paper and the data pipeline.
 
 ## 1. The Discrepancy
-*   **Research Paper (Methodology):** Defines HICE (Health-Impacting Conflict Events) as incidents involving "attacks on medical infrastructure" (SDG 3.d).
+*   **Research Paper (Methodology):** Defines HICE (Healthcare Interference Conflict Events) as incidents involving "attacks on medical infrastructure" (SDG 3.d).
 *   **Current Code (`src/processing.py`):** Includes broader outcome-based keywords like `displacement`, `malnutrition`, and `epidemic`.
 
 ## 2. The Solution: Precision-Focused Ontology

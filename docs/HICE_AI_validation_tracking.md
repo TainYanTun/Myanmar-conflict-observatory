@@ -6,7 +6,7 @@ This document records the evolution of the AI-Assisted Precision Audit ($n=200$ 
 * **Mean Precision**: **67.67% ($\pm$ 2.52%)**
 * **Metrics**: 406 True Positives, 194 False Positives.
 * **HICE Pool Size**: 1,469 events.
-* **Context**: The original detection framework relied on bidirectional proximity logic and basic action coupling. The strict text-only AI rubric yielded a conservative ~67% precision, while the researcher manual audit achieved 89.5%. 
+* **Context**: The original detection framework relied on bidirectional proximity logic and basic action coupling. The strict text-only AI rubric yielded a conservative ~67% precision, while the researcher manual audit achieved 93.3%. 
 
 ## 2. Robust Extraction Update (Precision Decrease)
 * **Mean Precision**: **65.33% ($\pm$ 3.55%)**

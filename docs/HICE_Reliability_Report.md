@@ -6,7 +6,7 @@ The observatory identifies "invisible" attacks on healthcare by looking for the 
 1. **Filtering the Noise**: Raw reports from conflict zones are cluttered and difficult to interpret. The system starts by cleaning thousands of these logs.
 2. **Keyword Search (The "First Pass")**: The system scans reports for "health-sensitive" words—like *hospital*, *medic*, *clinic*, or *medicine*.
 3. **The "Safety Gate" (The Accuracy Boost)**: This is the core of the system. If a report mentions "a victim being taken to a hospital," that doesn't mean the hospital was *attacked*. The system uses a **Safety Gate** to automatically discard these "incidental" mentions, ensuring it only focuses on events where healthcare facilities or workers were the **actual target**.
-4. **Verification**: The system looks for "action" words—like *arson*, *shelling*, *targeting*, or *occupation*. If it finds a health-related keyword AND a violent action word in the same report, it flags the event as a **HICE (Health-Impacting Conflict Event)**.
+4. **Verification**: The system looks for "action" words—like *arson*, *shelling*, *targeting*, or *occupation*. If it finds a health-related keyword AND a violent action word in the same report, it flags the event as a **HICE (Healthcare Interference Conflict Event)**.
 5. **Data with a "Verified Floor"**: Because the system is strict, it provides a "Verified Floor." Every event shown is a confirmed, evidence-based instance of healthcare being disrupted. This gives humanitarian organizations the solid ground needed to prioritize aid and protect staff.
 
 ## 2. Methodology & Reliability

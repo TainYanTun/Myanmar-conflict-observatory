@@ -1,18 +1,13 @@
-# --- Stage 1: Build & Runtime ---
+# --- Production Runtime ---
 FROM python:3.12-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    STREAMLIT_SERVER_PORT=8501 \
-    STREAMLIT_SERVER_ADDRESS=0.0.0.0
+    PYTHONUNBUFFERED=1
 
-# Install system dependencies for GeoPandas and PostGIS/PostgreSQL
+# Install system dependencies for PostgreSQL connectivity
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    libgdal-dev \
-    libgeos-dev \
-    libproj-dev \
     libpq-dev \
     curl \
     && rm -rf /var/lib/apt/lists/*
@@ -31,17 +26,14 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy the rest of the application and set ownership to the non-root user
 COPY --chown=appuser:appgroup . .
 
-# Ensure startup script is executable
-RUN chmod +x startup.sh
-
 # Switch to the non-root user
 USER appuser
 
-# Expose Streamlit port
-EXPOSE 8501
+# Expose FastAPI port
+EXPOSE 8000
 
-# Healthcheck to monitor Streamlit status
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
+# Healthcheck to monitor FastAPI status
+HEALTHCHECK CMD curl --fail http://localhost:8000/health || exit 1
 
 # Entrypoint for the application
-CMD ["./startup.sh"]
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]

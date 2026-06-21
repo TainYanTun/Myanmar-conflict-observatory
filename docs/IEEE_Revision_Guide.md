@@ -18,7 +18,7 @@ Your paper is currently stuck in the **Descriptive Trap**. It reads more like a 
 Do not hide your contribution. Add this exact block to the end of your Introduction:
 
 > **This paper makes the following specific contributions:**
-> 1.  **HICE Ontology & NLP Framework:** We propose a novel ontology for detecting Health-Impacting Conflict Events (HICE) using a regular-expression based NLP engine, achieving high precision in identifying attacks on medical infrastructure.
+> 1.  **HICE Ontology & NLP Framework:** We propose a novel ontology for detecting Healthcare Interference Conflict Events (HICE) using a regular-expression based NLP engine, achieving high precision in identifying attacks on medical infrastructure.
 > 2.  **Regional Risk Matrix:** We introduce a Severity Index and Vulnerability Score methodology that distinguishes high-lethality zones from high-frequency zones, enabling evidence-based humanitarian triage.
 > 3.  **System Validation:** We provide a retrospective spatiotemporal analysis of the Myanmar conflict (2021–2025), validating the proposed framework against ground-truth data and demonstrating its utility for SDG 3.d monitoring.
 
@@ -31,7 +31,7 @@ Do not hide your contribution. Add this exact block to the end of your Introduct
 > 
 > The computational analysis of conflict dynamics has evolved from manual logging to high-frequency, event-based monitoring systems [1][2]. Previous studies have utilized ACLED data to model the diffusion of violence using GIS-based spatial statistics [3] and to analyze actor network structures [4].
 > 
-> However, a persistent gap remains in the automated intersection of conflict events with specific Sustainable Development Goal (SDG) indicators. Existing platforms lack the domain-specific NLP ontologies required to isolate Health-Impacting Conflict Events (HICE). This study builds upon existing methodologies by introducing a specialized NLP layer for health-security nexus analysis and a formal Severity Index for regional vulnerability assessment.
+> However, a persistent gap remains in the automated intersection of conflict events with specific Sustainable Development Goal (SDG) indicators. Existing platforms lack the domain-specific NLP ontologies required to isolate Healthcare Interference Conflict Events (HICE). This study builds upon existing methodologies by introducing a specialized NLP layer for health-security nexus analysis and a formal Severity Index for regional vulnerability assessment.
 
 ---
 

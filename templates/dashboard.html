@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HICE Detection Framework</title>
+<script src="https://cdn.plot.ly/plotly-3.0.1.min.js"></script>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div id="loading-overlay" class="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Rendering dashboard&hellip;</div>
+</div>
+<div class="app-container">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <div class="sup">HICE &mdash; Healthcare Interference Conflict Events</div>
+      <h1>Myanmar Healthcare Interference Conflict Events</h1>
+      <div class="sub">{{ date_min }} &ndash; {{ date_max }} &middot; ACLED Myanmar</div>
+    </div>
+    <div class="header-right">
+      <div class="status-label">Total Incidents</div>
+      <div class="status-count">{{ total_hice }}</div>
+      <div class="status-sublabel">{{ fatal_pct }}% of {{ total_events }} conflict events</div>
+    </div>
+  </header>
+
+  <!-- Metrics -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="label">Top Category</div>
+      <div class="value">{{ top_cat.label if top_cat else 'N/A' }}</div>
+      <div class="sub">{{ top_cat.pct if top_cat else 0 }}% of HICE events</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Regions Affected</div>
+      <div class="value">{{ regions_affected }}</div>
+      <div class="sub">administrative regions</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Total Fatalities</div>
+      <div class="value">{{ total_fatalities }}</div>
+      <div class="sub">within HICE events</div>
+    </div>
+    <div class="metric-card">
+      <div class="label">Detection Rate</div>
+      <div class="value">{{ fatal_pct }}%</div>
+      <div class="sub">of all conflict events flagged</div>
+    </div>
+  </div>
+
+  <!-- Category Cards -->
+  <div class="cat-grid">
+    {% for key, cat in categories.items() %}
+    <div class="cat-card">
+      <div class="cat-label" style="color: {{ cat.color }}">{{ cat.label }}</div>
+      <div class="cat-count">{{ cat.count }}</div>
+      <div class="cat-pct">{{ cat.pct }}%</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Tabs -->
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="overview" role="tab">Overview</button>
+    <button class="tab-btn" data-tab="geospatial" role="tab">Geospatial</button>
+    <button class="tab-btn" data-tab="temporal" role="tab">Temporal</button>
+    <button class="tab-btn" data-tab="risk" role="tab">Risk Assessment</button>
+    <button class="tab-btn" data-tab="records" role="tab">Records</button>
+    <button class="tab-btn" data-tab="simulator" role="tab">Simulator</button>
+  </nav>
+
+  <!-- Tab: Overview -->
+  <section class="tab-content active" id="tab-overview">
+    <div class="chart-row">
+      <div class="chart-card"><div class="chart-container" id="overview-pie"></div></div>
+      <div class="chart-card"><div class="chart-container" id="overview-kw"></div></div>
+    </div>
+    <div class="chart-row">
+      <div class="chart-card"><div class="chart-container" id="overview-actor"></div></div>
+      <div class="chart-card"><div class="chart-container" id="overview-evt"></div></div>
+    </div>
+  </section>
+
+  <!-- Tab: Geospatial -->
+  <section class="tab-content" id="tab-geospatial">
+    <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;line-height:1.5">
+      Each marker represents a verified HICE incident. Color indicates impact category; marker size scales with fatalities.
+    </p>
+    <div class="map-legend" id="geo-legend"></div>
+    <div class="chart-card">
+      <div class="chart-container" id="geo-map" style="height:600px"></div>
+    </div>
+  </section>
+
+  <!-- Tab: Temporal -->
+  <section class="tab-content" id="tab-temporal">
+    <div class="chart-row full">
+      <div class="chart-card"><div class="chart-container" id="temporal-trend"></div></div>
+    </div>
+    <div class="chart-row full">
+      <div class="chart-card"><div class="chart-container" id="temporal-cat"></div></div>
+    </div>
+    <div class="chart-row full">
+      <div class="chart-card"><div class="chart-container" id="temporal-cum" style="height:320px"></div></div>
+    </div>
+  </section>
+
+  <!-- Tab: Risk Assessment -->
+  <section class="tab-content" id="tab-risk">
+    <div class="chart-row full">
+      <div class="chart-card"><div class="chart-container" id="risk-severity"></div></div>
+    </div>
+    <div class="chart-row full">
+      <div class="chart-card"><div class="chart-container" id="risk-matrix"></div></div>
+    </div>
+    <div class="chart-row full">
+      <div class="chart-card"><div class="chart-container" id="risk-vuln"></div></div>
+    </div>
+    <div class="chart-card">
+      <h3>Regional Vulnerability Ranking</h3>
+      <div class="table-wrapper" style="margin-top:8px">
+        <table class="data-table">
+          <thead>
+            <tr><th>Rank</th><th>Region</th><th>HICE Events</th><th>Fatalities</th><th>Score</th><th>Personnel%</th></tr>
+          </thead>
+          <tbody>
+            {% for r in risk_table %}
+            <tr>
+              <td>{{ r.rank }}</td>
+              <td><strong>{{ r.region }}</strong></td>
+              <td>{{ r.hice }}</td>
+              <td>{{ r.fatalities }}</td>
+              <td>{{ r.score }}</td>
+              <td><span style="color:#dc2626;font-weight:600">{{ r.pct_personnel }}%</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab: Records -->
+  <section class="tab-content" id="tab-records">
+    <div class="controls-row">
+      <label for="rec-search">Search:</label>
+      <input type="text" id="rec-search" placeholder="Filter by location, actor, notes...">
+      <label for="rec-type">Type:</label>
+      <select id="rec-type">
+        <option value="">All Types</option>
+        {% for key, cat in categories.items() %}
+        <option value="{{ cat.label }}">{{ cat.label }}</option>
+        {% endfor %}
+      </select>
+      <label for="rec-region">Region:</label>
+      <select id="rec-region">
+        <option value="">All Regions</option>
+      </select>
+      <span id="rec-count"></span>
+      <button class="btn" onclick="resetFilters()">Reset</button>
+    </div>
+    <div class="table-wrapper" id="records-table-wrapper">
+      <table class="data-table" id="records-table">
+        <thead>
+          <tr>
+            <th>Date</th><th>Type</th><th>Region</th><th>Location</th>
+            <th>Actor</th><th>Fatalities</th><th>Brief Note</th>
+          </tr>
+        </thead>
+        <tbody id="records-body"></tbody>
+      </table>
+    </div>
+    <div id="record-detail"></div>
+  </section>
+
+  <!-- Tab: Simulator -->
+  <section class="tab-content" id="tab-simulator">
+    <div class="controls-row">
+      <label for="sim-input" style="font-size:15px;font-weight:600;color:var(--text)">Narrative Text</label>
+      <button class="btn btn-primary" onclick="runSimulation()">Run Analysis</button>
+      <button class="btn" onclick="document.getElementById('sim-input').value='';document.getElementById('sim-results').style.display='none'">Clear</button>
+    </div>
+    <div class="chart-card" style="margin-bottom:16px">
+      <textarea id="sim-input" rows="3" style="width:100%;border:none;resize:vertical;font-family:var(--font);font-size:15px;color:var(--text);background:transparent;outline:none;padding:4px 0" placeholder="Paste a conflict narrative to test the HICE pipeline.&#10;&#10;Example: On March 15, Myanmar military forces attacked a village in Sagaing Region. During the attack, soldiers set fire to the local clinic and arrested two nurses. The clinic was destroyed and medical supplies were looted."></textarea>
+    </div>
+    <div id="sim-results" style="display:none">
+      <div id="sim-loading" style="text-align:center;padding:40px 0">
+        <div class="spinner" style="margin:0 auto"></div>
+        <p style="font-size:14px;color:var(--text-secondary);margin-top:12px">Running pipeline&hellip;</p>
+      </div>
+      <div class="chart-row full" id="sim-highlight-wrapper" style="display:none">
+        <div class="chart-card" id="sim-highlight">
+          <h3>Text with Pipeline Annotations</h3>
+          <div id="sim-highlight-text" style="font-size:15px;line-height:1.7;padding:8px 0"></div>
+          <div id="sim-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)"></div>
+        </div>
+      </div>
+      <div id="sim-steps" style="display:none"></div>
+      <div id="sim-final" style="display:none" class="chart-row full"></div>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ── Chart rendering with loading tracking ───────────────────────── */
+const renderPromises = [];
+const overlay = document.getElementById('loading-overlay');
+
+function renderPlotly(elId, data, layout, opts) {
+  const p = Plotly.newPlot(elId, data, layout, opts || {});
+  renderPromises.push(p);
+  return p;
+}
+
+function renderChart(elId, figJson) {
+  if (!figJson || figJson === 'null') return;
+  const el = document.getElementById(elId);
+  if (!el) return;
+  renderPlotly(elId, figJson.data, figJson.layout, {
+    responsive: true, displayModeBar: false, autosizable: true,
+  });
+}
+
+{% if overview_pie %}
+renderChart('overview-pie', {{ overview_pie|safe }});
+{% endif %}
+{% if overview_kw %}
+renderChart('overview-kw', {{ overview_kw|safe }});
+{% endif %}
+{% if overview_actor %}
+renderChart('overview-actor', {{ overview_actor|safe }});
+{% endif %}
+{% if overview_evt %}
+renderChart('overview-evt', {{ overview_evt|safe }});
+{% endif %}
+{% if temporal_trend %}
+renderChart('temporal-trend', {{ temporal_trend|safe }});
+{% endif %}
+{% if temporal_cat %}
+renderChart('temporal-cat', {{ temporal_cat|safe }});
+{% endif %}
+{% if temporal_cum %}
+renderChart('temporal-cum', {{ temporal_cum|safe }});
+{% endif %}
+{% if risk_severity %}
+renderChart('risk-severity', {{ risk_severity|safe }});
+{% endif %}
+{% if risk_matrix %}
+renderChart('risk-matrix', {{ risk_matrix|safe }});
+{% endif %}
+{% if risk_vuln %}
+renderChart('risk-vuln', {{ risk_vuln|safe }});
+{% endif %}
+
+/* ── Geospatial (Scattermapbox) ─────────────────────────────────── */
+const geoRecords = {{ geo_data|safe }};
+const hiceColors = {{ hice_colors|safe }};
+const hiceLabels = {{ hice_labels|safe }};
+
+if (geoRecords && geoRecords.length) {
+  const lat = geoRecords.map(r => r.lat);
+  const lon = geoRecords.map(r => r.lon);
+  const text = geoRecords.map(r => `<b>${r.location}</b><br>${r.date}<br>${r.type}<br>${r.actor}<br>${r.notes}`);
+  const colors = geoRecords.map(r => hiceColors[r.type_key] || '#6b7280');
+  const sizes = geoRecords.map(r => Math.max(5, Math.min(15, Math.sqrt(r.fatalities + 1) * 4)));
+
+  renderPlotly('geo-map', [{
+    type: 'scattermapbox',
+    lat: lat, lon: lon,
+    mode: 'markers',
+    marker: { color: colors, size: sizes, opacity: 0.8, sizemode: 'diameter' },
+    text: text, hoverinfo: 'text', hoverlabel: { bgcolor: '#1f2937' },
+  }], {
+    mapbox: {
+      style: 'carto-positron',
+      center: { lat: 21.5, lon: 96.0 },
+      zoom: 5.2,
+    },
+    height: 600,
+    margin: { t: 0, r: 0, b: 0, l: 0 },
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    font: { family: 'Inter, sans-serif', size: 11, color: '#6b7280' },
+    dragmode: 'zoom',
+  }, {
+    responsive: true, displayModeBar: true, displaylogo: false,
+    modeBarButtonsToRemove: ['sendDataToCloud', 'toImage'],
+  });
+
+  /* Legend */
+  const legendEl = document.getElementById('geo-legend');
+  for (const [key, label] of Object.entries(hiceLabels)) {
+    const item = document.createElement('span');
+    item.className = 'map-legend-item';
+    item.innerHTML = `<span class="map-legend-dot" style="background:${hiceColors[key]}"></span>${label}`;
+    legendEl.appendChild(item);
+  }
+}
+
+/* ── Hide loading overlay when all charts rendered ────────────────── */
+Promise.allSettled(renderPromises).then(() => {
+  overlay.classList.add('hidden');
+});
+
+/* ── Pipeline Simulator ──────────────────────────────────────────── */
+const STEP_COLORS = {
+  structural_gate: '#4f46e5',
+  health_mask: '#2563eb',
+  targeting_mask: '#dc2626',
+  phrase_mask: '#7c3aed',
+  soft_health: '#059669',
+  proximity: '#0891b2',
+  bystander: '#d97706',
+};
+function iconCheck() { return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#059669" stroke-width="1.5"/><path d="M5 8.5L7 10.5L11 6" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'; }
+function iconCross() { return '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#dc2626" stroke-width="1.5"/><path d="M5.5 5.5L10.5 10.5M10.5 5.5L5.5 10.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg>'; }
+function iconFinal(isHice) { return isHice
+  ? '<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="#059669" stroke-width="2"/><path d="M10 16.5L13.5 20L22 11" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  : '<svg width="32" height="32" viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="14" stroke="#dc2626" stroke-width="2"/><path d="M11 11L21 21M21 11L11 21" stroke="#dc2626" stroke-width="2.5" stroke-linecap="round"/></svg>'; }
+const STEP_ICONS = {
+  structural_gate: 'GATE',
+  health_mask: 'HLTH',
+  targeting_mask: 'TARG',
+  phrase_mask: 'PHR',
+  soft_health: 'CAS',
+  proximity: 'PROX',
+  bystander: 'FP',
+};
+
+function esc(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function runSimulation() {
+  const text = document.getElementById('sim-input').value.trim();
+  if (!text) return;
+  const resultsDiv = document.getElementById('sim-results');
+  resultsDiv.style.display = 'block';
+  document.getElementById('sim-loading').style.display = 'block';
+  document.getElementById('sim-highlight-wrapper').style.display = 'none';
+  document.getElementById('sim-steps').style.display = 'none';
+
+  fetch('/simulate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text }),
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.error) {
+      document.getElementById('sim-loading').style.display = 'none';
+      resultsDiv.innerHTML += '<p style="color:var(--danger);padding:16px">' + esc(data.error) + '</p>';
+      return;
+    }
+    renderSimResults(data);
+  })
+  .catch(err => {
+    document.getElementById('sim-loading').style.display = 'none';
+    resultsDiv.innerHTML += '<p style="color:var(--danger);padding:16px">Error: ' + esc(err.message) + '</p>';
+  });
+}
+
+function renderSimResults(data) {
+  const steps = data.steps;
+  const stepsEl = document.getElementById('sim-steps');
+
+  document.getElementById('sim-loading').style.display = 'none';
+  document.getElementById('sim-highlight-wrapper').style.display = 'block';
+  stepsEl.style.display = 'block';
+
+  stepsEl.innerHTML = '';
+  document.getElementById('sim-highlight-text').innerHTML = '';
+  document.getElementById('sim-legend').innerHTML = '';
+
+  renderHighlightedText(data, document.getElementById('sim-highlight-text'));
+
+  const s = id => steps.find(st => st.id === id);
+  const detectorIds = ['health_mask','targeting_mask','phrase_mask','soft_health','proximity'];
+  const isHice = data.is_hice;
+
+  /* ── Build box pipeline ───────────────────────────────────────────── */
+  const pipe = document.createElement('div');
+  pipe.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px 20px 20px';
+
+  function connector() {
+    const d = document.createElement('div');
+    d.style.cssText = 'display:flex;flex-direction:column;align-items:center;height:24px;position:relative';
+    const line = document.createElement('div');
+    line.style.cssText = 'width:1.5px;flex:1;background:var(--border)';
+    d.appendChild(line);
+    const arr = document.createElement('div');
+    arr.style.cssText = 'width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--border)';
+    d.appendChild(arr);
+    return d;
+  }
+
+  function sectionLabel(text) {
+    const l = document.createElement('div');
+    l.style.cssText = 'font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px';
+    l.textContent = text;
+    return l;
+  }
+
+  function nodeBox(label, status, passed, color, opts) {
+    opts = opts || {};
+    const box = document.createElement('div');
+    const bg = passed ? (color || '#059669') + '18' : '#fafafa';
+    const border = passed ? (color || '#059669') : '#e0e0e0';
+    const bw = passed ? '2px' : '1px';
+    const dash = passed ? '' : 'dashed';
+    const txtColor = passed ? (color || '#059669') : '#9ca3af';
+    box.style.cssText = `display:flex;align-items:center;justify-content:space-between;gap:12px;background:${bg};border:${bw} ${dash} ${border};border-radius:var(--radius);padding:14px 18px;transition:opacity.15s`;
+    if (!passed && !opts.noDim) box.style.opacity = '0.6';
+
+    const left = document.createElement('div');
+    left.style.cssText = 'display:flex;align-items:center;gap:10px;flex:1;min-width:0';
+    if (opts.tag) {
+      const tag = document.createElement('span');
+      tag.style.cssText = `font-size:9px;font-weight:700;letter-spacing:.04em;padding:2px 6px;border-radius:3px;background:${color}1A;color:${color};white-space:nowrap`;
+      tag.textContent = opts.tag;
+      left.appendChild(tag);
+    }
+    const lbl = document.createElement('span');
+    lbl.style.cssText = `font-size:14px;font-weight:${passed ? 700 : 500};color:${txtColor};line-height:1.3`;
+    lbl.textContent = label;
+    left.appendChild(lbl);
+
+    const right = document.createElement('span');
+    right.style.cssText = `font-size:11px;font-weight:700;padding:3px 10px;border-radius:9999px;background:${passed ? '#059669' : '#9ca3af'};color:#fff;white-space:nowrap`;
+    right.textContent = status;
+    box.appendChild(left);
+    box.appendChild(right);
+
+    if (opts.subchecks && opts.subchecks.length) {
+      const scRow = document.createElement('div');
+      scRow.style.cssText = 'display:flex;gap:14px;margin-top:10px;padding-top:10px;border-top:1px solid #eee;flex-wrap:wrap';
+      opts.subchecks.forEach(sc => {
+        const item = document.createElement('div');
+        item.style.cssText = 'display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-secondary)';
+        item.innerHTML = (sc.passed ? iconCheck() : iconCross()) + '<span>' + esc(sc.label) + '</span>';
+        scRow.appendChild(item);
+      });
+      box.appendChild(scRow);
+    }
+
+    if (opts.matches && opts.matches.length) {
+      const chipRow = document.createElement('div');
+      chipRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:4px;margin-top:8px';
+      opts.matches.slice(0, 5).forEach(m => {
+        const chip = document.createElement('span');
+        chip.style.cssText = 'font-size:11px;padding:1px 7px;border-radius:4px;background:var(--bg);border:1px solid var(--border);color:var(--text-secondary);font-family:var(--mono)';
+        chip.textContent = m.match_text;
+        chipRow.appendChild(chip);
+      });
+      box.appendChild(chipRow);
+    }
+
+    return box;
+  }
+
+  /* ── Layer 1: Structural Gate ──────────────── */
+  const sg = s('structural_gate');
+  if (sg) {
+    pipe.appendChild(sectionLabel('Layer 1 — Structural Gate'));
+    pipe.appendChild(nodeBox('Kinetic Event + Armed Actor', sg.passed ? 'PASS' : 'FAIL', sg.passed, '#4f46e5', {
+      tag: 'GATE', matches: sg.matches, noDim: true, subchecks: sg.subchecks,
+    }));
+    pipe.appendChild(connector());
+  }
+
+  /* ── Layer 2: Signal Detection ─────────────── */
+  pipe.appendChild(sectionLabel('Layer 2 — Signal Detection'));
+  detectorIds.forEach(id => {
+    const step = s(id);
+    const ok = step && step.passed;
+    pipe.appendChild(nodeBox(
+      {health_mask:'Health Keyword Detection',targeting_mask:'Targeting Language',phrase_mask:'Action Phrases',soft_health:'Soft Health-Casualty Coupling',proximity:'Proximity Coupling (45-char)'}[id],
+      ok ? 'DETECTED' : '—',
+      ok,
+      STEP_COLORS[id],
+      { tag: STEP_ICONS[id], matches: step ? step.matches : [] }
+    ));
+  });
+  pipe.appendChild(connector());
+
+  /* ── Layer 3: Bystander ────────────────────── */
+  const bs = s('bystander');
+  if (bs) {
+    pipe.appendChild(sectionLabel('Layer 3 — Bystander Disambiguation'));
+    pipe.appendChild(nodeBox('False-Positive Filter', bs.passed ? 'PASS' : 'FLAGGED', bs.passed, '#d97706', {
+      noDim: true, subchecks: bs.subchecks,
+    }));
+    pipe.appendChild(connector());
+  }
+
+  /* ── Decision: Coupling ────────────────────── */
+  const cp = s('coupling');
+  if (cp) {
+    pipe.appendChild(sectionLabel('Decision — Event Coupling'));
+    pipe.appendChild(nodeBox('Coupling Gate', cp.passed ? 'PASS' : 'FAIL', cp.passed, cp.passed ? '#059669' : '#dc2626', {
+      noDim: !cp.passed, subchecks: cp.subchecks,
+    }));
+    pipe.appendChild(connector());
+  }
+
+  /* ── Final Result ──────────────────────────── */
+  const finalBox = document.createElement('div');
+  finalBox.style.cssText = `display:flex;align-items:center;gap:14px;background:${isHice ? '#f0fdf4' : '#fef2f2'};border:2px solid ${isHice ? '#86efac' : '#fca5a5'};border-radius:var(--radius-lg);padding:18px 22px`;
+  finalBox.innerHTML = `
+    ${iconFinal(isHice)}
+    <div style="flex:1">
+      <div style="font-size:17px;font-weight:700;color:var(--text)">${isHice ? 'HICE Detected' : 'No HICE Detected'}</div>
+      <div style="font-size:13px;color:var(--text-secondary);margin-top:2px">${isHice ? 'Classified by pipeline rules' : 'Insufficient evidence of healthcare interference'}</div>
+    </div>
+    ${isHice ? '<span style="font-size:11px;font-weight:700;padding:4px 14px;border-radius:9999px;background:' + data.hice_color + ';color:#fff;white-space:nowrap">' + esc(data.hice_label) + '</span>' : ''}
+  `;
+  pipe.appendChild(finalBox);
+
+  stepsEl.appendChild(pipe);
+}
+
+function renderHighlightedText(data, el) {
+  const lower = data.text_lower;
+  const spans = data.highlight_spans || {};
+
+  /* Collect all span positions */
+  const annotations = [];
+  for (const [key, vals] of Object.entries(spans)) {
+    const [start, end] = key.split(':').map(Number);
+    vals.forEach(v => annotations.push({ start, end, ...v }));
+  }
+  annotations.sort((a, b) => a.start - b.start || b.end - a.end);
+
+  /* Merge overlapping ranges */
+  const merged = [];
+  for (const a of annotations) {
+    const last = merged[merged.length - 1];
+    if (last && a.start <= last.end) {
+      if (a.end > last.end) last.end = a.end;
+      if (!last.steps.includes(a.step_id)) last.steps.push(a.step_id);
+    } else {
+      merged.push({ start: a.start, end: a.end, steps: [a.step_id], color: a.color });
+    }
+  }
+
+  /* Build highlighted HTML */
+  let html = '';
+  let pos = 0;
+  for (const m of merged) {
+    if (m.start > pos) html += esc(lower.slice(pos, m.start));
+    const bgColor = m.color;
+    html += '<mark style="background:' + bgColor + '22;border-bottom:2px solid ' + bgColor + ';border-radius:2px;padding:1px 2px;color:var(--text)">' + esc(lower.slice(m.start, m.end)) + '</mark>';
+    pos = m.end;
+  }
+  if (pos < lower.length) html += esc(lower.slice(pos));
+
+  el.innerHTML = html ? html : '<span style="color:var(--text-muted)">No patterns matched in this text</span>';
+
+  /* Build legend */
+  const legendEl = document.getElementById('sim-legend');
+  const seen = {};
+  for (const a of annotations) {
+    if (seen[a.step_id]) continue;
+    seen[a.step_id] = true;
+    const step = data.steps.find(s => s.id === a.step_id);
+    if (!step) continue;
+    const item = document.createElement('span');
+    item.style.cssText = 'display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-secondary)';
+    item.innerHTML = '<span style="width:10px;height:10px;border-radius:50%;background:' + a.color + ';display:inline-block"></span>' + esc(step.label);
+    legendEl.appendChild(item);
+  }
+}
+
+function getContext(text, start, end, padding) {
+  const ctxStart = Math.max(0, start - padding);
+  const ctxEnd = Math.min(text.length, end + padding);
+  let ctx = text.slice(ctxStart, ctxEnd);
+  if (ctxStart > 0) ctx = '…' + ctx;
+  if (ctxEnd < text.length) ctx = ctx + '…';
+  return ctx;
+}
+
+/* ── Tab switching ──────────────────────────────────────────────── */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = document.getElementById('tab-' + btn.dataset.tab);
+    if (tab) {
+      tab.classList.add('active');
+      /* Resize plots in this tab */
+      tab.querySelectorAll('.js-plotly-plot').forEach(el => {
+        Plotly.Plots.resize(el);
+      });
+    }
+  });
+});
+
+/* ── Records tab ────────────────────────────────────────────────── */
+const allRecords = {{ records|safe }};
+const searchInput = document.getElementById('rec-search');
+const typeSelect = document.getElementById('rec-type');
+const regionSelect = document.getElementById('rec-region');
+const recordsBody = document.getElementById('records-body');
+const recordCount = document.getElementById('rec-count');
+const detailEl = document.getElementById('record-detail');
+const PAGE_SIZE = 50;
+let currentPage = 1;
+let filteredRecords = [];
+
+/* Pagination controls container */
+const wrapper = document.getElementById('records-table-wrapper');
+const paginationEl = document.createElement('div');
+paginationEl.className = 'pagination';
+wrapper.after(paginationEl);
+
+/* Populate region filter */
+if (allRecords.length) {
+  const regions = [...new Set(allRecords.map(r => r.region))].sort();
+  regions.forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r; opt.textContent = r;
+    regionSelect.appendChild(opt);
+  });
+}
+
+function renderRecords() {
+  const q = searchInput.value.toLowerCase();
+  const t = typeSelect.value;
+  const rg = regionSelect.value;
+
+  filteredRecords = allRecords.filter(r => {
+    if (t && r.type !== t) return false;
+    if (rg && r.region !== rg) return false;
+    if (q && !r.location.toLowerCase().includes(q) && !r.actor.toLowerCase().includes(q) && !r.notes.toLowerCase().includes(q)) return false;
+    return true;
+  });
+
+  currentPage = 1;
+  renderPage();
+}
+
+function renderPage() {
+  const totalPages = Math.max(1, Math.ceil(filteredRecords.length / PAGE_SIZE));
+  if (currentPage > totalPages) currentPage = totalPages;
+
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const page = filteredRecords.slice(start, start + PAGE_SIZE);
+
+  recordCount.textContent = filteredRecords.length + ' records';
+
+  recordsBody.innerHTML = page.map(r => `
+    <tr style="cursor:pointer" onclick="showDetail(${JSON.stringify(r).replace(/"/g, '&quot;')})">
+      <td>${r.date}</td>
+      <td style="color:${hiceColors[r.type_key] || 'inherit'};font-weight:500">${r.type}</td>
+      <td>${r.region}</td>
+      <td>${r.location}</td>
+      <td>${r.actor}</td>
+      <td>${r.fatalities}</td>
+      <td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.notes ? r.notes.slice(0, 100) : ''}</td>
+    </tr>
+  `).join('');
+
+  /* Pagination controls */
+  paginationEl.innerHTML = '';
+  if (totalPages <= 1) return;
+
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'page-btn';
+  prevBtn.textContent = '\u2039';
+  prevBtn.disabled = currentPage <= 1;
+  prevBtn.addEventListener('click', () => { if (currentPage > 1) { currentPage--; renderPage(); } });
+  paginationEl.appendChild(prevBtn);
+
+  const info = document.createElement('span');
+  info.className = 'page-info';
+  info.textContent = currentPage + ' / ' + totalPages;
+  paginationEl.appendChild(info);
+
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'page-btn';
+  nextBtn.textContent = '\u203A';
+  nextBtn.disabled = currentPage >= totalPages;
+  nextBtn.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; renderPage(); } });
+  paginationEl.appendChild(nextBtn);
+}
+
+function resetFilters() {
+  searchInput.value = '';
+  typeSelect.value = '';
+  regionSelect.value = '';
+  renderRecords();
+}
+
+function showDetail(rec) {
+  const badgeColor = hiceColors[rec.type_key] || '#6b7280';
+  detailEl.innerHTML = `
+    <div class="detail-card">
+      <div class="detail-header">
+        <div>
+          <div class="detail-title">${rec.location} — ${rec.date}</div>
+          <div class="detail-meta">${rec.region} &middot; ${rec.actor}${rec.actor2 ? ' &middot; ' + rec.actor2 : ''}</div>
+        </div>
+        <span class="detail-badge" style="color:${badgeColor};border-color:${badgeColor}">${rec.type}</span>
+      </div>
+      ${rec.notes ? `<div class="detail-note"><div class="note-label">Incident Narrative</div><div class="note-text">${rec.notes}</div></div>` : ''}
+      <div class="detail-grid">
+        <div class="detail-field ${rec.fatalities > 0 ? 'danger' : ''}">
+          <div class="field-label">Fatalities</div>
+          <div class="field-value">${rec.fatalities}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">Event Type</div>
+          <div class="field-value">${rec.event_type}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">Coordinates</div>
+          <div class="field-value">${rec.lat.toFixed(3)}, ${rec.lon.toFixed(3)}</div>
+        </div>
+        <div class="detail-field">
+          <div class="field-label">Region</div>
+          <div class="field-value">${rec.region}</div>
+        </div>
+      </div>
+    </div>
+  `;
+  detailEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+searchInput.addEventListener('input', renderRecords);
+typeSelect.addEventListener('change', renderRecords);
+regionSelect.addEventListener('change', renderRecords);
+
+if (allRecords.length) renderRecords();
+</script>
+</body>
+</html>

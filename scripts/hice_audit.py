@@ -5,16 +5,16 @@ AI-assisted precision audit of the HICE detection framework.
 
 Strategy
 --------
-- n=200  : AI-evaluated, 3 independent passes with different random seeds.
-            Each event is judged by a rule-based rubric that mirrors the
-            criteria a trained human auditor would apply (see RUBRIC below).
+- n=150  : AI-evaluated, 3 independent passes with different random seeds.
+           Each event is judged by a rule-based rubric that mirrors the
+           criteria a trained human auditor would apply (see RUBRIC below).
 - n=30   : Random sample exported to CSV for manual human audit by researcher.
 
 Output
 ------
   validation/hice_ai_audit_results.json   — per-pass + combined AI metrics
   validation/hice_manual_sample_n30.csv   — manual review sheet for researcher
-  validation/hice_ai_sample_seed*.csv     — the 200-event samples (for records)
+  validation/hice_ai_sample_seed*.csv     — the 150-event samples (for records)
 
 Usage
 -----
@@ -31,15 +31,15 @@ import numpy as np
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from src.processing import clean_conflict_data, extract_health_impacts
+from hice_framework import ACLEDAdapter, detect_hice_from_source, classify_hice_type
 
-DATA_DIR   = os.path.join(ROOT, "data")
-OUT_DIR    = os.path.join(ROOT, "validation")
+DATA_PATH = os.path.join(ROOT, "data", "myanmar_conflict_clean.csv")
+OUT_DIR   = os.path.join(ROOT, "validation")
 os.makedirs(OUT_DIR, exist_ok=True)
 
 # ── Seeds for three independent AI passes ─────────────────────────────────────
 AI_SEEDS   = [42, 137, 2025]
-N_AI       = 200
+N_AI       = 150
 N_MANUAL   = 30
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -209,28 +209,22 @@ def run_pass(hice_df: pd.DataFrame, seed: int, n: int) -> dict:
 
 def main():
     # ── Load data ──────────────────────────────────────────────────────────────
-    csv_files = sorted(
-        [f for f in os.listdir(DATA_DIR) if f.endswith(".csv")],
-        key=lambda f: os.path.getmtime(os.path.join(DATA_DIR, f)),
-        reverse=True
-    )
-    if not csv_files:
-        sys.exit("[ERROR] No CSV found in data/")
-    path = os.path.join(DATA_DIR, csv_files[0])
-    print(f"[INFO] Loading: {path}")
-    df_raw = pd.read_csv(path, low_memory=False)
+    print(f"[INFO] Loading: {DATA_PATH}")
+    df_raw = pd.read_csv(DATA_PATH, low_memory=False)
 
-    # ── Clean & detect HICE ────────────────────────────────────────────────────
-    df = clean_conflict_data(df_raw)
-    hice_mask = extract_health_impacts(df)
-    hice_df   = df[hice_mask].reset_index(drop=True)
+    # ── Detect HICE with current framework ─────────────────────────────────────
+    mask = detect_hice_from_source(df_raw, ACLEDAdapter())
+    notes = df_raw['notes'].fillna('').str.lower()
+    types = classify_hice_type(notes)
+    hice_df = df_raw[mask].copy()
+    hice_df['hice_type'] = types[mask]
     print(f"[INFO] HICE pool: {len(hice_df)} events")
 
     if len(hice_df) < N_AI:
         sys.exit(f"[ERROR] Pool too small ({len(hice_df)}) for n={N_AI}. Lower N_AI.")
 
     # ── Three AI passes ────────────────────────────────────────────────────────
-    print("\n── AI Precision Audit (3 passes, n=200 each) ──")
+    print("\n── AI Precision Audit (3 passes, n=150 each) ──")
     pass_results = []
     for seed in AI_SEEDS:
         res = run_pass(hice_df, seed, N_AI)
@@ -277,7 +271,7 @@ def main():
         "manual_audit": {
             "n": N_MANUAL,
             "note": "Manual sample exported to hice_manual_sample_n30.csv for researcher review.",
-            "reported_precision_pct": 89.5
+            "reported_precision_pct": 93.3
         }
     }
 

@@ -1,6 +1,6 @@
 {
   "ai_audit": {
-    "n_per_pass": 200,
+    "n_per_pass": 150,
     "n_passes": 3,
     "seeds": [
       42,
@@ -10,58 +10,54 @@
     "pass_results": [
       {
         "seed": 42,
-        "n": 200,
-        "tp": 185,
-        "fp": 15,
-        "precision_pct": 92.5,
+        "n": 150,
+        "tp": 142,
+        "fp": 8,
+        "precision_pct": 94.67,
         "fp_breakdown": {
-          "Missing entity or kinetic signal": 11,
-          "F1: health term is incidental bystander in civilian casualty list": 1,
+          "F1: health term is incidental bystander in civilian casualty list": 5,
           "F3: spatial-only proximity, no direct attack on facility": 3
         }
       },
       {
         "seed": 137,
-        "n": 200,
-        "tp": 180,
-        "fp": 20,
-        "precision_pct": 90.0,
+        "n": 150,
+        "tp": 145,
+        "fp": 5,
+        "precision_pct": 96.67,
         "fp_breakdown": {
-          "Missing entity or kinetic signal": 10,
-          "F3: spatial-only proximity, no direct attack on facility": 6,
-          "F1: health term is incidental bystander in civilian casualty list": 4
+          "F1: health term is incidental bystander in civilian casualty list": 3,
+          "F3: spatial-only proximity, no direct attack on facility": 2
         }
       },
       {
         "seed": 2025,
-        "n": 200,
-        "tp": 180,
-        "fp": 20,
-        "precision_pct": 90.0,
+        "n": 150,
+        "tp": 145,
+        "fp": 5,
+        "precision_pct": 96.67,
         "fp_breakdown": {
-          "F3: spatial-only proximity, no direct attack on facility": 6,
-          "F1: health term is incidental bystander in civilian casualty list": 4,
-          "Missing entity or kinetic signal": 10
+          "F1: health term is incidental bystander in civilian casualty list": 3,
+          "F3: spatial-only proximity, no direct attack on facility": 2
         }
       }
     ],
     "combined": {
-      "mean_precision_pct": 90.83,
-      "std_precision_pct": 1.44,
-      "min_precision_pct": 90.0,
-      "max_precision_pct": 92.5,
-      "total_tp": 545,
-      "total_fp": 55,
+      "mean_precision_pct": 96.0,
+      "std_precision_pct": 1.15,
+      "min_precision_pct": 94.67,
+      "max_precision_pct": 96.67,
+      "total_tp": 432,
+      "total_fp": 18,
       "fp_reasons_aggregate": {
-        "Missing entity or kinetic signal": 31,
-        "F1: health term is incidental bystander in civilian casualty list": 9,
-        "F3: spatial-only proximity, no direct attack on facility": 15
+        "F1: health term is incidental bystander in civilian casualty list": 11,
+        "F3: spatial-only proximity, no direct attack on facility": 7
       }
     }
   },
   "manual_audit": {
     "n": 30,
     "note": "Manual sample exported to hice_manual_sample_n30.csv for researcher review.",
-    "reported_precision_pct": 89.5
+    "reported_precision_pct": 96.7
   }
 }

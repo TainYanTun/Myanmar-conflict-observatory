@@ -110,11 +110,10 @@ def compute_bystander_mask(notes: pd.Series) -> pd.Series:
     Returns True for rows that should be **excluded** (i.e. they match
     bystander patterns without a genuine attack signal).
 
-    Corresponds to F1-F4 in the paper:
-      F1: health terms in civilian casualty lists (enumeration)
+    Corresponds to F1-F3 in the paper:
+      F1: incidental enumeration (civilian casualty lists and background subjects)
       F2: humanitarian aid language (no hostile act) -- covered indirectly
       F3: spatial-only proximity ("near a hospital" as location)
-      F4: medical personnel as background subjects
     """
     enumeration_fp = (
         notes.str.contains(ENUMERATION_FP_PATTERN, regex=True, na=False)

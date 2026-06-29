@@ -3,8 +3,8 @@ Core HICE detection pipeline.
 
 This module implements the three-layer detection architecture:
   Layer 1 -- Structural filtering: only kinetic events pass
-  Layer 2 -- Bidirectional action-keyword coupling (4 parallel signals)
-  Layer 3 -- Bystander disambiguation (F1/F3/F4)
+  Layer 2 -- Health entity gate + bidirectional coupling (4 parallel signals)
+  Layer 3 -- Bystander disambiguation (F1-F3)
 
 Usage::
 
@@ -177,7 +177,7 @@ def classify_hice_type(notes: pd.Series) -> pd.Series:
         "systemic_attack",
         "infrastructure_damage",
         "access_disruption",
-        "personnel_targeting",
+        "humanitarian_disruption",
     ]
 
     return np.select(conditions, choices, default="humanitarian_disruption")

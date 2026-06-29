@@ -1,102 +1,124 @@
-# Healthcare Interference Conflict Event (HICE) Detection Framework
+<p align="center">
+  <img src="assets/icon.png" alt="HICE Framework" width="40%">
+</p>
 
-[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/TainYanTun/HICE-Framework)
+<div align="center">
 
-The **HICE Detection Framework** is a deterministic rule-based NLP framework for detecting healthcare interference from unstructured conflict narrative text. It includes a standalone Python package (`hice_framework/`), an interactive analytical dashboard, and a formal research manuscript validated through a Myanmar case study (2021–2025).
+# HICE Framework
 
-## Core Components
+Rule-based NLP toolkit for detecting attacks on healthcare in conflict zones from free-text event data.
+Source-agnostic adapter pattern, interactive dashboard, MIT license.<br>
+[About](#about) · [Install](#install) · [Quick Start](#quick-start) · [Documentation](#documentation) · [Contributing](#contributing)
 
-### 1. HICE Detection Framework (`hice_framework/`)
-A standalone, importable Python package implementing a three-layer detection pipeline:
+</div>
 
-- **Layer 1 — Structural Gate**: Only kinetic events (battles, explosions, violence against civilians) proceed to NLP.
-- **Layer 2a — Health Entity Gate**: Events must contain a health ontology term (hospital, clinic, doctor, nurse, etc.).
-- **Layer 2b — Bidirectional Keyword Coupling**: Four parallel signals (proximity, targeting patterns, action phrases, soft casualty coupling) evaluated within a 45-character window.
-- **Layer 3 — Bystander Disambiguation**: F1/F4 (civilian casualty lists), F2 (humanitarian aid), and F3 (spatial proximity) false-positive filters.
+## About
 
-**Performance**: 96.0% precision validated via 3-pass AI-assisted audit (n=450). Spearman's ρ ≥ 0.995 under weight perturbations.
+HICE (Healthcare Interference Conflict Event) is a deterministic rule-based NLP pipeline that detects healthcare targeting in conflict zones from unstructured narrative text — without requiring labeled training data or machine learning models. It uses a three-layer architecture: a structural gate that filters for violent events, bidirectional keyword coupling within a 45-character proximity window, and bystander disambiguation to filter false positives. Results are classified into five impact categories and scored regionally for vulnerability triage.
 
-### 2. Interactive Dashboard (`server.py`)
-A FastAPI-based web dashboard with six analytical tabs:
-- Overview, Records, Geospatial, Temporal, Actor Network, Pipeline Simulator
+The framework is source-agnostic via plug-in adapters. Currently supports ACLED (used in the Myanmar case study) and UCDP GED, with a public adapter interface for any conflict event dataset.
 
-### 3. Research Manuscript (`research/main.tex`)
-Full paper documenting the HICE framework, Myanmar case study (463 HICE incidents from 80,000+ ACLED events, Feb 2021–Apr 2025), sensitivity analysis, and category-level validation.
+**Performance:** 96.0% validated precision (3-pass AI audit, n=450). Regional rankings stable at Spearman's ρ ≥ 0.9926 under weight perturbations.
+
+## Install
+
+```bash
+pip install git+https://github.com/TainYanTun/HICE-Framework.git
+```
+
+Or clone and install locally:
+
+```bash
+git clone https://github.com/TainYanTun/HICE-Framework.git
+pip install HICE-Framework/hice_framework/
+```
+
+Requires Python 3.10+. Dependencies (pandas, numpy, scipy) install automatically.
 
 ## Quick Start
 
-### Requirements
-- Python 3.9+
-- `pip install -r requirements.txt`
-
-### Run HICE Detection
 ```python
-from hice_framework import ACLEDAdapter, detect_hice_from_source, classify_hice_type
-import pandas as pd
+from hice_framework import ACLEDAdapter, detect_hice_from_source, classify_hice_type, VulnerabilityScorer
 
-df = pd.read_csv('data/myanmar_conflict_clean.csv')
+df = pd.read_csv("myanmar_conflict_clean.csv")
 mask = detect_hice_from_source(df, ACLEDAdapter())
-notes = df['notes'].fillna('').str.lower()
-types = classify_hice_type(notes)
 hice_events = df[mask].copy()
-hice_events['hice_type'] = types[mask]
+hice_events["hice_type"] = classify_hice_type(hice_events["notes"].fillna("").str.lower())
+
+scorer = VulnerabilityScorer()
+ranking = scorer.score(hice_events, admin_col="admin1")
+print(ranking.head(10))
 ```
+
+Full walkthrough: [`docs/Usage_Guide.md`](docs/Usage_Guide.md)
 
 ### Launch Dashboard
+
 ```bash
-python server.py
+python scripts/precompute.py
+uvicorn server:app --host 0.0.0.0 --port 8000
 ```
 
-### Run Validations
+Open http://localhost:8000
+
+### Run Validation Suite
+
 ```bash
 python scripts/validation/run_all.py
 ```
 
-## HICE Categories (Priority Order)
+Output written to `validation/validation_summary.json`.
+
+## Documentation
+
+| Guide | Description |
+|-------|-------------|
+| [Usage Guide](docs/Usage_Guide.md) | End-to-end walkthrough with data loading, detection, classification, scoring |
+| [Detection Pipeline](docs/HICE_Detection_Pipeline.md) | Three-layer architecture: structural gate, keyword coupling, bystander filtering |
+| [Signal System](docs/Signal_System.md) | All keyword patterns, proximity window, bystander regex rules |
+| [Classification](docs/Classification_System.md) | Five-category priority system with validation results |
+| [Source Adapters](docs/Source_Adapters.md) | Adapter pattern for ACLED, UCDP GED, custom datasets |
+| [Vulnerability Scoring](docs/Vulnerability_Scoring.md) | Score formula `Σ(w × (1+ln(F+1)))` and sensitivity analysis |
+| [Validation Framework](docs/Validation_Framework.md) | AI audit, category validation, sensitivity methodology |
+| [Dashboard API](docs/Dashboard_API.md) | FastAPI routes, precompute pipeline, simulator |
+
+## Architecture
+
+| Layer | Step | Status |
+|-------|------|--------|
+| 1 | Structural gate — kinetic events only | ✅ |
+| 2a | Health keyword detection (23 patterns) | ✅ |
+| 2b | Bidirectional proximity coupling (45-char window) | ✅ |
+| 2c | Targeting verbs, action phrases, soft casualty coupling | ✅ |
+| 3 | Bystander disambiguation (F1 civilian lists, F2 aid context, F3 spatial) | ✅ |
+| — | Five-category HICE classification | ✅ |
+| — | Regional vulnerability scoring with sensitivity analysis | ✅ |
+| — | Interactive dashboard with pipeline simulator | ✅ |
+
+### HICE Impact Categories
+
 | Category | Weight | Description |
-|---|---|---|
+|----------|--------|-------------|
 | Personnel Targeting | 1.0 | Medical staff killed, arrested, shot, or abducted |
-| Systemic Attack | 0.9 | Infrastructure damage + staff presence |
-| Infrastructure Damage | 0.6 | Facility bombed, burned, shelled, or looted |
-| Access Disruption | 0.5 | Closures, blockades, or proximity violence |
+| Systemic Attack | 0.9 | Infrastructure damage + staff present |
+| Infrastructure Damage | 0.6 | Facilities bombed, burned, shelled, looted |
+| Access Disruption | 0.5 | Closures, blockades, proximity violence |
 | Humanitarian Disruption | 0.3 | Supply chain or logistics interference |
 
-## Project Structure
-```
-├── hice_framework/          # Standalone Python package
-│   ├── __init__.py          # Public API
-│   ├── _adapter.py          # SourceAdapter ABC, ACLEDAdapter, UCDPGEDAdapter
-│   ├── _detector.py         # Detection pipeline + classification
-│   ├── _signals.py          # 5 pure signal functions
-│   └── _vulnerability.py    # VulnerabilityScorer, SensitivityAnalyzer
-├── scripts/
-│   ├── validation/          # Organized validation pipeline
-│   │   ├── run_audit.py
-│   │   ├── run_category_audit.py
-│   │   ├── run_sensitivity.py
-│   │   └── run_all.py
-│   └── generate_*.py        # Figure generation scripts
-├── server.py                # FastAPI dashboard
-├── templates/dashboard.html # Jinja2 template
-├── static/style.css         # Apple design tokens
-├── research/                # Paper manuscript + figures
-│   ├── main.tex
-│   └── assets/
-├── validation/              # Audit outputs
-└── data/                    # ACLED data (gitignored)
-```
-
 ## Data Source
-All analysis is based on the [ACLED](https://acleddata.com/) dataset covering Feb 1, 2021 to Apr 2, 2025 (80,000+ events). The framework's adapter architecture also supports UCDP GED ingestion for cross-source validation.
+
+The Myanmar case study uses [ACLED](https://acleddata.com/) data (Feb 2021–Apr 2025, 80,000+ events). The adapter architecture also supports UCDP GED and any custom dataset with free-text narrative columns.
 
 ## Ethical Framework
-- **Do No Harm**: Geospatial resolution limited to prevent tactical exploitation.
-- **Verified Floor**: ACLED data is treated as a confirmed minimum; actual figures in communication-blackout regions are likely higher.
+
+- **Do No Harm**: Geospatial resolution limited to administrative region level to prevent tactical exploitation.
+- **Verified Floor**: Detected counts are confirmed minimums; actual figures in communication-blackout regions are likely higher.
 - **ICRC Alignment**: Data governance follows the *ICRC Handbook on Data Protection in Humanitarian Action*.
 
-## Collaborators
-- **Tain Yan Tun** — Lead Engineer & Computational Data Scientist
-- **Pimpa Cheewaprakobkit** — Faculty Advisor, Asia Pacific International University
+## Contributing
+
+Contributions welcome. See [docs/](docs/) for system documentation and the research paper at `research/main.tex` for methodology details.
 
 ## License
+
 MIT License. Conflict data sourced from ACLED.

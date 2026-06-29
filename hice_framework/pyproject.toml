@@ -28,8 +28,9 @@ dependencies = [
     "scipy",
 ]
 
-[tool.setuptools]
-packages = ["hice_framework"]
+[tool.setuptools.packages.find]
+include = ["hice_framework*"]
+where = ["."]
 
 [project.urls]
-Repository = "https://github.com/TainYanTun/Myanmar-conflict-observatory"
+Repository = "https://github.com/TainYanTun/HICE-Framework"

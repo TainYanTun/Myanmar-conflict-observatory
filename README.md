@@ -1,6 +1,6 @@
 # Healthcare Interference Conflict Event (HICE) Detection Framework
 
-[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/TainYanTun/Myanmar-conflict-observatory)
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-black?logo=github)](https://github.com/TainYanTun/HICE-Framework)
 
 The **HICE Detection Framework** is a deterministic rule-based NLP framework for detecting healthcare interference from unstructured conflict narrative text. It includes a standalone Python package (`hice_framework/`), an interactive analytical dashboard, and a formal research manuscript validated through a Myanmar case study (2021–2025).
 

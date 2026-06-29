@@ -48,7 +48,7 @@ print(f"Minimum Spearman's rho: {min_rho:.4f}")
 **Option 1 — pip install from GitHub (recommended):**
 
 ```bash
-pip install git+https://github.com/TainYanTun/Myanmar-conflict-observatory.git#subdirectory=hice_framework
+pip install git+https://github.com/TainYanTun/HICE-Framework.git
 ```
 
 **Option 2 — pip install from the local directory:**

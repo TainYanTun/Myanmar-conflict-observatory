@@ -4,7 +4,7 @@ Version: 1.0.0
 Summary: Deterministic rule-based NLP pipeline for detecting Healthcare Interference Conflict Events (HICE) from unstructured conflict narratives
 Author: Tain Yan Tun
 License: MIT
-Project-URL: Repository, https://github.com/TainYanTun/Myanmar-conflict-observatory
+Project-URL: Repository, https://github.com/TainYanTun/HICE-Framework
 Keywords: nlp,conflict,healthcare,hice,event-detection,humanitarian,acled,rule-based
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: MIT License
@@ -24,6 +24,10 @@ in conflict zones from unstructured event narrative text. Designed to be
 event dataset with free-text narratives.
 
 ## Quick Start
+
+Full walkthrough with step-by-step explanations: [`docs/Usage_Guide.md`](../docs/Usage_Guide.md)
+
+This example uses ACLED data. The framework also supports UCDP GED, ICEWS, and custom sources via plug-in adapters (see [Source Adapters](#source-adapters)).
 
 ```python
 import pandas as pd
@@ -59,13 +63,19 @@ print(f"Minimum Spearman's rho: {min_rho:.4f}")
 
 ## Installation
 
-### Option 1: pip install from GitHub (recommended)
+**Option 1 — pip install from GitHub (recommended):**
 
 ```bash
-pip install git+https://github.com/TainYanTun/Myanmar-conflict-observatory.git#subdirectory=hice_framework
+pip install git+https://github.com/TainYanTun/HICE-Framework.git
 ```
 
-### Option 2: Copy the directory
+**Option 2 — pip install from the local directory:**
+
+```bash
+pip install hice_framework/
+```
+
+**Option 3 — Copy the directory:**
 
 Copy `hice_framework/` into your project and import:
 

@@ -189,20 +189,6 @@ Optional but recommended:
 - **Fatalities**: numeric fatality count for vulnerability scoring
 - **Admin region**: administrative region name for regional ranking
 
-## Citing
-
-If you use this framework in academic work, please cite the associated paper:
-
-```
-@article{hice2025,
-  title={Healthcare Interference Conflict Events: A Framework for
-         Detection and Vulnerability Assessment},
-  author={...},
-  journal={...},
-  year={2025}
-}
-```
-
 ## License
 
 See the LICENSE file in the project root.

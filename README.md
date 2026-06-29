@@ -117,7 +117,7 @@ The Myanmar case study uses [ACLED](https://acleddata.com/) data (Feb 2021–Apr
 
 ## Contributing
 
-Contributions welcome. See [docs/](docs/) for system documentation and the research paper at `research/main.tex` for methodology details.
+Contributions welcome. See [docs/](docs/) for system documentation and methodology details.
 
 ## License
 

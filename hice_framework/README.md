@@ -7,6 +7,10 @@ event dataset with free-text narratives.
 
 ## Quick Start
 
+Full walkthrough with step-by-step explanations: [`docs/Usage_Guide.md`](../docs/Usage_Guide.md)
+
+This example uses ACLED data. The framework also supports UCDP GED, ICEWS, and custom sources via plug-in adapters (see [Source Adapters](#source-adapters)).
+
 ```python
 import pandas as pd
 from hice_framework import (
@@ -41,13 +45,19 @@ print(f"Minimum Spearman's rho: {min_rho:.4f}")
 
 ## Installation
 
-### Option 1: pip install from GitHub (recommended)
+**Option 1 — pip install from GitHub (recommended):**
 
 ```bash
 pip install git+https://github.com/TainYanTun/Myanmar-conflict-observatory.git#subdirectory=hice_framework
 ```
 
-### Option 2: Copy the directory
+**Option 2 — pip install from the local directory:**
+
+```bash
+pip install hice_framework/
+```
+
+**Option 3 — Copy the directory:**
 
 Copy `hice_framework/` into your project and import:
 

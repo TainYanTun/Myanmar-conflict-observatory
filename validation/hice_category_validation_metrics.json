@@ -4,20 +4,20 @@
         "TP": 110,
         "precision": 80.3
     },
-    "personnel_targeting": {
-        "total": 54,
-        "TP": 51,
-        "precision": 94.4
-    },
     "humanitarian_disruption": {
-        "total": 141,
-        "TP": 141,
+        "total": 157,
+        "TP": 157,
         "precision": 100.0
     },
     "infrastructure_damage": {
         "total": 124,
         "TP": 116,
         "precision": 93.5
+    },
+    "personnel_targeting": {
+        "total": 38,
+        "TP": 38,
+        "precision": 100.0
     },
     "systemic_attack": {
         "total": 7,

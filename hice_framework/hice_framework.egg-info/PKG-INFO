@@ -1,3 +1,21 @@
+Metadata-Version: 2.4
+Name: hice-framework
+Version: 1.0.0
+Summary: Deterministic rule-based NLP pipeline for detecting Healthcare Interference Conflict Events (HICE) from unstructured conflict narratives
+Author: Tain Yan Tun
+License: MIT
+Project-URL: Repository, https://github.com/TainYanTun/Myanmar-conflict-observatory
+Keywords: nlp,conflict,healthcare,hice,event-detection,humanitarian,acled,rule-based
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Topic :: Scientific/Engineering :: Information Analysis
+Classifier: Intended Audience :: Science/Research
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: pandas
+Requires-Dist: numpy
+Requires-Dist: scipy
+
 # HICE Framework -- Healthcare Interference Conflict Event Detection
 
 A deterministic, rule-based NLP pipeline for detecting healthcare interference

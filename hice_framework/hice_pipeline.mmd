@@ -1,0 +1,36 @@
+graph TD
+    subgraph Layer1["Layer 1: Structural Gate"]
+        Start["Conflict records"] --> L1_Decision{"Kinetic event?\n(Battles, Explosions,\nVAC, Attacks, Arrests...)"}
+        L1_Decision -->|Yes| L2
+        L1_Decision -->|No| L1_Reject["REJECTED"]
+    end
+
+    subgraph Layer2["Layer 2: Health Entity Gate + Bidirectional Coupling"]
+        L2a{"Health term\nin narrative?"}
+        L2a -->|No| L2a_Reject["REJECTED"]
+        L2a -->|Yes| Sig_Prox["Proximity\n(health + attack verb\nwithin 45 chars)"]
+        Sig_Prox --> Sig_Target["Targeting\n(targeted, fired upon,\nraided, occupied)"]
+        Sig_Target --> Sig_Phrase["Action Phrase\n(was destroyed, arrested,\ncame under fire)"]
+        Sig_Phrase --> Sig_Soft["Soft Coupling\n(injured + doctor/patient\nwithin 20 chars)"]
+        Sig_Soft --> L2b_Merge{"Any signal\npresent?"}
+        L2b_Merge -->|No| L2b_Reject["REJECTED"]
+        L2b_Merge -->|Yes| L3
+    end
+
+    subgraph Layer3["Layer 3: Bystander Disambiguation"]
+        L3 --> F1{"F1: Background\ncasualty mention?"}
+        F1 -->|Yes| L3_Reject["REJECTED"]
+        F1 -->|No| F2{"F2: Humanitarian\naid context?"}
+        F2 -->|Yes| L3_Reject["REJECTED"]
+        F2 -->|No| F3{"F3: Spatial proximity\nonly?\n(taken to hospital)"}
+        F3 -->|Yes| L3_Reject["REJECTED"]
+        F3 -->|No| Classify
+    end
+
+    subgraph Output["Classification (priority order)"]
+        Classify[Classify HICE type] --> PT["1. Personnel Targeting"]
+        Classify --> SA["2. Systemic Attack"]
+        Classify --> ID["3. Infrastructure Damage"]
+        Classify --> AD["4. Access Disruption"]
+        Classify --> HD["5. Humanitarian Disruption"]
+    end

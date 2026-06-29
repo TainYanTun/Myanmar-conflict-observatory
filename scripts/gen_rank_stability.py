@@ -43,6 +43,7 @@ for pct in [p/100.0 for p in range(-10, 11, 2)]:
             worst_info = (pct, param, rho)
 
 pct, param, rho = worst_info
+pct_label = f"{'+' if pct >= 0 else ''}{int(pct * 100)}%"
 W_CASE = W_BASE.copy(); W_CASE[param] = W_BASE[param] * (1 + pct)
 perturbed = compute_rankings(W_CASE)
 merged = baseline.merge(perturbed, on='admin1', suffixes=('_base','_pert'))
@@ -64,7 +65,7 @@ ax.scatter(x, y, s=70, color='#0066cc', edgecolors='white', linewidth=0.8, zorde
 label = param.replace('_', ' ')
 ax.text(0.3, 16.6, f"Spearman's \u03c1 = {rho:.4f}", fontsize=14,
         fontweight='bold', color='#1d1d1f', va='top')
-ax.text(0.3, 15.3, f'{label} weight +10%', fontsize=11, color='#555', va='top')
+ax.text(0.3, 15.3, f'{label} weight {pct_label}', fontsize=11, color='#555', va='top')
 
 ax.set_xlabel('Baseline Regional Rank', fontsize=14, fontweight='bold')
 ax.set_ylabel('Perturbed Regional Rank', fontsize=14, fontweight='bold')

@@ -1,0 +1,7 @@
+README.md
+pyproject.toml
+hice_framework.egg-info/PKG-INFO
+hice_framework.egg-info/SOURCES.txt
+hice_framework.egg-info/dependency_links.txt
+hice_framework.egg-info/requires.txt
+hice_framework.egg-info/top_level.txt

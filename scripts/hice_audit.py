@@ -271,7 +271,7 @@ def main():
         "manual_audit": {
             "n": N_MANUAL,
             "note": "Manual sample exported to hice_manual_sample_n30.csv for researcher review.",
-            "reported_precision_pct": 93.3
+            "reported_precision_pct": 96.67
         }
     }
 

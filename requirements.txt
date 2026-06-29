@@ -4,5 +4,6 @@ uvicorn[standard]
 jinja2
 pandas
 numpy
+scipy
 plotly
 python-dotenv

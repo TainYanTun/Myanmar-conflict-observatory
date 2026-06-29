@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hice-framework"
+version = "1.0.0"
+description = "Deterministic rule-based NLP pipeline for detecting Healthcare Interference Conflict Events (HICE) from unstructured conflict narratives"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Tain Yan Tun"},
+]
+keywords = [
+    "nlp", "conflict", "healthcare", "hice", "event-detection",
+    "humanitarian", "acled", "rule-based",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Intended Audience :: Science/Research",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "pandas",
+    "numpy",
+    "scipy",
+]
+
+[tool.setuptools]
+packages = ["hice_framework"]
+
+[project.urls]
+Repository = "https://github.com/TainYanTun/Myanmar-conflict-observatory"

@@ -12,7 +12,7 @@ data = {
         'Humanitarian Disruption', 
         'Systemic Attack'
     ],
-    'Count': [237, 189, 56, 39, 12],
+    'Count': [124, 137, 38, 157, 7],
 }
 
 df = pd.DataFrame(data)

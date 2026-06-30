@@ -1,8 +1,14 @@
-<p align="center">
-  <img src="assets/icon.png" alt="HICE Framework" width="40%">
-</p>
-
 <div align="center">
+  <img src="assets/icon.png" alt="HICE Framework" width="40%">
+
+
+# HICE Framework
+
+Rule-based NLP toolkit for detecting attacks on healthcare in conflict zones from free-text event data.
+Source-agnostic adapter pattern, interactive dashboard, MIT license.<br>
+[About](#about) · [Install](#install) · [Quick Start](#quick-start) · [Documentation](#documentation) · [Contributing](#contributing)
+
+</div>
 
 ## About
 

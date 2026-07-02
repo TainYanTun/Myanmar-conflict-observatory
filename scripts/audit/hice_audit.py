@@ -28,7 +28,7 @@ import re
 import pandas as pd
 import numpy as np
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, ROOT)
 
 from hice_framework import ACLEDAdapter, detect_hice_from_source, classify_hice_type

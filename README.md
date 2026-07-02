@@ -4,7 +4,7 @@
 
 # HICE Framework
 
-Rule-based NLP toolkit for detecting attacks on healthcare in conflict zones from free-text event data.
+Deterministic rule-based NLP toolkit for detecting attacks on healthcare in conflict zones from free-text event data.
 Source-agnostic adapter pattern, interactive dashboard, MIT license.<br>
 [About](#about) · [Install](#install) · [Quick Start](#quick-start) · [Documentation](#documentation) · [Contributing](#contributing)
 
@@ -76,8 +76,7 @@ Output written to `validation/validation_summary.json`.
 | [Signal System](docs/Signal_System.md)                               | All keyword patterns, proximity window, bystander regex rules                    |
 | [Classification](docs/Classification_System.md)                      | Five-category priority system with validation results                            |
 | [Source Adapters](docs/Source_Adapters.md)                           | Adapter pattern for ACLED, UCDP GED, custom datasets                             |
-| [Vulnerability Scoring](docs/Vulnerability_Scoring.md)               | Score formula`Σ(w × (1+ln(F+1)))` and sensitivity analysis                   |
-| [Vulnerability Score — Worked Example](docs/vulnerability_score.md) | Formula breakdown, category weights, full example case calculation               |
+| [Vulnerability Score — Formula & Worked Example](docs/vulnerability_score.md) | Formula breakdown, category weights, full per-incident step-by-step calculation |
 | [Validation Framework](docs/Validation_Framework.md)                 | AI audit, category validation, sensitivity methodology                           |
 | [Dashboard API](docs/Dashboard_API.md)                               | FastAPI routes, precompute pipeline, simulator                                   |
 
@@ -103,6 +102,26 @@ Output written to `validation/validation_summary.json`.
 | Infrastructure Damage   | 0.6    | Facilities bombed, burned, shelled, looted        |
 | Access Disruption       | 0.5    | Closures, blockades, proximity violence           |
 | Humanitarian Disruption | 0.3    | Supply chain or logistics interference            |
+
+## Project Structure
+
+```
+├── data/                          # Conflict event data + precomputed dashboard data
+├── docs/                          # Documentation guides
+├── hice_framework/                # Core library (adapter, detector, signals, scoring)
+├── notebooks/                     # Jupyter notebooks for research analysis
+├── research/                      # LaTeX paper, figures, assets
+├── scripts/
+│   ├── precompute.py              # Dashboard data generator
+│   ├── generate/                  # Figure/chart generation scripts
+│   ├── audit/                     # Precision validation scripts
+│   └── validation/                # Validation suite runner
+├── static/                        # Dashboard CSS
+├── templates/                     # Dashboard HTML
+├── validation/                    # Validation samples and output artifacts
+├── server.py                      # FastAPI dashboard
+└── requirements.txt
+```
 
 ## Data Source
 

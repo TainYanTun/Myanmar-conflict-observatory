@@ -58,6 +58,6 @@
   "manual_audit": {
     "n": 30,
     "note": "Manual sample exported to hice_manual_sample_n30.csv for researcher review.",
-    "reported_precision_pct": 96.7
+    "reported_precision_pct": 96.67
   }
 }

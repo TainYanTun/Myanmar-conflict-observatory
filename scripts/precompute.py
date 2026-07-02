@@ -458,7 +458,7 @@ def main():
         "categories": category_breakdown,
     }
 
-    out_path = HERE / "dashboard_data.json"
+    out_path = HERE / "data" / "dashboard_data.json"
     with open(out_path, "w") as f:
         json.dump(data, f, cls=NumpyEncoder)
     size_mb = out_path.stat().st_size / (1024 * 1024)

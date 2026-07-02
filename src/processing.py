@@ -4,7 +4,7 @@ import re
 from collections import Counter
 
 # Source-agnostic HICE detection framework
-from .hice_detector import (
+from hice_framework import (
     ACLEDAdapter,
     detect_hice_from_source,
     classify_hice_type as _classify_hice_type,

@@ -32,7 +32,7 @@ HICE_LABELS = {
 
 
 # ── Load pre-computed dashboard data ───────────────────────────────
-data = json.load(open(HERE / "dashboard_data.json"))
+data = json.load(open(HERE / "data" / "dashboard_data.json"))
 
 meta = data["meta"]
 overview_data = (data["overview"]["pie"], data["overview"]["kw"], data["overview"]["actor"], data["overview"]["evt"])

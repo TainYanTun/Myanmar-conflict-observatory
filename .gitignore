@@ -36,7 +36,6 @@ __pycache__/
 .Trashes
 ehthumbs.db
 Thumbs.db
-.env
 
 # LaTeX
 *.aux
@@ -56,4 +55,9 @@ Thumbs.db
 # Compressed files
 *.gz
 
-main-backup.tex
+# IDE / Editor
+.vscode/
+.devcontainer/
+
+# opencode
+.opencode/

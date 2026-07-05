@@ -12,7 +12,7 @@ Source-agnostic adapter pattern, interactive dashboard, MIT license.<br>
 
 ## About
 
-HICE (Healthcare Interference Conflict Event) is a deterministic rule-based NLP pipeline that detects healthcare targeting in conflict zones from unstructured narrative text — without requiring labeled training data or machine learning models. It uses a three-layer architecture: a structural gate that filters for violent events, bidirectional keyword coupling within a 45-character proximity window, and bystander disambiguation to filter false positives. Results are classified into five impact categories and scored regionally for vulnerability triage.
+HICE (Healthcare Interference Conflict Event) is a deterministic rule-based NLP pipeline that detects healthcare targeting in conflict zones from unstructured narrative text — without requiring labeled training data or machine learning models. It utilize a three-layer architecture: a structural gate that filters for violent events, bidirectional keyword coupling within a 45-character proximity window, and bystander disambiguation to filter false positives. Results are classified into five impact categories and scored regionally for vulnerability triage.
 
 The framework is source-agnostic via plug-in adapters. Currently supports ACLED (used in the Myanmar case study) and UCDP GED, with a public adapter interface for any conflict event dataset.
 

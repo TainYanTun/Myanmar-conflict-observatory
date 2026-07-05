@@ -60,4 +60,4 @@ Thumbs.db
 .devcontainer/
 
 # opencode
-.opencode/
+*.opencode
